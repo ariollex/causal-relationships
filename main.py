@@ -23,7 +23,7 @@ def debugdataset(dataset):
 for i in range(0, data.shape[0]): # пробег по всей таблице
     if data.causes[i] != 0: # Поиск случаев. Если случай найден, то:
         schoolclass = str(data.parallel[i]) + data.letter[i] # Определение класса
-        formatcauses.append([data.name[i], schoolclass, data.causes[i]]) # Присваивание массива с именем, классом и случаем в массив causes
+        formatcauses.append([data.name[i], schoolclass]) # Присваивание массива с именем и классом в массив causes
 # Дебаг массива
 # debuglist(formatcauses)
 
