@@ -12,8 +12,12 @@ def debuglist(list):
     for i in range(len(list)):
         print(list[i])
 
+def debugdataset(dataset):
+    print(dataset.head)
+    print(dataset.shape)
+
 # Дебаг датасета
-# print(data.head)
+# debugdataset(data)
 
 # Создание и заполнение массива causes, в котором указаны все случаи в школе в период времени, указанный в таблице
 for i in range(0, data.shape[0]): # пробег по всей таблице
