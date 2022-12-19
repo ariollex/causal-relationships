@@ -4,6 +4,10 @@ data = pandas.read_csv(file_loc)
 formatcauses = []
 info = []
 
+def printinfo(info):
+    for i in range(len(info)):
+        print(*info[i])
+
 # Дебаг датасета
 # print(data.head)
 
@@ -31,5 +35,4 @@ for i in range(len(formatcauses)):
         info.append(['Случай напрямую связан с', formatcauses[i][1], 'классом'])
         break
 
-for i in range(len(info)):
-    print(*info[i])
+printinfo(info)
