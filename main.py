@@ -8,6 +8,10 @@ def printinfo(info):
     for i in range(len(info)):
         print(*info[i])
 
+def debuglist(list):
+    for i in range(len(list)):
+        print(list[i])
+
 # Дебаг датасета
 # print(data.head)
 
@@ -16,11 +20,8 @@ for i in range(0, data.shape[0]): # пробег по всей таблице
     if data.causes[i] != 0: # Поиск случаев. Если случай найден, то:
         schoolclass = str(data.parallel[i]) + data.letter[i] # Определение класса
         formatcauses.append([data.name[i], schoolclass, data.causes[i]]) # Присваивание массива с именем, классом и случаем в массив causes
-
 # Дебаг массива
-# for i in range(len(formatcauses)):
-#     print(formatcauses[i])
-# print(len(formatcauses))
+# debuglist(formatcauses)
 
 for i in range(len(formatcauses)):
     print(i+1, formatcauses[i])
