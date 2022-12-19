@@ -9,8 +9,8 @@ formatcauses = []
 # Создание и заполнение массива causes, в котором указаны все случаи в школе в период времени, указанный в таблице
 for i in range(0, data.shape[0]): # пробег по всей таблице
     if data.causes[i] != 0: # Поиск случаев. Если случай найден, то:
-        # schoolclass = str(data.parallel) + data.letter # Определение класса
-        formatcauses.append([data.name[i], data.causes[i]]) # Присваивание массива с именем, классом и случаем в массив causes
+        schoolclass = str(data.parallel[i]) + data.letter[i] # Определение класса
+        formatcauses.append([data.name[i], schoolclass, data.causes[i]]) # Присваивание массива с именем, классом и случаем в массив causes
 
 # Дебаг массива
 for i in range(len(formatcauses)):
