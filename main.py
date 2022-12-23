@@ -43,7 +43,7 @@ for i in range(len(formatcauses)):
 print("Выберите нужный случай и введите его номер: ", end='')
 userchoise = int(input()) - 1
 print()
-print('Вы выбрали номер ', userchoise, '. Учащийся: ', formatcauses[userchoise][0], sep='')
+print('Вы выбрали номер ', userchoise + 1, '. Учащийся: ', formatcauses[userchoise][0], sep='')
 print()
 
 for i in range(len(formatcauses)):
