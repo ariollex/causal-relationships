@@ -1,6 +1,6 @@
 import pandas
-file_loc = 'Dataset/Cause-effect-pairs-in-school.csv'
-data = pandas.read_csv(file_loc)
+file_loc = 'Dataset/Cause-effect-pairs-in-school.xlsx'
+data = pandas.read_excel(file_loc)
 formatcauses = []
 info = []
 
@@ -28,7 +28,7 @@ for i in range(0, data.shape[0]): # пробег по всей таблице
 # debuglist(formatcauses)
 
 for i in range(len(formatcauses)):
-    print(i+1, formatcauses[i])
+    print(i + 1, formatcauses[i])
 print("Выберите нужный случай и введите его номер: ", end='')
 userchoise = int(input()) - 1
 print()
