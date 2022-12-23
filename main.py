@@ -1,6 +1,15 @@
 import pandas
+
+# Датасет
 file_loc = 'Dataset/Cause-effect-pairs-in-school.xlsx'
 data = pandas.read_excel(file_loc)
+
+# Настройки датасета
+name = data.Имя
+parallel = data.Параллель
+letter = data.Буква
+causes = data.Инцидент
+
 formatcauses = []
 info = []
 
@@ -21,9 +30,9 @@ def debugdataset(dataset):
 
 # Создание и заполнение массива causes, в котором указаны все случаи в школе в период времени, указанный в таблице
 for i in range(0, data.shape[0]): # пробег по всей таблице
-    if data.causes[i] != 0: # Поиск случаев. Если случай найден, то:
-        schoolclass = str(data.parallel[i]) + data.letter[i] # Определение класса
-        formatcauses.append([data.name[i], schoolclass]) # Присваивание массива с именем и классом в массив causes
+    if causes[i] != 0: # Поиск случаев. Если случай найден, то:
+        schoolclass = str(parallel[i]) + letter[i] # Определение класса
+        formatcauses.append([name[i], schoolclass]) # Присваивание массива с именем и классом в массив causes
 # Дебаг массива
 # debuglist(formatcauses)
 
@@ -39,7 +48,7 @@ print()
 
 for i in range(len(formatcauses)):
     if formatcauses[userchoise][1] == formatcauses[i][1] and userchoise != i:
-        info.append(['Случай напрямую связан с', formatcauses[i][1], 'классом'])
+        info.append(['Случай связан с', formatcauses[i][1], 'классом'])
         break
 
 printinfo(info)
