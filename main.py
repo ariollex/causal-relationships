@@ -12,6 +12,7 @@ causes = data.Инцидент
 
 formatcauses = []
 info = []
+userchoise = -1
 
 def printinfo(info):
     for i in range(len(info)):
@@ -41,7 +42,12 @@ for i in range(len(formatcauses)):
     print(*formatcauses[i])
 
 print("Выберите нужный случай и введите его номер: ", end='')
-userchoise = int(input()) - 1
+
+while not(-1 < userchoise < len(formatcauses)):
+    userchoise = int(input()) - 1
+    if not(-1 < userchoise < len(formatcauses)):
+        print('Такого номера нет. Введите его заново: ')
+
 print()
 print('Вы выбрали номер ', userchoise + 1, '. Учащийся: ', formatcauses[userchoise][0], sep='')
 print()
