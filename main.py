@@ -28,11 +28,13 @@ for i in range(0, data.shape[0]): # пробег по всей таблице
 # debuglist(formatcauses)
 
 for i in range(len(formatcauses)):
-    print(i + 1, formatcauses[i])
+    print(i + 1,') ', sep='', end='')
+    print(*formatcauses[i])
+
 print("Выберите нужный случай и введите его номер: ", end='')
 userchoise = int(input()) - 1
 print()
-print('Вы выбрали номер ', userchoise, '. Случай связан с учеником по имени ', formatcauses[userchoise][0], sep='')
+print('Вы выбрали номер ', userchoise, '. Учащийся: ', formatcauses[userchoise][0], sep='')
 print()
 
 for i in range(len(formatcauses)):
