@@ -7,10 +7,10 @@ data = pandas.read_excel(file_loc)
 data.replace(numpy.nan, '0', inplace=True)
 
 # Настройки датасета
-name = data.Имя
-parallel = data.Параллель
-letter = data.Буква
-causes = data.Инцидент
+name = data['Имя']
+parallel = data['Параллель']
+letter = data['Буква']
+causes = data['Инцидент']
 infocauses = data['Информация об инцидентах']
 timecauses = data['Время инцидента']
 
@@ -19,10 +19,12 @@ info = []
 userchoise = -1
 
 def printinfo(info):
+    print()
     for i in range(len(info)):
         print(*info[i])
 
 def debuglist(list):
+    print()
     for i in range(len(list)):
         print(list[i])
 
@@ -35,7 +37,7 @@ def debugdataset(dataset):
 
 # Список инцидентов
 for i in range(0, data.shape[0]):
-    if causes[i] != 0:
+    if causes[i] != '0':
         schoolclass = str(parallel[i]) + letter[i]
         formatcauses.append([name[i], schoolclass])
 # Дебаг списка
@@ -57,9 +59,7 @@ while True:
         userchoise = int(userchoise) - 1
         break
 
-print()
 print('Вы выбрали номер ', userchoise + 1, '. Учащийся: ', formatcauses[userchoise][0], sep='')
-print()
 
 for i in range(len(formatcauses)):
     if formatcauses[userchoise][1] == formatcauses[i][1] and userchoise != i:
