@@ -29,12 +29,12 @@ def debugdataset(dataset):
 # Дебаг датасета
 # debugdataset(data)
 
-# Создание и заполнение массива causes, в котором указаны все случаи в школе в период времени, указанный в таблице
-for i in range(0, data.shape[0]): # пробег по всей таблице
-    if causes[i] != 0: # Поиск случаев. Если случай найден, то:
-        schoolclass = str(parallel[i]) + letter[i] # Определение класса
-        formatcauses.append([name[i], schoolclass]) # Присваивание массива с именем и классом в массив causes
-# Дебаг массива
+# Список инцидентов
+for i in range(0, data.shape[0]):
+    if causes[i] != 0:
+        schoolclass = str(parallel[i]) + letter[i]
+        formatcauses.append([name[i], schoolclass])
+# Дебаг списка
 # debuglist(formatcauses)
 
 for i in range(len(formatcauses)):
