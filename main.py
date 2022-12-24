@@ -43,10 +43,15 @@ for i in range(len(formatcauses)):
 
 print("Выберите нужный случай и введите его номер: ", end='')
 
-while not(-1 < userchoise < len(formatcauses)):
-    userchoise = int(input()) - 1
-    if not(-1 < userchoise < len(formatcauses)):
+while True:
+    userchoise = input()
+    if userchoise.isdigit() == False:
         print('Такого номера нет. Введите его заново: ')
+    elif not(0 < int(userchoise) < len(formatcauses) + 1):
+        print('Такого номера нет. Введите его заново: ')
+    else:
+        userchoise = int(userchoise) - 1
+        break
 
 print()
 print('Вы выбрали номер ', userchoise + 1, '. Учащийся: ', formatcauses[userchoise][0], sep='')
