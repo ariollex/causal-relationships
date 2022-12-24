@@ -1,8 +1,10 @@
 import pandas
+import numpy
 
 # Датасет
 file_loc = 'Dataset/Cause-effect-pairs-in-school.xlsx'
 data = pandas.read_excel(file_loc)
+data.replace(numpy.nan, '0', inplace=True)
 
 # Настройки датасета
 name = data.Имя
@@ -10,6 +12,7 @@ parallel = data.Параллель
 letter = data.Буква
 causes = data.Инцидент
 infocauses = data['Информация об инцидентах']
+timecauses = data['Время инцидента']
 
 formatcauses = []
 info = []
