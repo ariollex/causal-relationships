@@ -9,6 +9,7 @@ name = data.Имя
 parallel = data.Параллель
 letter = data.Буква
 causes = data.Инцидент
+infocauses = data['Информация об инцидентах']
 
 formatcauses = []
 info = []
