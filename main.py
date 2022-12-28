@@ -21,9 +21,9 @@ timecauses = data['Время инцидента']
 # Список с выходными данными
 info = []
 
-# Ввод данных
 # Вызов makeformatcauses для создания списка инцидентов
-formatcauses = input_data.makeformatcauses(data, name, parallel, letter, causes, infocauses, timecauses)
+formatcauses = calculations.makeformatcauses(data, name, parallel, letter, causes, infocauses, timecauses)
+
 # Вызов функции makeuserchoise
 userchoise = input_data.makeuserchoise(formatcauses)
 
