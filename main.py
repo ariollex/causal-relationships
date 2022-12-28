@@ -1,5 +1,9 @@
 import pandas
 import numpy
+import input_data
+import calculations
+import print_data
+import debug
 
 # Датасет
 file_loc = 'Dataset/Cause-effect-pairs-in-school.xlsx'
@@ -14,60 +18,17 @@ causes = data['Инцидент']
 infocauses = data['Информация об инцидентах']
 timecauses = data['Время инцидента']
 
-formatcauses = []
+# Список с выходными данными
 info = []
-userchoise = -1
 
+# Ввод данных
+# Вызов makeformatcauses для создания списка инцидентов
+formatcauses = input_data.makeformatcauses(data, name, parallel, letter, causes, infocauses, timecauses)
+# Вызов функции makeuserchoise
+userchoise = input_data.makeuserchoise(formatcauses)
 
-def printinfo(info):
-    print()
-    for i in range(len(info)):
-        print(*info[i])
+# Вычисления
+calculations.intersection_of_classes(formatcauses, userchoise, info)
 
-
-def debuglist(list):
-    print()
-    for i in range(len(list)):
-        print(list[i])
-
-
-def debugdataset(dataset):
-    print(dataset.head)
-    print(dataset.shape)
-
-
-# Дебаг датасета
-# debugdataset(data)
-
-# Список инцидентов
-for i in range(0, data.shape[0]):
-    if causes[i] != 0:
-        schoolclass = str(parallel[i]) + letter[i]
-        formatcauses.append([name[i], schoolclass])
-# Дебаг списка
-# debuglist(formatcauses)
-
-for i in range(len(formatcauses)):
-    print(i + 1, ') ', sep='', end='')
-    print(*formatcauses[i])
-
-print("Выберите нужный случай и введите его номер: ", end='')
-
-while True:
-    userchoise = input()
-    if not userchoise.isdigit():
-        print('Такого номера нет. Введите его заново: ')
-    elif not (0 < int(userchoise) < len(formatcauses) + 1):
-        print('Такого номера нет. Введите его заново: ')
-    else:
-        userchoise = int(userchoise) - 1
-        break
-
-print('Вы выбрали номер ', userchoise + 1, '. Учащийся: ', formatcauses[userchoise][0], sep='')
-
-for i in range(len(formatcauses)):
-    if formatcauses[userchoise][1] == formatcauses[i][1] and userchoise != i:
-        info.append(['Случай связан с', formatcauses[i][1], 'классом'])
-        break
-
-printinfo(info)
+# Вывод данных
+print_data.printinfo(info)
