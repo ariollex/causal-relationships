@@ -1,5 +1,4 @@
 def makeuserchoise(formatcauses):
-    userchoise = -1
     for i in range(len(formatcauses)):
         print(i + 1, ') ', sep='', end='')
         print(*formatcauses[i])
