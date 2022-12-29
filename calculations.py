@@ -13,5 +13,5 @@ def makeformatcauses(data, name, sex, parallel, letter, causes, infocauses, time
 def intersection_of_classes(formatcauses, userchoise, info):
     for i in range(len(formatcauses)):
         if formatcauses[userchoise][2] == formatcauses[i][2] and userchoise != i:
-            info.append([strings.printlanguage(1, 3), formatcauses[i][1], strings.printlanguage(2, 3)])
+            info.append([strings.printlanguage(1, 3), formatcauses[i][2], strings.printlanguage(2, 3)])
             break
