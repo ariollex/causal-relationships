@@ -1,10 +1,8 @@
+import print_data
+
+
 def makeuserchoise(formatcauses):
-    for i in range(len(formatcauses)):
-        print(i + 1, ') ', sep='', end='')
-        print(*formatcauses[i])
-
-    print("Выберите нужный случай и введите его номер: ", end='')
-
+    print_data.printformatcauses(formatcauses)
     while True:
         userchoise = input()
         if not userchoise.isdigit():
