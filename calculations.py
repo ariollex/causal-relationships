@@ -5,7 +5,7 @@ def makeformatcauses(data, name, sex, parallel, letter, causes, infocauses, time
     formatcauses = []
     for i in range(0, data.shape[0]):
         if causes[i] != 0:
-            schoolclass = str(parallel[i]) + letter[i]
+            schoolclass = str(parallel[i]) + ' "' + letter[i] + '"'
             formatcauses.append([name[i], sex[i], schoolclass, timecauses[i], infocauses[i]])
     return formatcauses
 
