@@ -14,15 +14,16 @@ strings.setlanguage(language)
 # Датасет
 file_loc = 'Dataset/Cause-effect-pairs-in-school.xlsx'
 data = pandas.read_excel(file_loc)
+data.columns = range(data.columns.size)
 data.replace(numpy.nan, 0, inplace=True)
 
 # Настройки датасета
-name = data['Имя']
-parallel = data['Параллель']
-letter = data['Буква']
-causes = data['Инцидент']
-infocauses = data['Информация об инцидентах']
-timecauses = data['Время инцидента']
+name = data[0]
+parallel = data[2]
+letter = data[3]
+causes = data[4]
+infocauses = data[5]
+timecauses = data[6]
 
 # Список с выходными данными
 info = []
