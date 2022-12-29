@@ -1,17 +1,16 @@
 import print_data
-
+import strings
 
 def makeuserchoise(formatcauses):
     print_data.printformatcauses(formatcauses)
     while True:
         userchoise = input()
         if not userchoise.isdigit():
-            print('Такого номера нет. Введите его заново: ')
+            print(strings.printlanguage(1, 1))
         elif not (0 < int(userchoise) < len(formatcauses) + 1):
-            print('Такого номера нет. Введите его заново: ')
+            print(strings.printlanguage(1, 1))
         else:
             userchoise = int(userchoise) - 1
             break
-
-    print('Вы выбрали номер ', userchoise + 1, '. Учащийся: ', formatcauses[userchoise][0], sep='')
+    print(strings.printlanguage(1, 2), userchoise + 1, strings.printlanguage(2, 2), formatcauses[userchoise][0], sep='')
     return userchoise

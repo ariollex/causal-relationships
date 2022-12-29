@@ -4,7 +4,12 @@ import matplotlib.pyplot
 import input_data
 import calculations
 import print_data
+import strings
 import debug
+
+# Язык
+language = 'ru-RU'
+strings.setlanguage(language)
 
 # Датасет
 file_loc = 'Dataset/Cause-effect-pairs-in-school.xlsx'

@@ -1,3 +1,5 @@
+import strings
+
 def printinfo(info):
     print()
     for i in range(len(info)):
@@ -8,5 +10,4 @@ def printformatcauses(formatcauses):
     for i in range(len(formatcauses)):
         print(i + 1, ') ', sep='', end='')
         print(*formatcauses[i][0], ' ', *formatcauses[i][1], sep='')
-
-    print("Выберите нужный случай и введите его номер: ", end='')
+    print(strings.printlanguage(1, 0), end='')
