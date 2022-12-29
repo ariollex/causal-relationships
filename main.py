@@ -19,6 +19,7 @@ data.replace(numpy.nan, 0, inplace=True)
 
 # Настройки датасета
 name = data[0]
+sex = data[1]
 parallel = data[2]
 letter = data[3]
 causes = data[4]
@@ -29,7 +30,7 @@ timecauses = data[6]
 info = []
 
 # Вызов makeformatcauses для создания списка инцидентов
-formatcauses = calculations.makeformatcauses(data, name, parallel, letter, causes, infocauses, timecauses)
+formatcauses = calculations.makeformatcauses(data, name, sex, parallel, letter, causes, infocauses, timecauses)
 
 # Вызов функции makeuserchoise
 userchoise = input_data.makeuserchoise(formatcauses)

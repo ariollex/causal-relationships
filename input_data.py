@@ -12,5 +12,5 @@ def makeuserchoise(formatcauses):
         else:
             userchoise = int(userchoise) - 1
             break
-    print(strings.printlanguage(1, 2), userchoise + 1, strings.printlanguage(2, 2), formatcauses[userchoise][0], sep='')
+    print(strings.printlanguage(1, 2), userchoise + 1, strings.printlanguage(2, 2) if formatcauses[userchoise][1] == strings.printlanguage(1, 4) else strings.printlanguage(3, 2), formatcauses[userchoise][0], sep='')
     return userchoise
