@@ -1,16 +1,16 @@
-import print_data
-import strings
+from strings import changelanguage, printlanguage
 
-def makeuserchoise(formatcauses):
-    print_data.printformatcauses(formatcauses)
+
+def makeuserchoise(list):
     while True:
-        userchoise = input()
-        if not userchoise.isdigit():
-            print(strings.printlanguage(1, 1))
-        elif not (0 < int(userchoise) < len(formatcauses) + 1):
-            print(strings.printlanguage(1, 1))
+        choise = input()
+        if choise == 'L':
+            changelanguage()
+        elif not choise.isdigit():
+            print(printlanguage(1, 1))
+        elif not (0 < int(choise) < len(list) + 1):
+            print(printlanguage(1, 1))
         else:
-            userchoise = int(userchoise) - 1
-            break
-    print(strings.printlanguage(1, 2), userchoise + 1, strings.printlanguage(2, 2) if formatcauses[userchoise][1] == strings.printlanguage(1, 4) else strings.printlanguage(3, 2), formatcauses[userchoise][0], sep='')
-    return userchoise
+            choise = int(choise) - 1
+            return choise
+        return -1

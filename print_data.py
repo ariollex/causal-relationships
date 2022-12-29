@@ -1,4 +1,5 @@
-import strings
+from strings import printlanguage
+
 
 def printinfo(info):
     print()
@@ -10,4 +11,4 @@ def printformatcauses(formatcauses):
     for i in range(len(formatcauses)):
         print(i + 1, ') ', sep='', end='')
         print(*formatcauses[i][0], ' ', *formatcauses[i][2], sep='')
-    print(strings.printlanguage(1, 0), end='')
+    print(printlanguage(1, 0), end='')
