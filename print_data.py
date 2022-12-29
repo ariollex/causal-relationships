@@ -7,6 +7,6 @@ def printinfo(info):
 def printformatcauses(formatcauses):
     for i in range(len(formatcauses)):
         print(i + 1, ') ', sep='', end='')
-        print(*formatcauses[i])
+        print(*formatcauses[i][0], ' ', *formatcauses[i][1], sep='')
 
     print("Выберите нужный случай и введите его номер: ", end='')
