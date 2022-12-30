@@ -9,7 +9,6 @@ def setlanguage(language):
         replace_line("current_language", 0, language)
     texts = pandas.read_excel('languages/strings_' + language + '.xlsx')
     texts.columns = range(texts.columns.size)
-    return
 
 
 def changelanguage():
