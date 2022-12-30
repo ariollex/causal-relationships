@@ -31,15 +31,17 @@ timecauses = data[6]
 info = []
 
 # Другое
-userchoise = -1
+userchoise = -2
 
 # Вызов makeformatcauses для создания списка инцидентов
 formatcauses = calculations.makeformatcauses(data, name, sex, parallel, letter, causes, infocauses, timecauses)
 
 # Вызов функции makeuserchoise
-while userchoise == -1:
-    print_data.printformatcauses(formatcauses)
+while userchoise == -2 or userchoise == -1:
+    if userchoise == -2:
+        print_data.printformatcauses(formatcauses)
     userchoise = input_data.makeuserchoise(formatcauses)
+
 print(printlanguage(1, 2), userchoise + 1, printlanguage(2, 2) if formatcauses[userchoise][1] == printlanguage(1, 4) or printlanguage(2, 3) != numpy.nan else printlanguage(3, 2), formatcauses[userchoise][0], sep='')
 
 # Вычисления

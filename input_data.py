@@ -6,6 +6,7 @@ def makeuserchoise(list):
         choise = input()
         if choise == 'L':
             changelanguage()
+            return -2
         elif not choise.isdigit():
             print(printlanguage(1, 1))
         elif not (0 < int(choise) < len(list) + 1):
