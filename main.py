@@ -8,8 +8,8 @@ from strings import printlanguage, setlanguage
 import debug
 
 # Язык
-language = 'ru-RU'
-print('Current language', language, '. If you want to change the language, enter L at any time.')
+language = open("current_language", 'r').read()
+print('Current language: ', language, '. If you want to change the language, enter L at any time.', sep='')
 setlanguage(language)
 
 # Датасет
