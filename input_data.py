@@ -4,7 +4,9 @@ from strings import changelanguage, printlanguage
 def makeuserchoise(list):
     while True:
         choise = input()
-        if choise == 'L':
+        if choise == 'E':
+            exit()
+        elif choise == 'L':
             changelanguage()
             return -2
         elif not choise.isdigit():
