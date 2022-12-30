@@ -1,10 +1,10 @@
 import pandas
 import numpy
-import matplotlib.pyplot as plt
 import datetime
 import input_data
 import calculations
 import print_data
+import charts
 from strings import printlanguage, setlanguage
 
 version = '0.0.1-debug-closed'
@@ -74,10 +74,4 @@ elif choisefunc == 1:
     print(printlanguage(1, 11) + ':', end=' ')
     choisegraph = input_data.makeuserchoise(functions)
     if choisegraph == 0:
-        plt.hist(causes, bins=2, label=printlanguage(1, 12) + ' / ' + printlanguage(1, 13) + ', %: ' + str(round((len(formatcauses)/data.shape[0] * 100), 3)))
-        plt.xlabel(printlanguage(1, 12))
-        plt.ylabel(printlanguage(1, 13))
-        plt.locator_params(axis='y', nbins=10)
-        plt.locator_params(axis='x', nbins=2)
-        plt.legend()
-        plt.show()
+        charts.graph_1(data, causes, formatcauses)
