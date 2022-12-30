@@ -1,20 +1,20 @@
 import pandas
 import numpy
-import datetime
 import input_data
 import calculations
 import print_data
 import charts
 from strings import printlanguage, setlanguage
 
+# Версия
 version = '0.0.1-debug-closed'
-print('Causal relationships in school, ver', version)
-print('If you want to close the program, press "E"', end='\n\n')
 
 # Язык
 language = open("current_language", 'r').read()
-print('Current language: ', language, '. If you want to change the language, enter L at any time.', sep='', end='\n\n')
 setlanguage(language)
+print(printlanguage(1, 15), version)
+print('If you want to close the program, press "E"', end='\n\n')
+print('Current language: ', language, '. If you want to change the language, enter L at any time.', sep='', end='\n\n')
 
 # Датасет
 file_loc = 'Dataset/Cause-effect-pairs-in-school.xlsx'
