@@ -7,11 +7,13 @@ import print_data
 from strings import printlanguage, setlanguage
 import debug
 
-print('If you want to close the program, press "E"')
+version = '0.0.1-debug-closed'
+print('Causal relationships in school, ver', version)
+print('If you want to close the program, press "E"', end='\n\n')
 
 # Язык
 language = open("current_language", 'r').read()
-print('Current language: ', language, '. If you want to change the language, enter L at any time.', sep='')
+print('Current language: ', language, '. If you want to change the language, enter L at any time.', sep='', end='\n\n')
 setlanguage(language)
 
 # Датасет
