@@ -3,6 +3,7 @@ import pandas
 import input_data
 from calculations import replace_line
 
+
 def setlanguage(language):
     global texts
     if language != open("current_language", 'r').read():
@@ -20,6 +21,7 @@ def changelanguage():
     print('Enter the number: ', end='')
     language = files[input_data.makeuserchoise(files)].replace('strings_', '').replace('.xlsx', '')
     setlanguage(language)
+    exit(printlanguage(1, 14))
 
 
 def printlanguage(line, column):
