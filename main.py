@@ -37,7 +37,7 @@ info = []
 # Другое
 userchoise = -2
 choisefunc = -2
-graphs = [printlanguage(1, 5)]
+graphs = [printlanguage(1, 5), printlanguage(1, 18)]
 
 # Выбор режима работы программы
 functions = [printlanguage(1, 8), printlanguage(1, 9)]
@@ -75,3 +75,5 @@ elif choisefunc == 1:
     choisegraph = input_data.makeuserchoise(functions)
     if choisegraph == 0:
         charts.graph_1(data, causes, formatcauses)
+    elif choisegraph == 1:
+        charts.graph_2(data, formatcauses, parallel)
