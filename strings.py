@@ -1,4 +1,5 @@
 import os
+import numpy
 import pandas
 import input_data
 from calculations import replace_line
@@ -9,6 +10,7 @@ def setlanguage(language):
     if language != open("current_language", 'r').read():
         replace_line("current_language", 0, language)
     texts = pandas.read_excel('languages/strings_' + language + '.xlsx')
+    texts.replace(numpy.nan, 0, inplace=True)
     texts.columns = range(texts.columns.size)
 
 
