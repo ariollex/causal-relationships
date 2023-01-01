@@ -4,76 +4,80 @@ import input_data
 import calculations
 import print_data
 import charts
-from strings import printlanguage, setlanguage
+from strings import print_on_language, set_language
 
-# Версия
+# Version
 version = '0.0.1-debug-closed'
 
-# Язык
+# Language
 language = open("current_language", 'r').read()
-setlanguage(language)
-print(printlanguage(1, 15), version)
+set_language(language)
+print(print_on_language(1, 15), version)
 print('If you want to close the program, press "E"', end='\n\n')
 print('Current language: ', language, '. If you want to change the language, enter L at any time.', sep='', end='\n\n')
 
-# Датасет
+# Dataset
 file_loc = 'Dataset/Cause-effect-pairs-in-school.xlsx'
 data = pandas.read_excel(file_loc)
 data.columns = range(data.columns.size)
 data.replace(numpy.nan, 0, inplace=True)
 
-# Настройки датасета
+# Dataset settings
 name = data[0]
 sex = data[1]
 parallel = data[2]
 letter = data[3]
 causes = data[4]
-infocauses = data[5]
-timecauses = data[6]
+info_about_causes = data[5]
+time_causes = data[6]
 
-# Список с выходными данными
+# List with output data
 info = []
 
-# Другое
-userchoise = -2
-choisefunc = -2
-graphs = [printlanguage(1, 5), printlanguage(1, 18)]
+# Other
+user_selection = -2
+choice_mode = -2
+graphs = [print_on_language(1, 5), print_on_language(1, 18)]
 
-# Выбор режима работы программы
-functions = [printlanguage(1, 8), printlanguage(1, 9)]
-while choisefunc == -2 or choisefunc == -1:
-    if choisefunc == -2:
-        print(printlanguage(1, 6) + ':')
+# Program operation mode selection
+functions = [print_on_language(1, 8), print_on_language(1, 9)]
+while choice_mode == -2 or choice_mode == -1:
+    if choice_mode == -2:
+        print(print_on_language(1, 6) + ':')
         for i in range(len(functions)):
             print(i + 1, ') ', functions[i], sep='')
-        print(printlanguage(1, 7) + ':', end=' ')
-    choisefunc = input_data.makeuserchoise(functions)
+        print(print_on_language(1, 7) + ':', end=' ')
+    choice_mode = input_data.make_user_choice(functions)
 
-# Вызов makeformatcauses для создания списка инцидентов
-formatcauses = calculations.makeformatcauses(data, name, sex, parallel, letter, causes, infocauses, timecauses)
+# Creating a list of incidents
+list_incidents = calculations.make_list_incidents(data, name, sex, parallel, letter, causes, info_about_causes,
+                                                  time_causes)
 
-if choisefunc == 0:
-    # Вызов функции makeuserchoise
-    while userchoise == -2 or userchoise == -1:
-        if userchoise == -2:
-            print_data.printformatcauses(formatcauses)
-        userchoise = input_data.makeuserchoise(formatcauses)
+if choice_mode == 0:
+    # Incident selection
+    while user_selection == -2 or user_selection == -1:
+        if user_selection == -2:
+            print_data.print_list_incidents(list_incidents)
+        user_selection = input_data.make_user_choice(list_incidents)
 
-    print(printlanguage(1, 2), ' ', userchoise + 1, '. ' + printlanguage(2, 2) + ': ' if formatcauses[userchoise][1] == printlanguage(1, 4) or printlanguage(3, 2) == 0 else '. ' + printlanguage(3, 2) + ': ', formatcauses[userchoise][0], sep='')
+    print(print_on_language(1, 2), ' ', user_selection + 1,
+          '. ' + print_on_language(2, 2) + ': '
+          if list_incidents[user_selection][1] == print_on_language(1, 4) or print_on_language(3, 2) == 0
+          else '. ' + print_on_language(3, 2) + ': ', list_incidents[user_selection][0], sep='')
 
-    # Вычисления
-    calculations.intersection_of_classes(formatcauses, userchoise, info)
+    # Calculations
+    calculations.intersection_of_classes(list_incidents, user_selection, info)
 
-    # Вывод данных
-    print_data.printinfo(info)
+    # Data output
+    print_data.print_info(info)
 
-elif choisefunc == 1:
-    print(printlanguage(1, 10) + ':')
+elif choice_mode == 1:
+    print(print_on_language(1, 10) + ':')
     for i in range(len(graphs)):
         print(i + 1, ') ', graphs[i], sep='')
-    print(printlanguage(1, 11) + ':', end=' ')
-    choisegraph = input_data.makeuserchoise(functions)
-    if choisegraph == 0:
-        charts.graph_1(data, causes, formatcauses)
-    elif choisegraph == 1:
-        charts.graph_2(data, formatcauses, parallel)
+    print(print_on_language(1, 11) + ':', end=' ')
+    choice_graph = input_data.make_user_choice(functions)
+    if choice_graph == 0:
+        charts.graph_1(data, causes, list_incidents)
+    elif choice_graph == 1:
+        charts.graph_2(data, list_incidents, parallel)

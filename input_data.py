@@ -1,19 +1,19 @@
-from strings import changelanguage, printlanguage
+from strings import change_language, print_on_language
 
 
-def makeuserchoise(list):
+def make_user_choice(example_list):
     while True:
-        choise = input()
-        if choise == 'E':
+        choice = input()
+        if choice == 'E':
             exit()
-        elif choise == 'L':
-            changelanguage()
+        elif choice == 'L':
+            change_language()
             return -2
-        elif not choise.isdigit():
-            print(printlanguage(1, 1), end=': ')
-        elif not (0 < int(choise) < len(list) + 1):
-            print(printlanguage(1, 1), end=': ')
+        elif not choice.isdigit():
+            print(print_on_language(1, 1), end=': ')
+        elif not (0 < int(choice) < len(example_list) + 1):
+            print(print_on_language(1, 1), end=': ')
         else:
-            choise = int(choise) - 1
-            return choise
+            choice = int(choice) - 1
+            return choice
         return -1
