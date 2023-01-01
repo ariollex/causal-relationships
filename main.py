@@ -7,7 +7,7 @@ import charts
 from strings import print_on_language, set_language
 
 # Version
-version = '0.0.1-debug-closed'
+version = '0.0.2-debug-closed'
 
 # Language
 language = open("current_language", 'r').read()
