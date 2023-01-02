@@ -34,16 +34,13 @@ time_causes = data[6]
 # List with output data
 info = []
 
-# Other
-user_selection = -2
-choice_mode = -2
+# Available graphs
 graphs = [print_on_language(1, 5), print_on_language(1, 18)]
 
 # Program operation mode selection
 functions = [print_on_language(1, 8), print_on_language(1, 9)]
 print(print_on_language(1, 6) + ':')
-for i in range(len(functions)):
-    print(i + 1, ') ', functions[i], sep='')
+print_data.print_selection_list(functions)
 print(print_on_language(1, 7) + ':', end=' ')
 choice_mode = input_data.make_user_choice(functions)
 # Creating a list of incidents
@@ -67,10 +64,8 @@ if choice_mode == 0:
     print_data.print_info(info)
 
 elif choice_mode == 1:
-    choice_graph = -1
     print(print_on_language(1, 10) + ':')
-    for i in range(len(graphs)):
-        print(i + 1, ') ', graphs[i], sep='')
+    print_data.print_selection_list(graphs)
     print(print_on_language(1, 11) + ':', end=' ')
     # Graph selection
     choice_graph = input_data.make_user_choice(graphs)
