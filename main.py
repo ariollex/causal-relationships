@@ -6,6 +6,9 @@ import print_data
 import charts
 from strings import print_on_language, set_language
 
+# Disable warnings
+pandas.options.mode.chained_assignment = None
+
 # Version
 version = '0.0.2-debug-closed'
 
@@ -19,6 +22,7 @@ print('Current language: ', language, '. If you want to change the language, ent
 # Dataset
 file_loc = 'Dataset/Cause-effect-pairs-in-school.xlsx'
 data = pandas.read_excel(file_loc)
+name_columns = list(data)
 data.columns = range(data.columns.size)
 data.replace(numpy.nan, 0, inplace=True)
 
@@ -31,11 +35,18 @@ causes = data[4]
 info_about_causes = data[5]
 time_causes = data[6]
 
+# Convert time
+for i in range(data.shape[0]):
+    if time_causes[i] != 0:
+        time_causes[i] = int(str(time_causes[i]).replace(':', ''))
+    else:
+        time_causes[i] = int(time_causes[i])
+
 # List with output data
 info = []
 
 # Available graphs
-graphs = [print_on_language(1, 5), print_on_language(1, 18)]
+graphs = [print_on_language(1, 5), print_on_language(1, 18), print_on_language(1, 19)]
 
 # Program operation mode selection
 functions = [print_on_language(1, 8), print_on_language(1, 9)]
@@ -73,3 +84,5 @@ elif choice_mode == 1:
         charts.graph_1(data, causes, list_incidents)
     elif choice_graph == 1:
         charts.graph_2(data, list_incidents, parallel)
+    elif choice_graph == 2:
+        charts.graph_3(data, name_columns)

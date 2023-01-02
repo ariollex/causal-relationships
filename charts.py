@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from print_data import print_on_language
+import seaborn as sns
 
 
 def graph_1(data, causes, example_list_incidents):
@@ -21,4 +22,13 @@ def graph_2(data, example_list_incidents, parallel):
     plt.locator_params(axis='y', nbins=max(causes_df) + 1)
     plt.locator_params(axis='x', nbins=max(parallel) + 1)
     plt.legend([], loc='upper right', title=print_on_language(1, 16) + ': ' + str(len(example_list_incidents)))
+    plt.show()
+
+
+def graph_3(data, name_columns):
+    sns.heatmap(data.drop([0, 1, 3, 5], axis=1).corr(method='pearson', min_periods=1, numeric_only=False),
+                linewidths=0.1, annot=True)
+    plt.legend([], loc='upper right',
+               title='2 - ' + str(name_columns[2]) + '\n4 - ' + str(name_columns[4]) +
+                     '\n6 - ' + str(name_columns[6]) + '\n7 - ' + str(name_columns[7]))
     plt.show()
