@@ -72,11 +72,14 @@ if choice_mode == 0:
     print_data.print_info(info)
 
 elif choice_mode == 1:
+    choice_graph = -1
     print(print_on_language(1, 10) + ':')
     for i in range(len(graphs)):
         print(i + 1, ') ', graphs[i], sep='')
     print(print_on_language(1, 11) + ':', end=' ')
-    choice_graph = input_data.make_user_choice(functions)
+    # Graph selection
+    while choice_graph == -2 or choice_graph == -1:
+        choice_graph = input_data.make_user_choice(graphs)
     if choice_graph == 0:
         charts.graph_1(data, causes, list_incidents)
     elif choice_graph == 1:
