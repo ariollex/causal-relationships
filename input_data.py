@@ -4,7 +4,7 @@ from strings import change_language, print_on_language
 def make_user_choice(example_list):
     while True:
         choice = input()
-        if choice == 'E':
+        if choice == 'E' or choice == 'Е':
             exit()
         elif choice == 'L':
             change_language()
