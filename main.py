@@ -52,6 +52,8 @@ graphs = [print_on_language(1, 5), print_on_language(1, 18), print_on_language(1
 functions = [print_on_language(1, 8), print_on_language(1, 9)]
 print(print_on_language(1, 6) + ':')
 print_data.print_selection_list(functions)
+print('L)', print_on_language(1, 20))
+print('E)', print_on_language(1, 21))
 print(print_on_language(1, 7) + ':', end=' ')
 choice_mode = input_data.make_user_choice(functions)
 # Creating a list of incidents
