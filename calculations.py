@@ -59,13 +59,17 @@ def distribute_points(example_list_incidents, user_selection, info):
 
 
 def conclusions(example_list_incidents, user_selection, info):
+    student_name = example_list_incidents[user_selection][0]
     participants = None
-    if info[0][1] != 0:
+    if info[1][0] != 0:
         participants = intersection_of_time(example_list_incidents, user_selection, info, 1)
     elif info[0][0] != 0:
         participants = intersection_of_classes(example_list_incidents, user_selection, info, 1)
-    maximum = intersection_of_previous_causes(example_list_incidents, participants)
-    if maximum[1] != 0:
+    if participants is not None:
+        maximum = intersection_of_previous_causes(example_list_incidents, participants)
+    else:
+        maximum = [0, 0]
+    if maximum[1] > 4:
         suspicious = 1
     else:
         suspicious = 0
@@ -78,10 +82,10 @@ def conclusions(example_list_incidents, user_selection, info):
     else:
         time_matters = 0
     if time_matters == 1 and class_matters == 1:
-        return print_data.is_fight(1, info[1][0], info[0][0], info[0][1], suspicious, maximum)
+        return print_data.is_fight(1, participants, info[0][1], suspicious, maximum, student_name)
     elif time_matters == 1 and class_matters == 0:
-        return print_data.is_fight(0, info[1][0], 0, 0, suspicious, maximum)
+        return print_data.is_fight(0, participants, 0, suspicious, maximum, student_name)
     elif time_matters == 0 and class_matters == 1:
-        return print_data.is_incident_in_classroom(info[0][0], info[0][1], suspicious, maximum)
+        return print_data.is_incident_in_classroom(participants, info[0][1], suspicious, maximum, student_name)
     else:
-        return print_data.is_personal_incident()
+        return print_data.is_personal_incident(student_name, info[0][1])

@@ -19,23 +19,36 @@ def print_selection_list(example_list):
         print(i + 1, ') ', example_list[i], sep='')
 
 
-def is_fight(in_class, count_participants, count_participants_in_class, student_class, suspicious, maximum):
-    # result = strings.print_on_language(1, 22) + ' :'
-    # if in_class == 0:
-    #     result = result + strings.print_on_language(1, 23).lower()
-    #     if suspicious != 0:
-    #         result = result + strings.print_on_language(1, 24) + ' ' + maximum[1] + ' ' + strings.print_on_language(2, 24) + ' ' maximum[0] + ' ' + print_on_language(3, 24)
-    # else:
-    #     result = strings.print_on_language(1, 23).lower() + strings.print_on_language(2, 23)
-    #     if suspicious != 0:
-    #         result = result + strings.print_on_language(1, 24) + ' ' + maximum[1] + ' ' + strings.print_on_language(2, 24) + ' ' maximum[0] + ' ' + print_on_language(3, 24)
-    # return result
-    print('ЭТО ДРАКА')
+def is_fight(in_class, participants, student_class, suspicious, maximum, student_name):
+    result = print_on_language(1, 22) + ': '
+    if in_class == 0:
+        result = result + print_on_language(1, 23).lower()
+        if suspicious != 0:
+            result = result + '\n' + print_on_language(1, 24) + ' ' + maximum[0] + ' ' + \
+                     ', ' + print_on_language(2, 24) + ' ' + str(maximum[1]) + ' ' + print_on_language(3, 24)
+    else:
+        result = result + print_on_language(1, 23).lower() + ' ' + print_on_language(2, 23) + ' ' + student_class
+        if suspicious != 0:
+            result = result + '\n' + print_on_language(1, 24) + ' ' + maximum[0] + ' ' + \
+                     ', ' + print_on_language(2, 24) + ' ' + str(maximum[1]) + ' ' + print_on_language(3, 24)
+    result = result + '\n' + print_on_language(1, 25) + ' ' + str(len(participants) + 1) + ' ' + \
+             print_on_language(2, 25) + ':' + '\n' + student_name + '\n' + '\n'.join(participants)
+    return result
 
 
-def is_incident_in_classroom(count_participants_in_class, student_class, suspicious, maximum):
-    print('ЭТО СЛУЧАЙ В КЛАССЕ БЕЗ ВРЕМЕНИ')
+def is_incident_in_classroom(participants, student_class, suspicious, maximum, student_name):
+    result = print_on_language(1, 22) + ': '
+    result = result + print_on_language(1, 26).lower() + ' ' + print_on_language(2, 23) + ' ' + student_class
+    if suspicious != 0:
+        result = result + '\n' + print_on_language(1, 24) + ' ' + maximum[0] + ' ' + \
+                 print_on_language(2, 24) + ' ' + str(maximum[1]) + ' ' + print_on_language(3, 24)
+    result = result + '\n' + print_on_language(1, 27) + ' ' + str(len(participants) + 1) + ' ' + \
+             print_on_language(2, 27) + ':' + '\n' + student_name + '\n' + '\n'.join(participants)
+    return result
 
 
-def is_personal_incident():
-    print('ЭТО ПЕРСОНАЛЬНЫЙ СЛУЧАЙ')
+def is_personal_incident(student_name, student_class):
+    result = print_on_language(1, 28) + ': '
+    result = result + print_on_language(1, 29).lower() + ' ' + student_class + ' ' + \
+        print_on_language(2, 29) + ' ' + student_name + '\n' + print_on_language(3, 29)
+    return result
