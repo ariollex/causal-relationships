@@ -2,7 +2,6 @@ import os
 import numpy
 import pandas
 import input_data
-from calculations import replace_line
 
 language_texts = []
 
@@ -10,7 +9,11 @@ language_texts = []
 def set_language(language):
     global language_texts
     if language != open("current_language", 'r').read():
-        replace_line("current_language", 0, language)
+        lines = open("current_language", 'r').readlines()
+        lines[0] = language
+        out = open("current_language", 'w')
+        out.writelines(lines)
+        out.close()
     language_texts = pandas.read_excel('languages/strings_' + language + '.xlsx')
     language_texts.replace(numpy.nan, 0, inplace=True)
     language_texts.columns = range(language_texts.columns.size)

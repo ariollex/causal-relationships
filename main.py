@@ -34,6 +34,7 @@ letter = data[3]
 causes = data[4]
 info_about_causes = data[5]
 time_causes = data[6]
+previous_causes = data[7]
 
 # Convert time
 for i in range(data.shape[0]):
@@ -58,7 +59,7 @@ print(print_on_language(1, 7) + ':', end=' ')
 choice_mode = input_data.make_user_choice(functions)
 # Creating a list of incidents
 list_incidents = calculations.make_list_incidents(data, name, sex, parallel, letter, causes, info_about_causes,
-                                                  time_causes)
+                                                  time_causes, previous_causes)
 
 if choice_mode == 0:
     print_data.print_list_incidents(list_incidents)
@@ -70,11 +71,13 @@ if choice_mode == 0:
           if list_incidents[user_selection][1] == print_on_language(1, 4) or print_on_language(3, 2) == 0
           else '. ' + print_on_language(3, 2) + ': ', list_incidents[user_selection][0], sep='')
 
-    # Calculations
-    calculations.intersection_of_classes(list_incidents, user_selection, info)
+    # Calculations: search for matching information
+    calculations.intersection_of_classes(list_incidents, user_selection, info, 0)
+    calculations.intersection_of_time(list_incidents, user_selection, info, 0)
 
-    # Data output
-    print_data.print_info(info)
+    # Calculations: conclusions
+    calculations.distribute_points(list_incidents, user_selection, info)
+    print(calculations.conclusions(list_incidents, user_selection, info))
 
 elif choice_mode == 1:
     print(print_on_language(1, 10) + ':')
