@@ -1,4 +1,6 @@
 import print_data
+
+
 def make_list_incidents(data, name, sex, parallel, letter, causes, info_about_causes, time_causes, previous_causes):
     example_list_incidents = []
     for i in range(0, data.shape[0]):
@@ -46,16 +48,6 @@ def intersection_of_previous_causes(example_list_incidents, participants):
             if example_list_incidents[i][0] == participants[j] and example_list_incidents[0][5] > int(maximum[1]):
                 maximum = [example_list_incidents[i][0], example_list_incidents[i][5]]
     return maximum
-
-
-def distribute_points(example_list_incidents, user_selection, info):
-    is_fight = 0
-    is_personal = 0
-    is_class = 0
-    additional_info = []
-    if info[0][0] != 0 and info[1][0] != 0:
-        is_fight = is_fight + 1
-    return [is_fight, is_personal, is_class, additional_info]
 
 
 def conclusions(example_list_incidents, user_selection, info):

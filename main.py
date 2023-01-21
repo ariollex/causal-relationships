@@ -76,7 +76,6 @@ if choice_mode == 0:
     calculations.intersection_of_time(list_incidents, user_selection, info, 0)
 
     # Calculations: conclusions
-    calculations.distribute_points(list_incidents, user_selection, info)
     print(calculations.conclusions(list_incidents, user_selection, info))
 
 elif choice_mode == 1:
