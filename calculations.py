@@ -5,7 +5,9 @@ def check_configuration(configuration):
     supported_parameters = ['version', 'prefix', 'language']
     indexes = [None] * len(supported_parameters)
     for i in range(len(configuration)):
-        if configuration[i][:configuration[i].find(' ')] in supported_parameters:
+        if configuration[i] == '' or configuration[i][0] == '#':
+            continue
+        elif configuration[i][:configuration[i].find(' ')] in supported_parameters:
             indexes[supported_parameters.index(configuration[i][:configuration[i].find(' ')])] = i
         else:
             print('\033[93mWarning\033[0m: unknown parameter', configuration[i][:configuration[i].find(' ')],
