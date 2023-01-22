@@ -22,9 +22,7 @@ version = 'v' + version + '-' + prefix
 # Language
 language = configuration[indexes[2]][str(configuration[indexes[2]]).find("'") + 1:str(configuration[indexes[2]]).rfind("'")]
 set_language(language)
-print(print_on_language(1, 15), version)
-print('If you want to close the program, press "E"', end='\n\n')
-print('Current language: ', language, '. If you want to change the language, enter L at any time.', sep='', end='\n\n')
+print(print_on_language(1, 15), version, '\n')
 
 # Dataset
 file_loc = 'Dataset/Cause-effect-pairs-in-school.xlsx'
