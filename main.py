@@ -10,7 +10,9 @@ from strings import print_on_language, set_language
 pandas.options.mode.chained_assignment = None
 
 # Version
-version = '0.1'
+version = '0.1.0'
+prefix = 'alpha'
+version = 'v' + version + '-' + prefix
 
 # Language
 language = open("current_language", 'r').read()
