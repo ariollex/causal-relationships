@@ -1,6 +1,20 @@
 import print_data
 
 
+def check_configuration(configuration):
+    supported_parameters = ['version', 'prefix', 'language']
+    indexes = [None] * len(supported_parameters)
+    for i in range(len(configuration)):
+        if configuration[i][:configuration[i].find(' ')] in supported_parameters:
+            indexes[supported_parameters.index(configuration[i][:configuration[i].find(' ')])] = i
+        else:
+            print('\033[93mWarning\033[0m: unknown parameter', configuration[i][:configuration[i].find(' ')],
+                  'in the configuration file. This can cause problems!')
+    if None in indexes:
+        exit('Configuration file is broken! Exit...')
+    return indexes
+
+
 def make_list_incidents(data, name, sex, parallel, letter, causes, time_causes, previous_causes):
     example_list_incidents = []
     for i in range(0, data.shape[0]):
@@ -57,7 +71,8 @@ def conclusions(example_list_incidents, user_selection, info):
         participants = intersection_of_time(example_list_incidents, user_selection, info, 1)
     elif info[0][0] != 0:
         participants = intersection_of_classes(example_list_incidents, user_selection, info, 1)
-    maximum = (intersection_of_previous_causes(example_list_incidents, participants) if participants is not None else [0, 0])
+    maximum = (
+        intersection_of_previous_causes(example_list_incidents, participants) if participants is not None else [0, 0])
     suspicious = (1 if maximum[1] > 4 else 0)
     class_matters = (1 if info[0][0] != 0 else 0)
     time_matters = (1 if info[1][0] != 0 else 0)

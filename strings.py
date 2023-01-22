@@ -3,15 +3,22 @@ import numpy
 import pandas
 import input_data
 
-language_texts = []
+configuration, indexes, language_texts = [], [], []
+
+
+def set_variables(configuration_file, indexes_in_conf_file):
+    global configuration, indexes
+    configuration = configuration_file
+    indexes = indexes_in_conf_file
 
 
 def set_language(language):
     global language_texts
-    if language != open("current_language", 'r').read():
-        lines = open("current_language", 'r').readlines()
-        lines[0] = language
-        out = open("current_language", 'w')
+    if language != configuration[indexes[2]][
+                   str(configuration[indexes[2]]).find("'") + 1:str(configuration[indexes[2]]).rfind("'")]:
+        lines = open("configuration", 'r').readlines()
+        lines[2] = "language = '" + language + "'"
+        out = open("configuration", 'w')
         out.writelines(lines)
         out.close()
     language_texts = pandas.read_excel('languages/strings_' + language + '.xlsx')

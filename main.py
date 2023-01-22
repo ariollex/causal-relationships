@@ -4,18 +4,23 @@ import input_data
 import calculations
 import print_data
 import graphs
-from strings import print_on_language, set_language
+from strings import print_on_language, set_language, set_variables
 
 # Disable warnings
 pandas.options.mode.chained_assignment = None
 
+# Configuration
+configuration = open("configuration", 'r').read().split('\n')
+indexes = calculations.check_configuration(configuration)
+set_variables(configuration, indexes)
+
 # Version
-version = '0.1.1'
-prefix = 'alpha'
+version = configuration[indexes[0]][str(configuration[indexes[0]]).find("'") + 1:str(configuration[indexes[0]]).rfind("'")]
+prefix = configuration[indexes[1]][str(configuration[indexes[1]]).find("'") + 1:str(configuration[indexes[1]]).rfind("'")]
 version = 'v' + version + '-' + prefix
 
 # Language
-language = open("current_language", 'r').read()
+language = configuration[indexes[2]][str(configuration[indexes[2]]).find("'") + 1:str(configuration[indexes[2]]).rfind("'")]
 set_language(language)
 print(print_on_language(1, 15), version)
 print('If you want to close the program, press "E"', end='\n\n')
