@@ -3,7 +3,7 @@ import numpy
 import input_data
 import calculations
 import print_data
-import charts
+import graphs
 from strings import print_on_language, set_language
 
 # Disable warnings
@@ -46,7 +46,7 @@ for i in range(data.shape[0]):
 info = []
 
 # Available graphs
-graphs = [print_on_language(1, 5), print_on_language(1, 18), print_on_language(1, 19)]
+available_graphs = [print_on_language(1, 5), print_on_language(1, 18), print_on_language(1, 19)]
 
 # Program operation mode selection
 functions = [print_on_language(1, 8), print_on_language(1, 9)]
@@ -79,13 +79,13 @@ if choice_mode == 0:
 
 elif choice_mode == 1:
     print(print_on_language(1, 10) + ':')
-    print_data.print_selection_list(graphs)
+    print_data.print_selection_list(available_graphs)
     print(print_on_language(1, 11) + ':', end=' ')
     # Graph selection
-    choice_graph = input_data.make_user_choice(graphs)
+    choice_graph = input_data.make_user_choice(available_graphs)
     if choice_graph == 0:
-        charts.graph_1(data, causes, list_incidents)
+        graphs.graph_1(data, causes, list_incidents)
     elif choice_graph == 1:
-        charts.graph_2(data, list_incidents, parallel)
+        graphs.graph_2(data, list_incidents, parallel)
     elif choice_graph == 2:
-        charts.graph_3(data, name_columns)
+        graphs.graph_3(data, name_columns)
