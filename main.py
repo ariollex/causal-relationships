@@ -44,9 +44,6 @@ for i in range(data.shape[0]):
     else:
         time_causes[i] = int(time_causes[i])
 
-# List with output data
-info = []
-
 # Available graphs
 available_graphs = [print_on_language(1, 5), print_on_language(1, 18), print_on_language(1, 19)]
 
@@ -63,12 +60,13 @@ list_incidents = calculations.make_list_incidents(data, name, sex, parallel, let
                                                   time_causes, previous_causes)
 
 if choice_mode == 0:
+    info = []
+
     print_data.print_list_incidents(list_incidents)
     # Incident selection
     user_selection = input_data.make_user_choice(list_incidents)
 
-    print(print_on_language(1, 2), ' ', user_selection + 1,
-          '. ' + print_on_language(2, 2) + ': '
+    print(print_on_language(1, 2), ' ', user_selection + 1, '. ' + print_on_language(2, 2) + ': '
           if list_incidents[user_selection][1] == print_on_language(1, 4) or print_on_language(3, 2) == 0
           else '. ' + print_on_language(3, 2) + ': ', list_incidents[user_selection][0], sep='')
 

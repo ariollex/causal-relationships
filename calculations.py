@@ -57,22 +57,10 @@ def conclusions(example_list_incidents, user_selection, info):
         participants = intersection_of_time(example_list_incidents, user_selection, info, 1)
     elif info[0][0] != 0:
         participants = intersection_of_classes(example_list_incidents, user_selection, info, 1)
-    if participants is not None:
-        maximum = intersection_of_previous_causes(example_list_incidents, participants)
-    else:
-        maximum = [0, 0]
-    if maximum[1] > 4:
-        suspicious = 1
-    else:
-        suspicious = 0
-    if info[0][0] != 0:
-        class_matters = 1
-    else:
-        class_matters = 0
-    if info[1][0] != 0:
-        time_matters = 1
-    else:
-        time_matters = 0
+    maximum = (intersection_of_previous_causes(example_list_incidents, participants) if participants is not None else [0, 0])
+    suspicious = (1 if maximum[1] > 4 else 0)
+    class_matters = (1 if info[0][0] != 0 else 0)
+    time_matters = (1 if info[1][0] != 0 else 0)
     if time_matters == 1 and class_matters == 1:
         return print_data.is_fight(1, participants, info[0][1], suspicious, maximum, student_name)
     elif time_matters == 1 and class_matters == 0:
