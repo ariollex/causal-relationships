@@ -14,13 +14,19 @@ configuration = open("configuration", 'r').read().split('\n')
 indexes = calculations.check_configuration(configuration)
 set_variables(configuration, indexes)
 
+
+def read_from_configuration(n):
+    return configuration[indexes[n]][str(configuration[indexes[n]]).find("'") + 1:
+                                     str(configuration[indexes[n]]).rfind("'")]
+
+
 # Version
-version = configuration[indexes[0]][str(configuration[indexes[0]]).find("'") + 1:str(configuration[indexes[0]]).rfind("'")]
-prefix = configuration[indexes[1]][str(configuration[indexes[1]]).find("'") + 1:str(configuration[indexes[1]]).rfind("'")]
+version = read_from_configuration(0)
+prefix = read_from_configuration(1)
 version = 'v' + version + '-' + prefix
 
 # Language
-language = configuration[indexes[2]][str(configuration[indexes[2]]).find("'") + 1:str(configuration[indexes[2]]).rfind("'")]
+language = read_from_configuration(2)
 set_language(language)
 print(print_on_language(1, 15), version, '\n')
 
@@ -32,13 +38,13 @@ data.columns = range(data.columns.size)
 data.replace(numpy.nan, 0, inplace=True)
 
 # Dataset settings
-name = data[int(configuration[indexes[3]][str(configuration[indexes[3]]).find("'") + 1:str(configuration[indexes[3]]).rfind("'")]) - 1]
-sex = data[int(configuration[indexes[4]][str(configuration[indexes[4]]).find("'") + 1:str(configuration[indexes[4]]).rfind("'")]) - 1]
-parallel = data[int(configuration[indexes[5]][str(configuration[indexes[5]]).find("'") + 1:str(configuration[indexes[5]]).rfind("'")]) - 1]
-letter = data[int(configuration[indexes[6]][str(configuration[indexes[6]]).find("'") + 1:str(configuration[indexes[6]]).rfind("'")]) - 1]
-causes = data[int(configuration[indexes[7]][str(configuration[indexes[7]]).find("'") + 1:str(configuration[indexes[7]]).rfind("'")]) - 1]
-time_causes = data[int(configuration[indexes[8]][str(configuration[indexes[8]]).find("'") + 1:str(configuration[indexes[8]]).rfind("'")]) - 1]
-previous_causes = data[int(configuration[indexes[9]][str(configuration[indexes[9]]).find("'") + 1:str(configuration[indexes[9]]).rfind("'")]) - 1]
+name = data[int(read_from_configuration(3)) - 1]
+sex = data[int(read_from_configuration(4)) - 1]
+parallel = data[int(read_from_configuration(5)) - 1]
+letter = data[int(read_from_configuration(6)) - 1]
+causes = data[int(read_from_configuration(7)) - 1]
+time_causes = data[int(read_from_configuration(8)) - 1]
+previous_causes = data[int(read_from_configuration(9)) - 1]
 
 # Convert time
 for i in range(data.shape[0]):
@@ -69,9 +75,12 @@ if choice_mode == 0:
     # Incident selection
     user_selection = input_data.make_user_choice(list_incidents)
 
-    print(print_on_language(1, 2), ' ', user_selection + 1, '. ' + print_on_language(2, 2) + ': '
-          if list_incidents[user_selection][1] == print_on_language(1, 4) or print_on_language(3, 2) == 0
-          else '. ' + print_on_language(3, 2) + ': ', list_incidents[user_selection][0], sep='')
+    if list_incidents[user_selection][1] == print_on_language(1, 4) or (print_on_language(3, 2) == 0):
+        print(print_on_language(1, 2), ' ', user_selection + 1, '. ' + print_on_language(2, 2) + ': ',
+              list_incidents[user_selection][0], sep='')
+    else:
+        print(print_on_language(1, 2), ' ', user_selection + 1, '. ' + print_on_language(3, 2) + ': ',
+              list_incidents[user_selection][0], sep='')
 
     # Calculations: search for matching information
     calculations.intersection_of_classes(list_incidents, user_selection, info, 0)
