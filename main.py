@@ -32,9 +32,8 @@ sex = data[1]
 parallel = data[2]
 letter = data[3]
 causes = data[4]
-info_about_causes = data[5]
-time_causes = data[6]
-previous_causes = data[7]
+time_causes = data[5]
+previous_causes = data[6]
 
 # Convert time
 for i in range(data.shape[0]):
@@ -58,7 +57,7 @@ print('E)', print_on_language(1, 21))
 print(print_on_language(1, 7) + ':', end=' ')
 choice_mode = input_data.make_user_choice(functions)
 # Creating a list of incidents
-list_incidents = calculations.make_list_incidents(data, name, sex, parallel, letter, causes, info_about_causes,
+list_incidents = calculations.make_list_incidents(data, name, sex, parallel, letter, causes,
                                                   time_causes, previous_causes)
 
 if choice_mode == 0:

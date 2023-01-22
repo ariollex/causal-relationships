@@ -1,13 +1,13 @@
 import print_data
 
 
-def make_list_incidents(data, name, sex, parallel, letter, causes, info_about_causes, time_causes, previous_causes):
+def make_list_incidents(data, name, sex, parallel, letter, causes, time_causes, previous_causes):
     example_list_incidents = []
     for i in range(0, data.shape[0]):
         if causes[i] != 0:
             school_class = str(parallel[i]) + ' "' + letter[i] + '"'
             example_list_incidents.append(
-                [name[i], sex[i], school_class, time_causes[i], info_about_causes[i], previous_causes[i]])
+                [name[i], sex[i], school_class, time_causes[i], previous_causes[i]])
     return example_list_incidents
 
 
@@ -45,8 +45,8 @@ def intersection_of_previous_causes(example_list_incidents, participants):
     maximum = [0, 0]
     for i in range(len(example_list_incidents)):
         for j in range(len(participants)):
-            if example_list_incidents[i][0] == participants[j] and example_list_incidents[0][5] > int(maximum[1]):
-                maximum = [example_list_incidents[i][0], example_list_incidents[i][5]]
+            if example_list_incidents[i][0] == participants[j] and example_list_incidents[0][4] > int(maximum[1]):
+                maximum = [example_list_incidents[i][0], example_list_incidents[i][4]]
     return maximum
 
 
