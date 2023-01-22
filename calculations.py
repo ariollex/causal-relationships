@@ -2,7 +2,8 @@ import print_data
 
 
 def check_configuration(configuration):
-    supported_parameters = ['version', 'prefix', 'language']
+    supported_parameters = ['version', 'prefix', 'language', 'name', 'sex', 'parallel', 'letter', 'causes',
+                            'time_causes', 'previous_causes']
     indexes = [None] * len(supported_parameters)
     for i in range(len(configuration)):
         if configuration[i] == '' or configuration[i][0] == '#':

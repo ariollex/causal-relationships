@@ -32,13 +32,13 @@ data.columns = range(data.columns.size)
 data.replace(numpy.nan, 0, inplace=True)
 
 # Dataset settings
-name = data[0]
-sex = data[1]
-parallel = data[2]
-letter = data[3]
-causes = data[4]
-time_causes = data[5]
-previous_causes = data[6]
+name = data[int(configuration[indexes[3]][str(configuration[indexes[3]]).find("'") + 1:str(configuration[indexes[3]]).rfind("'")]) - 1]
+sex = data[int(configuration[indexes[4]][str(configuration[indexes[4]]).find("'") + 1:str(configuration[indexes[4]]).rfind("'")]) - 1]
+parallel = data[int(configuration[indexes[5]][str(configuration[indexes[5]]).find("'") + 1:str(configuration[indexes[5]]).rfind("'")]) - 1]
+letter = data[int(configuration[indexes[6]][str(configuration[indexes[6]]).find("'") + 1:str(configuration[indexes[6]]).rfind("'")]) - 1]
+causes = data[int(configuration[indexes[7]][str(configuration[indexes[7]]).find("'") + 1:str(configuration[indexes[7]]).rfind("'")]) - 1]
+time_causes = data[int(configuration[indexes[8]][str(configuration[indexes[8]]).find("'") + 1:str(configuration[indexes[8]]).rfind("'")]) - 1]
+previous_causes = data[int(configuration[indexes[9]][str(configuration[indexes[9]]).find("'") + 1:str(configuration[indexes[9]]).rfind("'")]) - 1]
 
 # Convert time
 for i in range(data.shape[0]):
