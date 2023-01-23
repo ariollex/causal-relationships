@@ -26,9 +26,9 @@ def graph_2(data, example_list_incidents, parallel):
 
 
 def graph_3(data, name_columns):
-    sns.heatmap(data.drop([0, 1, 3, 5], axis=1).corr(method='pearson', min_periods=1, numeric_only=False),
+    sns.heatmap(data.drop([0, 1, 3], axis=1).corr(method='pearson', min_periods=1, numeric_only=False),
                 linewidths=0.1, annot=True)
     plt.legend([], loc='upper right',
                title='2 - ' + str(name_columns[2]) + '\n4 - ' + str(name_columns[4]) +
-                     '\n6 - ' + str(name_columns[5]) + '\n7 - ' + str(name_columns[6]))
+                     '\n5 - ' + str(name_columns[5]) + '\n6 - ' + str(name_columns[6]))
     plt.show()
