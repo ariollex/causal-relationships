@@ -92,8 +92,8 @@ elif choice_mode == 1:
     # Graph selection
     choice_graph = input_data.make_user_choice(available_graphs)
     if choice_graph == 0:
-        graphs.graph_1(data, causes, list_incidents)
+        graphs.graph_number_of_incidents_to_students(data, causes, list_incidents)
     elif choice_graph == 1:
-        graphs.graph_2(data, list_incidents, parallel)
+        graphs.graph_incidents_on_parallel(data, list_incidents, parallel)
     elif choice_graph == 2:
-        graphs.graph_3(data, name_columns)
+        graphs.correlation_graph(data, name_columns)

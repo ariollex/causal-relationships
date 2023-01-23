@@ -3,7 +3,7 @@ from print_data import print_on_language
 import seaborn as sns
 
 
-def graph_1(data, causes, example_list_incidents):
+def graph_number_of_incidents_to_students(data, causes, example_list_incidents):
     plt.hist(causes, bins=2, label=print_on_language(1, 12) + ' / ' + print_on_language(1, 13) + ', %: ' + str(
         round((len(example_list_incidents) / data.shape[0] * 100), 3)))
     plt.xlabel(print_on_language(1, 12))
@@ -14,7 +14,7 @@ def graph_1(data, causes, example_list_incidents):
     plt.show()
 
 
-def graph_2(data, example_list_incidents, parallel):
+def graph_incidents_on_parallel(data, example_list_incidents, parallel):
     causes_df = data[[4] + [2]]
     causes_df.groupby(2).sum().plot(kind='bar', rot=0)
     plt.xlabel(print_on_language(1, 17))
@@ -25,7 +25,7 @@ def graph_2(data, example_list_incidents, parallel):
     plt.show()
 
 
-def graph_3(data, name_columns):
+def correlation_graph(data, name_columns):
     sns.heatmap(data.drop([0, 1, 3], axis=1).corr(method='pearson', min_periods=1, numeric_only=False),
                 linewidths=0.1, annot=True)
     plt.legend([], loc='upper right',
