@@ -11,40 +11,37 @@ pandas.options.mode.chained_assignment = None
 
 # Configuration
 configuration = open("configuration", 'r').read().split('\n')
-indexes = calculations.check_configuration(configuration)
+calculations.set_variables(configuration)
+indexes = calculations.check_configuration()
 set_variables(configuration, indexes)
-
-
-def read_from_configuration(n):
-    return configuration[indexes[n]][str(configuration[indexes[n]]).find("'") + 1:
-                                     str(configuration[indexes[n]]).rfind("'")]
-
+if not calculations.check_parameters():
+    exit('Broken configuration:')
 
 # Version
-version = read_from_configuration(0)
-prefix = read_from_configuration(1)
+version = calculations.read_from_configuration(0)
+prefix = calculations.read_from_configuration(1)
 version = 'v' + version + '-' + prefix
 
 # Language
-language = read_from_configuration(2)
+language = calculations.read_from_configuration(2)
 set_language(language)
 print(print_on_language(1, 15), version, '\n')
 
 # Dataset
-file_loc = 'Dataset/Cause-effect-pairs-in-school.xlsx'
+file_loc = calculations.read_from_configuration(10)
 data = pandas.read_excel(file_loc)
 name_columns = list(data)
 data.columns = range(data.columns.size)
 data.replace(numpy.nan, 0, inplace=True)
 
 # Dataset settings
-name = data[int(read_from_configuration(3)) - 1]
-sex = data[int(read_from_configuration(4)) - 1]
-parallel = data[int(read_from_configuration(5)) - 1]
-letter = data[int(read_from_configuration(6)) - 1]
-causes = data[int(read_from_configuration(7)) - 1]
-time_causes = data[int(read_from_configuration(8)) - 1]
-previous_causes = data[int(read_from_configuration(9)) - 1]
+name = data[int(calculations.read_from_configuration(3)) - 1]
+sex = data[int(calculations.read_from_configuration(4)) - 1]
+parallel = data[int(calculations.read_from_configuration(5)) - 1]
+letter = data[int(calculations.read_from_configuration(6)) - 1]
+causes = data[int(calculations.read_from_configuration(7)) - 1]
+time_causes = data[int(calculations.read_from_configuration(8)) - 1]
+previous_causes = data[int(calculations.read_from_configuration(9)) - 1]
 
 # Convert time
 for i in range(data.shape[0]):

@@ -5,7 +5,10 @@ prefix = 'alpha'
 # Language
 language = 'ru-RU'
 
-# Dataset settings (column name = column number).
+# Dataset settings
+# Path to dataset
+dataset_path = 'Dataset/Cause-effect-pairs-in-school.xlsx'
+# Dataset columns (column_name = column_number)
 # Numbering starts from 1. Example: name = '1'
 name = '1'
 sex = '2'
