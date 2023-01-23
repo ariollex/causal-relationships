@@ -2,6 +2,7 @@ import os
 import numpy
 import pandas
 import input_data
+import error
 
 configuration, indexes, language_texts = [], [], []
 
@@ -26,17 +27,16 @@ def set_language(language):
         language_texts.replace(numpy.nan, 0, inplace=True)
         language_texts.columns = range(language_texts.columns.size)
     else:
-        print('\033[91mError:\033[0m', language,
-              'language is not supported. \n'
-              'Make sure that you downloaded the program from '
-              'https://github.com/Ariollex/causal-relationships-in-school/releases '
-              'and did not make any changes to the code. \n'
-              'Supported languages:')
+        error.error(language + ' language is not supported. \n'
+                               'Make sure that you downloaded the program from '
+                               'https://github.com/Ariollex/causal-relationships-in-school/releases '
+                               'and did not make any changes to the code. \n', 0)
+        print('Supported languages:')
         files = os.listdir('languages')
         for i in range(len(files)):
             print(files[i].replace('strings_', '').replace('.xlsx', ''), sep='')
         print('\033[91mConfigure this in "configuration" or reinstall the program.\033[0m')
-        exit()
+        exit('Broken configuration!')
 
 
 def change_language():

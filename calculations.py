@@ -1,4 +1,5 @@
 import print_data
+import error
 import numpy
 import os
 
@@ -16,25 +17,21 @@ def read_from_configuration(n):
 
 
 def check_parameters():
-    parameters_digits = ['name', 'sex', 'parallel', 'letter', 'causes', 'time_causes', 'previous_causes']
-    parameters_stings = ['prefix', 'language', 'version']
+    parameters_integers = ['name', 'sex', 'parallel', 'letter', 'causes', 'time_causes', 'previous_causes']
+    parameters_strings = ['prefix', 'language', 'version']
     parameters_path = ['dataset_path']
     for i in range(len(supported_parameters)):
         example_parameter_name = supported_parameters[i]
         example_parameter_value = read_from_configuration(i)
-        if example_parameter_name in parameters_digits and example_parameter_value.isdigit() is False:
-            print('\033[91mError!\033[0m Parameter', example_parameter_name, 'has an incorrect value! It should be of '
-                                                                             'integer.')
-            return False
-        if example_parameter_name in parameters_stings and isinstance(example_parameter_value, str) is False:
-            print('\033[91mError!\033[0m Parameter', example_parameter_name, 'has an incorrect value! It should be of '
-                                                                             'string')
-            return False
+        if example_parameter_name in parameters_integers and example_parameter_value.isdigit() is False:
+            error.error('Parameter ' + example_parameter_name + ' has an incorrect value! It should be integer.',
+                        'Broken configuration!')
+        if example_parameter_name in parameters_strings and isinstance(example_parameter_value, str) is False:
+            error.error('Parameter ' + example_parameter_name + ' has an incorrect value! It should be string.',
+                        'Broken configuration!')
         if example_parameter_name in parameters_path and not os.path.exists(example_parameter_value):
-            print('\033[91mError:\033[0m parameter', example_parameter_name, 'has an incorrect path')
-            return False
-    else:
-        return True
+            error.error('Parameter ' + example_parameter_name + ' has an incorrect path.',
+                        'Broken configuration!')
 
 
 def check_configuration():
@@ -47,15 +44,15 @@ def check_configuration():
         if configuration[i] == '' or configuration[i][0] == '#':
             continue
         elif parameter_name not in supported_parameters:
-            print('\033[93mWarning\033[0m: unknown parameter', '"' + parameter_name + '"',
-                  'in the configuration file. This can cause problems!')
+            error.warning('Unknown parameter ' + '"' + parameter_name + '"' + ' in the configuration file. '
+                          'This can cause problems!')
         elif not numpy.isnan(indexes[supported_parameters.index(parameter_name)]):
-            print('\033[93mWarning\033[0m: Duplicate parameter', '"' + parameter_name + '"',
-                  'in the configuration file. This can cause problems!')
+            error.warning('Duplicate parameter ' + '"' + parameter_name + '"' + ' in the configuration file. '
+                          'This can cause problems!')
         else:
             indexes[supported_parameters.index(parameter_name)] = i
     if numpy.nan in indexes:
-        print('These required parameters are not defined:')
+        error.error('These required parameters are not defined:', 0)
         for i in range(len(indexes)):
             if numpy.isnan(indexes[i]):
                 print(supported_parameters[i])

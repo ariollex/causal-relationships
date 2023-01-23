@@ -14,8 +14,7 @@ configuration = open("configuration", 'r').read().split('\n')
 calculations.set_variables(configuration)
 indexes = calculations.check_configuration()
 set_variables(configuration, indexes)
-if not calculations.check_parameters():
-    exit('Broken configuration:')
+calculations.check_parameters()
 
 # Version
 version = calculations.read_from_configuration(0)
