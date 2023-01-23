@@ -3,8 +3,7 @@ version = '0.1.2'
 prefix = 'alpha'
 
 # Language
-language = 'ru-RU'
-
+language = 'en-US'
 # Dataset settings
 # Path to dataset
 dataset_path = 'Dataset/Cause-effect-pairs-in-school.xlsx'
