@@ -18,7 +18,7 @@ def set_language(language):
     if language != configuration[indexes[2]][
                    str(configuration[indexes[2]]).find("'") + 1:str(configuration[indexes[2]]).rfind("'")]:
         lines = open("configuration", 'r').readlines()
-        lines[2] = "language = '" + language + "'"
+        lines[indexes[2]] = "language = '" + language + "'"
         out = open("configuration", 'w')
         out.writelines(lines)
         out.close()
