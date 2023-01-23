@@ -39,26 +39,26 @@ def check_configuration():
     supported_parameters = ['version', 'prefix', 'language', 'name', 'sex', 'parallel', 'letter', 'causes',
                             'time_causes', 'previous_causes', 'dataset_path']
     indexes = [numpy.nan] * len(supported_parameters)
+    warnings = []
+    missing_parameters = []
     for i in range(len(configuration)):
         parameter_name = configuration[i][:configuration[i].find(' ')]
         if configuration[i] == '' or configuration[i][0] == '#':
             continue
         elif parameter_name not in supported_parameters:
-            error.warning('Unknown parameter ' + '"' + parameter_name + '"' + ' in the configuration file. '
-                          'This can cause problems!')
+            warnings.append('Unknown parameter ' + '"' + parameter_name + '"' + ' in the configuration file. '
+                            'This can cause problems!')
         elif not numpy.isnan(indexes[supported_parameters.index(parameter_name)]):
-            error.warning('Duplicate parameter ' + '"' + parameter_name + '"' + ' in the configuration file. '
-                          'This can cause problems!')
+            warnings.append('Duplicate parameter ' + '"' + parameter_name + '"' + ' in the configuration file. '
+                            'This can cause problems!')
         else:
             indexes[supported_parameters.index(parameter_name)] = i
     if numpy.nan in indexes:
-        error.error('These required parameters are not defined:', 0)
+        missing_parameters = []
         for i in range(len(indexes)):
             if numpy.isnan(indexes[i]):
-                print(supported_parameters[i])
-        exit('Configuration file is broken! Exit...')
-    else:
-        return indexes
+                missing_parameters.append(supported_parameters[i])
+    return indexes, warnings, missing_parameters
 
 
 def make_list_incidents(data, name, sex, parallel, letter, causes, time_causes, previous_causes):

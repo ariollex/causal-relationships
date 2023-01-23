@@ -1,5 +1,6 @@
 import pandas
 import numpy
+import error
 import input_data
 import calculations
 import print_data
@@ -12,7 +13,15 @@ pandas.options.mode.chained_assignment = None
 # Configuration
 configuration = open("configuration", 'r').read().split('\n')
 calculations.set_variables(configuration)
-indexes = calculations.check_configuration()
+indexes, warnings, missing_parameters = calculations.check_configuration()
+if len(warnings) != 0:
+    for i in range(len(warnings)):
+        error.warning(warnings[i])
+if len(missing_parameters) != 0:
+    error.error('These required parameters are not defined:', 0)
+    for i in range(len(missing_parameters)):
+        print('-', missing_parameters[i])
+    exit('Configuration file is broken! Exit...')
 set_variables(configuration, indexes)
 calculations.check_parameters()
 
