@@ -3,7 +3,9 @@ version = '0.1.2'
 prefix = 'alpha'
 
 # Language
-language = 'ru-RU'# Dataset settings
+language = 'ru-RU'
+
+# Dataset settings
 # Path to dataset
 dataset_path = 'Dataset/Cause-effect-pairs-in-school.xlsx'
 # Dataset columns (column_name = column_number)
