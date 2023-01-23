@@ -20,18 +20,17 @@ def check_parameters():
     parameters_integers = ['name', 'sex', 'parallel', 'letter', 'causes', 'time_causes', 'previous_causes']
     parameters_strings = ['prefix', 'language', 'version']
     parameters_path = ['dataset_path']
+    errors = []
     for i in range(len(supported_parameters)):
         example_parameter_name = supported_parameters[i]
         example_parameter_value = read_from_configuration(i)
         if example_parameter_name in parameters_integers and example_parameter_value.isdigit() is False:
-            error.error('Parameter ' + example_parameter_name + ' has an incorrect value! It should be integer.',
-                        'Broken configuration!')
+            errors.append('Parameter "' + example_parameter_name + '" has an incorrect value! It should be integer.')
         if example_parameter_name in parameters_strings and isinstance(example_parameter_value, str) is False:
-            error.error('Parameter ' + example_parameter_name + ' has an incorrect value! It should be string.',
-                        'Broken configuration!')
+            errors.append('Parameter "' + example_parameter_name + '" has an incorrect value! It should be string.')
         if example_parameter_name in parameters_path and not os.path.exists(example_parameter_value):
-            error.error('Parameter ' + example_parameter_name + ' has an incorrect path.',
-                        'Broken configuration!')
+            errors.append('Parameter "' + example_parameter_name + '" has an incorrect path.')
+    return errors
 
 
 def check_configuration():
@@ -47,10 +46,10 @@ def check_configuration():
             continue
         elif parameter_name not in supported_parameters:
             warnings.append('Unknown parameter ' + '"' + parameter_name + '"' + ' in the configuration file. '
-                            'This can cause problems!')
+                                                                                'This can cause problems!')
         elif not numpy.isnan(indexes[supported_parameters.index(parameter_name)]):
             warnings.append('Duplicate parameter ' + '"' + parameter_name + '"' + ' in the configuration file. '
-                            'This can cause problems!')
+                                                                                  'This can cause problems!')
         else:
             indexes[supported_parameters.index(parameter_name)] = i
     if numpy.nan in indexes:

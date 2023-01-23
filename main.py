@@ -19,11 +19,14 @@ if len(warnings) != 0:
         error.warning(warnings[i])
 if len(missing_parameters) != 0:
     error.error('These required parameters are not defined:', 0)
-    for i in range(len(missing_parameters)):
-        print('-', missing_parameters[i])
+    print(*['- ' + missing_parameters[i] for i in range(len(missing_parameters))], sep='\n')
     exit('Configuration file is broken! Exit...')
 set_variables(configuration, indexes)
-calculations.check_parameters()
+errors = calculations.check_parameters()
+if len(errors) != 0:
+    error.error('Incorrect parameter values:', 0)
+    print(*['- ' + errors[i] for i in range(len(errors))], sep='\n')
+    exit('Configuration file is broken! Exit...')
 
 # Version
 version = calculations.read_from_configuration(0)
