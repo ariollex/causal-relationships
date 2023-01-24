@@ -68,6 +68,7 @@ print('L)', print_on_language(1, 20))
 print('E)', print_on_language(1, 21))
 print(print_on_language(1, 7) + ':', end=' ')
 choice_mode = input_data.make_user_choice(functions)
+
 # Creating a list of incidents
 list_incidents = calculations.make_list_incidents(data, name, sex, parallel, letter, causes,
                                                   time_causes, previous_causes)
@@ -90,14 +91,10 @@ if choice_mode == 0:
     print(calculations.conclusions(list_incidents, user_selection, info))
 
 elif choice_mode == 1:
-    print(print_on_language(1, 10) + ':')
     print_data.print_selection_list(available_graphs)
-    print(print_on_language(1, 11) + ':', end=' ')
+    print(print_on_language(1, 10) + ':', end=' ')
+
     # Graph selection
+    graphs.set_variables(list_incidents, causes, parallel, name_columns)
     choice_graph = input_data.make_user_choice(available_graphs)
-    if choice_graph == 0:
-        graphs.graph_number_of_incidents_to_students(data, causes, list_incidents)
-    elif choice_graph == 1:
-        graphs.graph_incidents_on_parallel(data, list_incidents, parallel)
-    elif choice_graph == 2:
-        graphs.correlation_graph(data, name_columns)
+    graphs.graph_selection(choice_graph, data)
