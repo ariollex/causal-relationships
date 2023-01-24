@@ -15,18 +15,17 @@ configuration = open("configuration", 'r').read().split('\n')
 calculations.set_variables(configuration)
 indexes, warnings, missing_parameters = calculations.check_configuration()
 if len(warnings) != 0:
-    for i in range(len(warnings)):
-        error.warning(warnings[i])
+    [error.warning(warnings[i]) for i in range(len(warnings))]
 if len(missing_parameters) != 0:
     error.error('These required parameters are not defined:', 0)
     print(*['- ' + missing_parameters[i] for i in range(len(missing_parameters))], sep='\n')
-    exit('Configuration file is broken! Exit...')
+    error.broken_configuration()
 set_variables(configuration, indexes)
 errors = calculations.check_parameters()
 if len(errors) != 0:
     error.error('Incorrect parameter values:', 0)
     print(*['- ' + errors[i] for i in range(len(errors))], sep='\n')
-    exit('Configuration file is broken! Exit...')
+    error.broken_configuration()
 
 # Version
 version = calculations.read_from_configuration(0)
