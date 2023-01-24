@@ -2,14 +2,12 @@ from strings import print_on_language
 
 
 def print_list_incidents(example_list_incidents):
-    for i in range(len(example_list_incidents)):
-        print(i + 1, ') ', example_list_incidents[i][0], ' ', example_list_incidents[i][2], sep='')
-    print(print_on_language(1, 0), end=': ')
+    return [str(i + 1) + ') ' + example_list_incidents[i][0] + ' ' + example_list_incidents[i][2]
+            for i in range(len(example_list_incidents))]
 
 
 def print_selection_list(example_list):
-    for i in range(len(example_list)):
-        print(i + 1, ') ', example_list[i], sep='')
+    return [str(i + 1) + ') ' + example_list[i] for i in range(len(example_list))]
 
 
 def is_fight(in_class, participants, student_class, suspicious, maximum, student_name):

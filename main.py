@@ -63,7 +63,7 @@ available_graphs = [print_on_language(1, 5), print_on_language(1, 18), print_on_
 # Program operation mode selection
 functions = [print_on_language(1, 8), print_on_language(1, 9)]
 print(print_on_language(1, 6) + ':')
-print_data.print_selection_list(functions)
+print(*print_data.print_selection_list(functions), sep='\n')
 print('L)', print_on_language(1, 20))
 print('E)', print_on_language(1, 21))
 print(print_on_language(1, 7) + ':', end=' ')
@@ -75,7 +75,8 @@ list_incidents = calculations.make_list_incidents(data, name, sex, parallel, let
 
 if choice_mode == 0:
     info = []
-    print_data.print_list_incidents(list_incidents)
+    print(*print_data.print_list_incidents(list_incidents), sep='\n')
+    print(print_on_language(1, 0), end=': ')
 
     # Incident selection
     user_selection = input_data.make_user_choice(list_incidents)
