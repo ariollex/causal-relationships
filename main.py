@@ -55,10 +55,7 @@ previous_causes = data[int(calculations.read_from_configuration(9)) - 1]
 
 # Convert time
 for i in range(data.shape[0]):
-    if time_causes[i] != 0:
-        time_causes[i] = int(str(time_causes[i]).replace(':', ''))
-    else:
-        time_causes[i] = int(time_causes[i])
+    time_causes[i] = int(str(time_causes[i]).replace(':', '')) if time_causes[i] != 0 else int(time_causes[i])
 
 # Available graphs
 available_graphs = [print_on_language(1, 5), print_on_language(1, 18), print_on_language(1, 19)]
@@ -77,17 +74,13 @@ list_incidents = calculations.make_list_incidents(data, name, sex, parallel, let
 
 if choice_mode == 0:
     info = []
-
     print_data.print_list_incidents(list_incidents)
+
     # Incident selection
     user_selection = input_data.make_user_choice(list_incidents)
-
-    if list_incidents[user_selection][1] == print_on_language(1, 4) or (print_on_language(3, 2) == 0):
-        print(print_on_language(1, 2), ' ', user_selection + 1, '. ' + print_on_language(2, 2) + ': ',
-              list_incidents[user_selection][0], sep='')
-    else:
-        print(print_on_language(1, 2), ' ', user_selection + 1, '. ' + print_on_language(3, 2) + ': ',
-              list_incidents[user_selection][0], sep='')
+    print(print_on_language(1, 2), ' ', user_selection + 1, '. ' + (print_on_language(2, 2)
+          if list_incidents[user_selection][1] == print_on_language(1, 4) or (print_on_language(3, 2) == 0)
+          else print_on_language(3, 2)) + ': ', list_incidents[user_selection][0], sep='')
 
     # Calculations: search for matching information
     calculations.intersection_of_classes(list_incidents, user_selection, info, 0)

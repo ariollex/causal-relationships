@@ -1,5 +1,4 @@
 import print_data
-import error
 import numpy
 import os
 
