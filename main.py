@@ -1,7 +1,9 @@
 import pandas
 import numpy
+from tkinter import *
+import os
+
 import error
-import input_data
 import calculations
 import print_data
 import graphs
@@ -34,8 +36,9 @@ version = 'v' + version + '-' + prefix
 
 # Language
 language = calculations.read_from_configuration(2)
-set_language(language)
-print(print_on_language(1, 15), version, '\n')
+delayed_start = []
+if not set_language(language):
+    delayed_start.append('language')
 
 # Dataset
 file_loc = calculations.read_from_configuration(10)
@@ -57,45 +60,126 @@ previous_causes = data[int(calculations.read_from_configuration(9)) - 1]
 for i in range(data.shape[0]):
     time_causes[i] = int(str(time_causes[i]).replace(':', '')) if time_causes[i] != 0 else int(time_causes[i])
 
-# Available graphs
-available_graphs = [print_on_language(1, 5), print_on_language(1, 18), print_on_language(1, 19)]
 
-# Program operation mode selection
-functions = [print_on_language(1, 8), print_on_language(1, 9)]
-print(print_on_language(1, 6) + ':')
-print(*print_data.print_selection_list(functions), sep='\n')
-print('L)', print_on_language(1, 20))
-print('E)', print_on_language(1, 21))
-print(print_on_language(1, 7) + ':', end=' ')
-choice_mode = input_data.make_user_choice(functions)
+def change_language():
+    files = os.listdir('languages')
+    clear_window()
+    Label(window, text='Available languages:').grid(column=0, row=0)
+    count_row = 1
+    for i in range(len(files)):
+        Button(window, text=files[i].replace('strings_', '').replace('.xlsx', ''),
+               command=lambda j=i: change_language_process(files, j)).grid(column=0, row=count_row)
+        count_row = count_row + 1
+    Label(window, text='Please note that if the dataset and the program language are different, there may be errors.') \
+        .grid(column=0, row=count_row + 1)
 
-# Creating a list of incidents
-list_incidents = calculations.make_list_incidents(data, name, sex, parallel, letter, causes,
-                                                  time_causes, previous_causes)
 
-if choice_mode == 0:
+def clear_window(message=None):
+    for widget in window.winfo_children():
+        widget.destroy()
+    if message is not None:
+        Label(window, text=message).grid(column=0, row=0)
+
+
+def change_language_process(files, index_language):
+    new_language = files[index_language].replace('strings_', '').replace('.xlsx', '')
+    set_language(new_language)
+    exit_screen(print_on_language(1, 14))
+
+
+def exit_screen(message=None):
+    if message is not None:
+        clear_window(message)
+    Button(window, text=print_on_language(1, 21), command=exit).grid(column=0, row=1)
+
+
+def mode_selection(clear=False):
+    if clear:
+        clear_window()
+    Label(window, text=print_on_language(1, 6) + '. ' + print_on_language(1, 7) + ':').grid(column=0, row=0)
+
+    # Program operation mode selection
+    Button(window, text=modes[0], command=mode_causal_relationship).grid(column=0, row=1)
+    Button(window, text=modes[1], command=mode_graph).grid(column=0, row=2)
+    Button(window, text=print_on_language(1, 20), command=change_language).grid(column=0, row=3)
+    Button(window, text=print_on_language(1, 21), command=exit).grid(column=0, row=4)
+
+
+def mode_causal_relationship():
+    clear_window()
     info = []
-    print(*print_data.print_list_incidents(list_incidents), sep='\n')
-    print(print_on_language(1, 0), end=': ')
+    list_incidents_numbered = print_data.print_list_incidents(list_incidents)
+    Label(window, text=print_on_language(1, 0)).grid(column=0, row=0)
+    count_row = len(list_incidents_numbered)
+    for i in range(count_row):
+        Button(window, text=list_incidents_numbered[i], command=lambda j=i: mode_causal_relationship_process(j, info)) \
+            .grid(column=0, row=i + 1)
+    Button(window, text='Back', command=lambda: mode_selection(clear=True)).grid(column=0, row=count_row + 1)
+    Button(window, text=print_on_language(1, 21), command=exit).grid(column=1, row=count_row + 1)
 
-    # Incident selection
-    user_selection = input_data.make_user_choice(list_incidents)
-    print(print_on_language(1, 2), ' ', user_selection + 1, '. ' + (print_on_language(2, 2)
-          if list_incidents[user_selection][1] == print_on_language(1, 4) or (print_on_language(3, 2) == 0)
-          else print_on_language(3, 2)) + ': ', list_incidents[user_selection][0], sep='')
+
+def mode_causal_relationship_process(user_selection, info):
+    clear_window()
+    if list_incidents[user_selection][1] == print_on_language(1, 4) or (print_on_language(3, 2) == 0):
+        user_choice_text = print_on_language(1, 2) + ' ' + str(user_selection + 1) + '. ' + print_on_language(2, 2) + \
+                           ': ' + list_incidents[user_selection][0]
+    else:
+        user_choice_text = print_on_language(1, 2) + ' ' + str(user_selection + 1) + '. ' + print_on_language(3, 2) + \
+                           ': ' + list_incidents[user_selection][0]
+    Label(window, text=user_choice_text).grid(column=0, row=0)
 
     # Calculations: search for matching information
     calculations.intersection_of_classes(list_incidents, user_selection, info, 0)
     calculations.intersection_of_time(list_incidents, user_selection, info, 0)
 
     # Calculations: conclusions
-    print(calculations.conclusions(list_incidents, user_selection, info))
+    Label(window, text=calculations.conclusions(list_incidents, user_selection, info)).grid(column=0, row=1)
+    Button(window, text='Back', command=lambda: mode_selection(clear=True)).grid(column=0, row=2)
+    Button(window, text=print_on_language(1, 21), command=exit).grid(column=1, row=2)
 
-elif choice_mode == 1:
-    print(*print_data.print_selection_list(available_graphs), sep='\n')
-    print(print_on_language(1, 10) + ':', end=' ')
 
-    # Graph selection
+def mode_graph():
+    clear_window()
+    list_graphs_numbered = print_data.print_selection_list(available_graphs)
+    Label(window, text=print_on_language(1, 10) + ':')
+    count_row = len(list_graphs_numbered)
+    for i in range(count_row):
+        Button(window, text=list_graphs_numbered[i], command=lambda j=i: mode_graph_process(j)).grid(column=0, row=i + 1)
+    Button(window, text='Back', command=lambda: mode_selection(clear=True)).grid(column=0, row=count_row + 1)
+    Button(window, text=print_on_language(1, 21), command=exit).grid(column=1, row=count_row + 1)
+
+
+def mode_graph_process(choice_graph):
     graphs.set_variables(list_incidents, causes, parallel, name_columns)
-    choice_graph = input_data.make_user_choice(available_graphs)
     graphs.graph_selection(choice_graph, data)
+    count_row = len(available_graphs)
+    Button(window, text='Back', command=lambda: mode_selection(clear=True)).grid(column=0, row=count_row + 1)
+    Button(window, text=print_on_language(1, 21), command=exit).grid(column=1, row=count_row + 1)
+
+
+root = Tk()
+window = Frame()
+window.pack(fill="both", expand=True)
+
+if len(delayed_start) != 0:
+    root.title('Causal relationships in school ' + version)
+    for i in range(len(delayed_start)):
+        if i == len(delayed_start):
+            break
+        if delayed_start[i] == 'language':
+            change_language()
+            delayed_start.remove('language')
+else:
+    # Modes
+    modes = [print_on_language(1, 8), print_on_language(1, 9)]
+
+    # Available graphs
+    available_graphs = [print_on_language(1, 5), print_on_language(1, 18), print_on_language(1, 19)]
+
+    # Creating a list of incidents
+    list_incidents = calculations.make_list_incidents(data, name, sex, parallel, letter, causes,
+                                                      time_causes, previous_causes)
+
+    root.title(print_on_language(1, 15) + ' ' + version)
+    mode_selection()
+root.mainloop()
