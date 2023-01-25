@@ -61,7 +61,7 @@ for i in range(data.shape[0]):
     time_causes[i] = int(str(time_causes[i]).replace(':', '')) if time_causes[i] != 0 else int(time_causes[i])
 
 
-def change_language():
+def change_language(back_button=None):
     files = os.listdir('languages')
     clear_window()
     Label(window, text='Available languages:').grid(column=0, row=0)
@@ -72,6 +72,11 @@ def change_language():
         count_row = count_row + 1
     Label(window, text='Please note that if the dataset and the program language are different, there may be errors.') \
         .grid(column=0, row=count_row + 1)
+    column_btn = 0
+    if back_button:
+        Button(window, text='Back', command=lambda: mode_selection(clear=True)).grid(column=column_btn, row=count_row + 2)
+        column_btn = column_btn + 1
+    Button(window, text='Exit', command=exit).grid(column=column_btn, row=count_row + 2)
 
 
 def clear_window(message=None):
@@ -101,7 +106,7 @@ def mode_selection(clear=False):
     # Program operation mode selection
     Button(window, text=modes[0], command=mode_causal_relationship).grid(column=0, row=1)
     Button(window, text=modes[1], command=mode_graph).grid(column=0, row=2)
-    Button(window, text=print_on_language(1, 20), command=change_language).grid(column=0, row=3)
+    Button(window, text=print_on_language(1, 20), command=lambda: change_language(True)).grid(column=0, row=3)
     Button(window, text=print_on_language(1, 21), command=exit).grid(column=0, row=4)
 
 
