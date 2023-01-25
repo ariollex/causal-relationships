@@ -92,7 +92,7 @@ if choice_mode == 0:
     print(calculations.conclusions(list_incidents, user_selection, info))
 
 elif choice_mode == 1:
-    print_data.print_selection_list(available_graphs)
+    print(*print_data.print_selection_list(available_graphs), sep='\n')
     print(print_on_language(1, 10) + ':', end=' ')
 
     # Graph selection
