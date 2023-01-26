@@ -103,7 +103,7 @@ def clear_window(message=None):
     for widget in window.winfo_children():
         widget.destroy()
     if message is not None:
-        Label(window, text=message).grid(column=0, row=0, fg='red')
+        Label(window, text=message, fg='red').grid(column=0, row=0)
 
 
 def change_language_process(files, index_language):
@@ -192,7 +192,7 @@ def mode_graph_process(choice_graph):
 root = Tk()
 root.minsize(400, 150)
 window = Frame(root)
-window.pack(fill="both", expand=True)
+window.pack(expand=True)
 button_frame = Frame(root)
 button_frame.pack()
 
