@@ -61,7 +61,23 @@ for i in range(data.shape[0]):
     time_causes[i] = int(str(time_causes[i]).replace(':', '')) if time_causes[i] != 0 else int(time_causes[i])
 
 
-def change_language(back_button=None):
+def back_button(column_btn, count_row, translated=True):
+    if not translated:
+        exit_btn = Button(button_frame, text='Back', command=lambda: mode_selection(clear=True))
+    else:
+        exit_btn = Button(button_frame, text=print_on_language(1, 30), command=lambda: mode_selection(clear=True))
+    exit_btn.grid(column=column_btn, row=count_row, padx=5, pady=5)
+
+
+def exit_button(column_btn, count_row, translated=True):
+    if not translated:
+        exit_btn = Button(button_frame, text='Exit', command=exit)
+    else:
+        exit_btn = Button(button_frame, text=print_on_language(1, 21), command=exit)
+    exit_btn.grid(column=column_btn, row=count_row, padx=5, pady=5)
+
+
+def change_language(back_btn=None):
     files = os.listdir('languages')
     clear_window()
     Label(window, text='Available languages:').grid(column=0, row=0)
@@ -73,14 +89,17 @@ def change_language(back_button=None):
     Label(window, text='Please note that if the dataset and the program language are different, there may be errors.') \
         .grid(column=0, row=count_row + 1)
     column_btn = 0
-    if back_button:
-        Button(window, text='Back', command=lambda: mode_selection(clear=True))\
-            .grid(column=column_btn, row=count_row + 2)
+    translated = False
+    if back_btn:
+        back_button(column_btn, count_row + 2)
         column_btn = column_btn + 1
-    Button(window, text='Exit', command=exit).grid(column=column_btn, row=count_row + 2)
+        translated = True
+    exit_button(column_btn, count_row + 2, translated)
 
 
 def clear_window(message=None):
+    for widget in button_frame.winfo_children():
+        widget.destroy()
     for widget in window.winfo_children():
         widget.destroy()
     if message is not None:
@@ -96,7 +115,7 @@ def change_language_process(files, index_language):
 def exit_screen(message=None):
     if message is not None:
         clear_window(message)
-    Button(window, text=print_on_language(1, 21), command=exit).grid(column=0, row=1)
+    exit_button(0, 1)
 
 
 def mode_selection(clear=False):
@@ -108,7 +127,7 @@ def mode_selection(clear=False):
     Button(window, text=modes[0], command=mode_causal_relationship).grid(column=0, row=1)
     Button(window, text=modes[1], command=mode_graph).grid(column=0, row=2)
     Button(window, text=print_on_language(1, 20), command=lambda: change_language(True)).grid(column=0, row=3)
-    Button(window, text=print_on_language(1, 21), command=exit).grid(column=0, row=4)
+    exit_button(0, 4)
 
 
 def mode_causal_relationship():
@@ -120,8 +139,8 @@ def mode_causal_relationship():
     for i in range(count_row):
         Button(window, text=list_incidents_numbered[i], command=lambda j=i: mode_causal_relationship_process(j, info)) \
             .grid(column=0, row=i + 1, sticky=W)
-    Button(window, text='Back', command=lambda: mode_selection(clear=True)).grid(column=0, row=count_row + 1)
-    Button(window, text=print_on_language(1, 21), command=exit).grid(column=1, row=count_row + 1)
+    back_button(0, count_row + 1)
+    exit_button(1, count_row + 1)
 
 
 def mode_causal_relationship_process(user_selection, info):
@@ -140,8 +159,8 @@ def mode_causal_relationship_process(user_selection, info):
 
     # Calculations: conclusions
     Label(window, text=calculations.conclusions(list_incidents, user_selection, info)).grid(column=0, row=1)
-    Button(window, text='Back', command=lambda: mode_selection(clear=True)).grid(column=0, row=2)
-    Button(window, text=print_on_language(1, 21), command=exit).grid(column=1, row=2)
+    back_button(0, 2)
+    exit_button(1, 2)
 
 
 def mode_graph():
@@ -150,23 +169,25 @@ def mode_graph():
     Label(window, text=print_on_language(1, 10) + ':')
     count_row = len(list_graphs_numbered)
     for i in range(count_row):
-        Button(window, text=list_graphs_numbered[i], command=lambda j=i: mode_graph_process(j))\
+        Button(window, text=list_graphs_numbered[i], command=lambda j=i: mode_graph_process(j)) \
             .grid(column=0, row=i + 1, sticky=W)
-    Button(window, text='Back', command=lambda: mode_selection(clear=True)).grid(column=0, row=count_row + 1)
-    Button(window, text=print_on_language(1, 21), command=exit).grid(column=1, row=count_row + 1)
+    back_button(0, count_row + 1)
+    exit_button(1, count_row + 1)
 
 
 def mode_graph_process(choice_graph):
     graphs.set_variables(list_incidents, causes, parallel, name_columns)
     graphs.graph_selection(choice_graph, data)
     count_row = len(available_graphs)
-    Button(window, text='Back', command=lambda: mode_selection(clear=True)).grid(column=0, row=count_row + 1)
-    Button(window, text=print_on_language(1, 21), command=exit).grid(column=1, row=count_row + 1)
+    back_button(0, count_row + 1)
+    exit_button(1, count_row + 1)
 
 
 root = Tk()
-window = Frame()
+window = Frame(root)
 window.pack(fill="both", expand=True)
+button_frame = Frame(root)
+button_frame.pack()
 
 if len(delayed_start) != 0:
     root.title('Causal relationships in school ' + version)
