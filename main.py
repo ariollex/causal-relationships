@@ -74,7 +74,8 @@ def change_language(back_button=None):
         .grid(column=0, row=count_row + 1)
     column_btn = 0
     if back_button:
-        Button(window, text='Back', command=lambda: mode_selection(clear=True)).grid(column=column_btn, row=count_row + 2)
+        Button(window, text='Back', command=lambda: mode_selection(clear=True))\
+            .grid(column=column_btn, row=count_row + 2)
         column_btn = column_btn + 1
     Button(window, text='Exit', command=exit).grid(column=column_btn, row=count_row + 2)
 
@@ -118,7 +119,7 @@ def mode_causal_relationship():
     count_row = len(list_incidents_numbered)
     for i in range(count_row):
         Button(window, text=list_incidents_numbered[i], command=lambda j=i: mode_causal_relationship_process(j, info)) \
-            .grid(column=0, row=i + 1)
+            .grid(column=0, row=i + 1, sticky=W)
     Button(window, text='Back', command=lambda: mode_selection(clear=True)).grid(column=0, row=count_row + 1)
     Button(window, text=print_on_language(1, 21), command=exit).grid(column=1, row=count_row + 1)
 
@@ -131,7 +132,7 @@ def mode_causal_relationship_process(user_selection, info):
     else:
         user_choice_text = print_on_language(1, 2) + ' ' + str(user_selection + 1) + '. ' + print_on_language(3, 2) + \
                            ': ' + list_incidents[user_selection][0]
-    Label(window, text=user_choice_text).grid(column=0, row=0)
+    Label(window, text=user_choice_text).grid(column=0, row=0, sticky=W)
 
     # Calculations: search for matching information
     calculations.intersection_of_classes(list_incidents, user_selection, info, 0)
@@ -149,7 +150,8 @@ def mode_graph():
     Label(window, text=print_on_language(1, 10) + ':')
     count_row = len(list_graphs_numbered)
     for i in range(count_row):
-        Button(window, text=list_graphs_numbered[i], command=lambda j=i: mode_graph_process(j)).grid(column=0, row=i + 1)
+        Button(window, text=list_graphs_numbered[i], command=lambda j=i: mode_graph_process(j))\
+            .grid(column=0, row=i + 1, sticky=W)
     Button(window, text='Back', command=lambda: mode_selection(clear=True)).grid(column=0, row=count_row + 1)
     Button(window, text=print_on_language(1, 21), command=exit).grid(column=1, row=count_row + 1)
 
@@ -187,4 +189,5 @@ else:
 
     root.title(print_on_language(1, 15) + ' ' + version)
     mode_selection()
+
 root.mainloop()
