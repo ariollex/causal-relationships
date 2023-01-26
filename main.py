@@ -237,7 +237,7 @@ def settings_dataset(buttons=True):
             Label(window, text=parameters_dataset[i]).grid(column=0, row=count_row, sticky=W)
         value_entry = Entry(window, textvariable=v)
         entries.append(value_entry)
-        value_entry.grid(column=0, row=count_row)
+        value_entry.grid(column=1, row=count_row)
         count_row = count_row + 1
     if not buttons:
         Label(window, text='Current dataset: ' + file_loc).grid(column=0, row=count_row + 1)
