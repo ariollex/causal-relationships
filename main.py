@@ -376,7 +376,7 @@ def fix_configuration():
 
 
 root = Tk()
-root.minsize(400, 150)
+root.minsize(500, 150)
 window = Frame(root)
 window.pack(expand=True)
 button_frame = Frame(root)
