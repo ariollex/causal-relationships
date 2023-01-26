@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
-from print_data import print_on_language
 import seaborn as sns
+from strings import print_on_language
 
-list_incidents, causes, parallel, name_columns = [], [], [], []
+list_incidents, causes, parallel, name_columns, language_texts = [], [], [], [], []
 
 
 def set_variables(example_list_incidents, example_causes, example_parallel, example_name_columns):

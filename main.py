@@ -9,7 +9,7 @@ import error
 import calculations
 import print_data
 import graphs
-from strings import print_on_language, set_language, set_variables
+from strings import set_language, set_variables, print_on_language
 
 # Disable warnings
 pandas.options.mode.chained_assignment = None
@@ -43,6 +43,7 @@ version = 'v' + version + '-' + prefix
 language = calculations.read_from_configuration(2)
 if not set_language(language):
     delayed_start.insert(0, 'invalid_language')
+
 # Dataset
 file_loc = calculations.read_from_configuration(10)
 
@@ -96,14 +97,14 @@ def change_configuration(option, line, argument):
     out.close()
 
 
-def change_language(back_btn=None):
+def change_language(back_btn=None, delayed_start_var=False):
     files = os.listdir('languages')
     clear_window()
     Label(window, text='Available languages:').grid(column=0, row=0)
     count_row = 1
     for i in range(len(files)):
         Button(window, text=files[i].replace('strings_', '').replace('.xlsx', ''),
-               command=lambda j=i: change_language_process(files, j)).grid(column=0, row=count_row)
+               command=lambda j=i: change_language_process(files, j, delayed_start_var)).grid(column=0, row=count_row)
         count_row = count_row + 1
     Label(window, text='Please note that if the dataset and the program language are different, there may be errors.') \
         .grid(column=0, row=count_row + 1)
@@ -125,10 +126,14 @@ def clear_window(message=None):
         Label(window, text=message, fg='red').grid(column=0, row=0)
 
 
-def change_language_process(files, index_language):
+def change_language_process(files, index_language, delayed_start_var=False):
     new_language = files[index_language].replace('strings_', '').replace('.xlsx', '')
     set_language(new_language)
-    exit_screen(print_on_language(1, 14))
+    if delayed_start_var:
+        fix_configuration()
+    else:
+        start_variables()
+        mode_selection()
 
 
 def exit_screen(message=None):
@@ -174,6 +179,7 @@ def apply_dataset(changes, delayed_start_var=False):
     if not delayed_start_var:
         mode_selection()
     else:
+        start_variables()
         messagebox.showinfo(title='Success', message='Successfully applied')
         fix_configuration()
 
@@ -321,7 +327,7 @@ def fix_configuration():
     if len(delayed_start) == 0:
         start_variables()
     elif 'invalid_language' in delayed_start:
-        change_language()
+        change_language(delayed_start_var=True)
         delayed_start.remove('invalid_language')
     elif 'invalid_parameters_values' in delayed_start:
         settings_dataset(buttons=False)
