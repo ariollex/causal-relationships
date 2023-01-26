@@ -16,7 +16,7 @@ pandas.options.mode.chained_assignment = None
 
 # Delayed start
 delayed_start = []
-modes, available_graphs, list_incidents, parameters_dataset = [], [], [], []
+modes, available_graphs, list_incidents, parameters_dataset, parameters_dataset_translated = [], [], [], [], []
 
 # Configuration
 configuration = open("configuration", 'r').read().split('\n')
@@ -194,40 +194,59 @@ def check_dataset(new_file_loc):
     return True
 
 
-def change_dataset(count_row):
+def change_dataset(count_row, translated=True):
     global data, name_columns, file_loc
     new_file_loc = askopenfilename()
     if new_file_loc != '':
         if not check_dataset(new_file_loc):
-            messagebox.showerror("Error", "Broken dataset")
+            if translated:
+                messagebox.showerror(print_on_language(1, 41), print_on_language(1, 42))
+            else:
+                messagebox.showerror('Error', 'Broken dataset')
             return
         data, name_columns = set_dataset_parameters(new_file_loc)
         change_configuration('dataset_path', indexes[10], new_file_loc)
         file_loc = new_file_loc
     window.winfo_children()[-2].destroy()
-    Label(window, text='Current dataset: ' + file_loc).grid(column=0, row=count_row + 1)
-    Button(window, text='Change', command=lambda: change_dataset(count_row)).grid(column=1, row=count_row + 1)
+    if translated:
+        Label(window, text=print_on_language(1, 34) + ': ' + file_loc).grid(column=0, row=count_row + 1)
+        Button(window, text=print_on_language(1, 35), command=lambda: change_dataset(count_row)) \
+            .grid(column=1, row=count_row + 1)
+    else:
+        Label(window, text='Current dataset: ' + file_loc).grid(column=0, row=count_row + 1)
+        Button(window, text='Change', command=lambda: change_dataset(count_row, translated=False))
 
 
 def settings_dataset(buttons=True):
     global parameters_dataset
     clear_window()
-    Label(window, text='Column numbers in dataset:').grid(column=0, row=0)
+    if not buttons:
+        Label(window, text='Column numbers in dataset').grid(column=0, row=0)
+    else:
+        Label(window, text=print_on_language(1, 33)).grid(column=0, row=0)
     count_row = 1
     parameters_dataset = calculations.get_parameters_dataset()
     entries = []
     for i in range(len(parameters_dataset)):
         v = StringVar(root, value=str(configuration[indexes[3 + i]][str(configuration[indexes[3 + i]]).find("'") + 1:
                                                                     str(configuration[indexes[3 + i]]).rfind("'")]))
-        Label(window, text=parameters_dataset[i]).grid(column=0, row=count_row, sticky=W)
+        if buttons:
+            Label(window, text=parameters_dataset_translated[i]).grid(column=0, row=count_row, sticky=W)
+        else:
+            Label(window, text=parameters_dataset[i]).grid(column=0, row=count_row, sticky=W)
         value_entry = Entry(window, textvariable=v)
         entries.append(value_entry)
         value_entry.grid(column=0, row=count_row)
         count_row = count_row + 1
-    Label(window, text='Current dataset: ' + file_loc).grid(column=0, row=count_row + 1)
-    Button(window, text='Change', command=lambda: change_dataset(count_row)).grid(column=1, row=count_row + 1)
     if not buttons:
-        Button(window, text='Apply', command=lambda: apply_dataset(entries, delayed_start_var=True)).\
+        Label(window, text='Current dataset: ' + file_loc).grid(column=0, row=count_row + 1)
+        Button(window, text='Change', command=lambda: change_dataset(count_row, translated=False))
+    else:
+        Label(window, text=print_on_language(1, 34) + ': ' + file_loc).grid(column=0, row=count_row + 1)
+        Button(window, text=print_on_language(1, 35), command=lambda: change_dataset(count_row)) \
+            .grid(column=1, row=count_row + 1)
+    if not buttons:
+        Button(window, text='Apply', command=lambda: apply_dataset(entries, delayed_start_var=True)). \
             grid(column=0, row=count_row + 2)
         exit_button(1, count_row + 2, False)
     else:
@@ -237,7 +256,7 @@ def settings_dataset(buttons=True):
 
 def settings():
     clear_window()
-    Button(window, text='Dataset settings', command=settings_dataset).grid(column=0, row=0)
+    Button(window, text=print_on_language(1, 32), command=settings_dataset).grid(column=0, row=0)
     Button(window, text=print_on_language(1, 20), command=lambda: change_language(True)).grid(column=0, row=1)
     back_button(0, 1)
     exit_button(1, 1)
@@ -308,7 +327,7 @@ def mode_graph_process(choice_graph):
 
 
 def start_variables():
-    global modes, available_graphs, list_incidents
+    global modes, available_graphs, list_incidents, parameters_dataset_translated
     # Modes
     modes = [print_on_language(1, 8), print_on_language(1, 9)]
 
@@ -318,6 +337,11 @@ def start_variables():
     # Creating a list of incidents
     list_incidents = calculations.make_list_incidents(data, name, sex, parallel, letter, causes,
                                                       time_causes, previous_causes)
+
+    # Translated dataset parameters
+    parameters_dataset_translated = [print_on_language(1, 36), print_on_language(1, 37), print_on_language(1, 17),
+                                     print_on_language(1, 38), print_on_language(1, 12), print_on_language(1, 39),
+                                     print_on_language(1, 40)]
 
     root.title(print_on_language(1, 15) + ' ' + version)
     mode_selection()
