@@ -2,11 +2,15 @@ import print_data
 import numpy
 import os
 
-configuration, indexes, supported_parameters = [], [], []
+configuration, indexes, supported_parameters, parameters_dataset = [], [], [], []
 
 
 def get_supported_parameters():
     return supported_parameters
+
+
+def get_parameters_dataset():
+    return parameters_dataset
 
 
 def set_variables(configuration_file):
@@ -20,14 +24,17 @@ def read_from_configuration(n):
 
 
 def check_parameters():
-    parameters_integers = ['name', 'sex', 'parallel', 'letter', 'causes', 'time_causes', 'previous_causes']
+    global parameters_dataset
+    parameters_dataset = ['name', 'sex', 'parallel', 'letter', 'causes', 'time_causes', 'previous_causes']
     parameters_strings = ['prefix', 'language', 'version']
     parameters_path = ['dataset_path']
     errors = []
     for i in range(len(supported_parameters)):
         example_parameter_name = supported_parameters[i]
         example_parameter_value = read_from_configuration(i)
-        if example_parameter_name in parameters_integers and example_parameter_value.isdigit() is False:
+        if example_parameter_name in parameters_dataset and (not example_parameter_value.isdigit() or
+                                                             not (0 < int(example_parameter_value) <
+                                                                  len(parameters_dataset) + 1)):
             errors.append('Parameter "' + example_parameter_name + '" has an incorrect value! It should be integer.')
         if example_parameter_name in parameters_strings and isinstance(example_parameter_value, str) is False:
             errors.append('Parameter "' + example_parameter_name + '" has an incorrect value! It should be string.')

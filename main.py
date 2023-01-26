@@ -14,6 +14,10 @@ from strings import print_on_language, set_language, set_variables
 # Disable warnings
 pandas.options.mode.chained_assignment = None
 
+# Delayed start
+delayed_start = []
+modes, available_graphs, list_incidents, parameters_dataset = [], [], [], []
+
 # Configuration
 configuration = open("configuration", 'r').read().split('\n')
 calculations.set_variables(configuration)
@@ -26,10 +30,9 @@ if len(missing_parameters) != 0:
     error.broken_configuration()
 set_variables(configuration, indexes)
 errors = calculations.check_parameters()
-if len(errors) != 0:
-    error.error('Incorrect parameter values:', 0)
+if len(errors) > 0:
     print(*['- ' + errors[i] for i in range(len(errors))], sep='\n')
-    error.broken_configuration()
+    delayed_start.append('invalid_parameters_values')
 
 # Version
 version = calculations.read_from_configuration(0)
@@ -38,10 +41,8 @@ version = 'v' + version + '-' + prefix
 
 # Language
 language = calculations.read_from_configuration(2)
-delayed_start = []
 if not set_language(language):
-    delayed_start.append('language')
-
+    delayed_start.insert(0, 'invalid_language')
 # Dataset
 file_loc = calculations.read_from_configuration(10)
 
@@ -57,18 +58,18 @@ def set_dataset_parameters(file_location):
 data, name_columns = set_dataset_parameters(file_loc)
 
 # Dataset settings
-dataset_parameters = ['name', 'sex', 'parallel', 'letter', 'causes', 'time_causes', 'previous_causes']
-name = data[int(calculations.read_from_configuration(3)) - 1]
-sex = data[int(calculations.read_from_configuration(4)) - 1]
-parallel = data[int(calculations.read_from_configuration(5)) - 1]
-letter = data[int(calculations.read_from_configuration(6)) - 1]
-causes = data[int(calculations.read_from_configuration(7)) - 1]
-time_causes = data[int(calculations.read_from_configuration(8)) - 1]
-previous_causes = data[int(calculations.read_from_configuration(9)) - 1]
+if not ('invalid_parameters_values' in delayed_start):
+    name = data[int(calculations.read_from_configuration(3)) - 1]
+    sex = data[int(calculations.read_from_configuration(4)) - 1]
+    parallel = data[int(calculations.read_from_configuration(5)) - 1]
+    letter = data[int(calculations.read_from_configuration(6)) - 1]
+    causes = data[int(calculations.read_from_configuration(7)) - 1]
+    time_causes = data[int(calculations.read_from_configuration(8)) - 1]
+    previous_causes = data[int(calculations.read_from_configuration(9)) - 1]
 
-# Convert time
-for i in range(data.shape[0]):
-    time_causes[i] = int(str(time_causes[i]).replace(':', '')) if time_causes[i] != 0 else int(time_causes[i])
+    # Convert time
+    for i in range(data.shape[0]):
+        time_causes[i] = int(str(time_causes[i]).replace(':', '')) if time_causes[i] != 0 else int(time_causes[i])
 
 
 def back_button(column_btn, count_row, translated=True, back_command=lambda: mode_selection()):
@@ -136,10 +137,10 @@ def exit_screen(message=None):
     exit_button(0, 1)
 
 
-def apply_dataset(changes):
+def apply_dataset(changes, delayed_start_var=False):
     supported_parameters = calculations.get_supported_parameters()
-    for i in range(len(dataset_parameters)):
-        if not changes[i].get().isdigit() or not 0 < int(changes[i].get()) < len(dataset_parameters) + 1:
+    for i in range(len(parameters_dataset)):
+        if not changes[i].get().isdigit() or not 0 < int(changes[i].get()) < len(parameters_dataset) + 1:
             messagebox.showerror("Error", "Incorrect column values")
             return
         else:
@@ -170,7 +171,11 @@ def apply_dataset(changes):
         # Re-creating a list of incidents
         list_incidents = calculations.make_list_incidents(data, name, sex, parallel, letter, causes,
                                                           time_causes, previous_causes)
-    mode_selection()
+    if not delayed_start_var:
+        mode_selection()
+    else:
+        messagebox.showinfo(title='Success', message='Successfully applied')
+        fix_configuration()
 
 
 def check_dataset(new_file_loc):
@@ -198,27 +203,30 @@ def change_dataset(count_row):
     Button(window, text='Change', command=lambda: change_dataset(count_row)).grid(column=1, row=count_row + 1)
 
 
-def read_value(entries):
-    return [e.get() for e in entries]
-
-
-def settings_dataset():
+def settings_dataset(buttons=True):
+    global parameters_dataset
     clear_window()
     Label(window, text='Column numbers in dataset:').grid(column=0, row=0)
     count_row = 1
+    parameters_dataset = calculations.get_parameters_dataset()
     entries = []
-    for i in range(len(dataset_parameters)):
+    for i in range(len(parameters_dataset)):
         v = StringVar(root, value=str(configuration[indexes[3 + i]][str(configuration[indexes[3 + i]]).find("'") + 1:
                                                                     str(configuration[indexes[3 + i]]).rfind("'")]))
-        Label(window, text=dataset_parameters[i]).grid(column=0, row=count_row, sticky=W)
+        Label(window, text=parameters_dataset[i]).grid(column=0, row=count_row, sticky=W)
         value_entry = Entry(window, textvariable=v)
         entries.append(value_entry)
         value_entry.grid(column=0, row=count_row)
         count_row = count_row + 1
     Label(window, text='Current dataset: ' + file_loc).grid(column=0, row=count_row + 1)
     Button(window, text='Change', command=lambda: change_dataset(count_row)).grid(column=1, row=count_row + 1)
-    back_button(0, count_row + 2, back_command=lambda: apply_dataset(entries))
-    exit_button(1, count_row + 2)
+    if not buttons:
+        Button(window, text='Apply', command=lambda: apply_dataset(entries, delayed_start_var=True)).\
+            grid(column=0, row=count_row + 2)
+        exit_button(1, count_row + 2, False)
+    else:
+        back_button(0, count_row + 2, back_command=lambda: apply_dataset(entries))
+        exit_button(1, count_row + 2)
 
 
 def settings():
@@ -293,22 +301,8 @@ def mode_graph_process(choice_graph):
     exit_button(1, count_row + 1)
 
 
-root = Tk()
-root.minsize(400, 150)
-window = Frame(root)
-window.pack(expand=True)
-button_frame = Frame(root)
-button_frame.pack()
-
-if len(delayed_start) != 0:
-    root.title('Causal relationships in school ' + version)
-    for i in range(len(delayed_start)):
-        if i == len(delayed_start):
-            break
-        if delayed_start[i] == 'language':
-            change_language()
-            delayed_start.remove('language')
-else:
+def start_variables():
+    global modes, available_graphs, list_incidents
     # Modes
     modes = [print_on_language(1, 8), print_on_language(1, 9)]
 
@@ -322,4 +316,28 @@ else:
     root.title(print_on_language(1, 15) + ' ' + version)
     mode_selection()
 
+
+def fix_configuration():
+    if len(delayed_start) == 0:
+        start_variables()
+    elif 'invalid_language' in delayed_start:
+        change_language()
+        delayed_start.remove('invalid_language')
+    elif 'invalid_parameters_values' in delayed_start:
+        settings_dataset(buttons=False)
+        delayed_start.remove('invalid_parameters_values')
+
+
+root = Tk()
+root.minsize(400, 150)
+window = Frame(root)
+window.pack(expand=True)
+button_frame = Frame(root)
+button_frame.pack()
+
+if len(delayed_start) != 0:
+    root.title('Causal relationships in school ' + version)
+    fix_configuration()
+else:
+    start_variables()
 root.mainloop()
