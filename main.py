@@ -191,6 +191,7 @@ def mode_graph_process(choice_graph):
 
 
 root = Tk()
+root.minsize(400, 150)
 window = Frame(root)
 window.pack(fill="both", expand=True)
 button_frame = Frame(root)
