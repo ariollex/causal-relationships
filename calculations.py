@@ -32,7 +32,7 @@ def check_parameters():
     return errors
 
 
-def check_configuration():
+def check_configuration(only_dataset=False, only_indexes=False):
     global indexes, supported_parameters
     supported_parameters = ['version', 'prefix', 'language', 'name', 'sex', 'parallel', 'letter', 'causes',
                             'time_causes', 'previous_causes', 'dataset_path']
@@ -56,6 +56,10 @@ def check_configuration():
         for i in range(len(indexes)):
             if numpy.isnan(indexes[i]):
                 missing_parameters.append(supported_parameters[i])
+    if only_dataset:
+        return missing_parameters
+    if only_indexes:
+        return indexes
     return indexes, warnings, missing_parameters
 
 
@@ -63,7 +67,7 @@ def make_list_incidents(data, name, sex, parallel, letter, causes, time_causes, 
     example_list_incidents = []
     for i in range(0, data.shape[0]):
         if causes[i] != 0:
-            school_class = str(parallel[i]) + ' "' + letter[i] + '"'
+            school_class = str(parallel[i]) + ' "' + str(letter[i]) + '"'
             example_list_incidents.append(
                 [name[i], sex[i], school_class, time_causes[i], previous_causes[i]])
     return example_list_incidents

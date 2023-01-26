@@ -1,6 +1,8 @@
 import pandas
 import numpy
 from tkinter import *
+from tkinter import messagebox
+from tkinter.filedialog import askopenfilename
 import os
 
 import error
@@ -42,10 +44,17 @@ if not set_language(language):
 
 # Dataset
 file_loc = calculations.read_from_configuration(10)
-data = pandas.read_excel(file_loc)
-name_columns = list(data)
-data.columns = range(data.columns.size)
-data.replace(numpy.nan, 0, inplace=True)
+
+
+def set_dataset_parameters(file_location):
+    dataset = pandas.read_excel(file_location)
+    dataset_name_columns = list(dataset)
+    dataset.columns = range(dataset.columns.size)
+    dataset.replace(numpy.nan, 0, inplace=True)
+    return dataset, dataset_name_columns
+
+
+data, name_columns = set_dataset_parameters(file_loc)
 
 # Dataset settings
 name = data[int(calculations.read_from_configuration(3)) - 1]
@@ -61,11 +70,11 @@ for i in range(data.shape[0]):
     time_causes[i] = int(str(time_causes[i]).replace(':', '')) if time_causes[i] != 0 else int(time_causes[i])
 
 
-def back_button(column_btn, count_row, translated=True):
+def back_button(column_btn, count_row, translated=True, back_command=lambda: mode_selection()):
     if not translated:
-        exit_btn = Button(button_frame, text='Back', command=lambda: mode_selection())
+        exit_btn = Button(button_frame, text='Back', command=back_command)
     else:
-        exit_btn = Button(button_frame, text=print_on_language(1, 30), command=lambda: mode_selection())
+        exit_btn = Button(button_frame, text=print_on_language(1, 30), command=back_command)
     exit_btn.grid(column=column_btn, row=count_row, padx=5, pady=5)
 
 
@@ -75,6 +84,14 @@ def exit_button(column_btn, count_row, translated=True):
     else:
         exit_btn = Button(button_frame, text=print_on_language(1, 21), command=exit)
     exit_btn.grid(column=column_btn, row=count_row, padx=5, pady=5)
+
+
+def change_configuration(option, line, argument):
+    lines = open("configuration", 'r').readlines()
+    lines[line] = option + " = '" + argument + "'\n"
+    out = open("configuration", 'w')
+    out.writelines(lines)
+    out.close()
 
 
 def change_language(back_btn=None):
@@ -118,9 +135,64 @@ def exit_screen(message=None):
     exit_button(0, 1)
 
 
+def apply_dataset():
+    if len(calculations.check_configuration(only_dataset=True)) != 0:
+        messagebox.showerror("Error", "incorrect column values or incorrect dataset")
+        return
+    else:
+        global indexes, list_incidents, name, sex, parallel, letter, causes, time_causes, previous_causes
+        indexes = calculations.check_configuration(only_indexes=True)
+        name = data[int(calculations.read_from_configuration(3)) - 1]
+        sex = data[int(calculations.read_from_configuration(4)) - 1]
+        parallel = data[int(calculations.read_from_configuration(5)) - 1]
+        letter = data[int(calculations.read_from_configuration(6)) - 1]
+        causes = data[int(calculations.read_from_configuration(7)) - 1]
+        time_causes = data[int(calculations.read_from_configuration(8)) - 1]
+        previous_causes = data[int(calculations.read_from_configuration(9)) - 1]
+        # Convert time
+        for i in range(data.shape[0]):
+            time_causes[i] = int(str(time_causes[i]).replace(':', '')) if time_causes[i] != 0 else int(time_causes[i])
+        # Re-creating a list of incidents
+        list_incidents = calculations.make_list_incidents(data, name, sex, parallel, letter, causes,
+                                                          time_causes, previous_causes)
+    mode_selection()
+
+
+def check_dataset(new_file_loc):
+    try:
+        pandas.read_excel(new_file_loc)
+    except ValueError:
+        return False
+    if len(list(pandas.read_excel(new_file_loc))) < 7:
+        return False
+    return True
+
+
+def change_dataset():
+    global data, name_columns, file_loc
+    new_file_loc = askopenfilename()
+    if new_file_loc != '':
+        if not check_dataset(new_file_loc):
+            messagebox.showerror("Error", "Broken dataset")
+            return
+        data, name_columns = set_dataset_parameters(new_file_loc)
+        change_configuration('dataset_path', indexes[10], new_file_loc)
+        file_loc = new_file_loc
+    settings_dataset()
+
+
+def settings_dataset():
+    clear_window()
+    Label(window, text='Current dataset: ' + file_loc).grid(column=0, row=0)
+    Button(window, text='Change', command=change_dataset).grid(column=1, row=0)
+    back_button(0, 1, back_command=apply_dataset)
+    exit_button(1, 1)
+
+
 def settings():
     clear_window()
-    Button(window, text=print_on_language(1, 20), command=lambda: change_language(True)).grid(column=0, row=0)
+    Button(window, text='Dataset settings', command=settings_dataset).grid(column=0, row=0)
+    Button(window, text=print_on_language(1, 20), command=lambda: change_language(True)).grid(column=0, row=1)
     back_button(0, 1)
     exit_button(1, 1)
 
@@ -153,10 +225,10 @@ def mode_causal_relationship_process(user_selection, info):
     clear_window()
     if list_incidents[user_selection][1] == print_on_language(1, 4) or (print_on_language(3, 2) == 0):
         user_choice_text = print_on_language(1, 2) + ' ' + str(user_selection + 1) + '. ' + print_on_language(2, 2) + \
-                           ': ' + list_incidents[user_selection][0]
+                           ': ' + str(list_incidents[user_selection][0])
     else:
         user_choice_text = print_on_language(1, 2) + ' ' + str(user_selection + 1) + '. ' + print_on_language(3, 2) + \
-                           ': ' + list_incidents[user_selection][0]
+                           ': ' + str(list_incidents[user_selection][0])
     Label(window, text=user_choice_text).grid(column=0, row=0, sticky=W)
 
     # Calculations: search for matching information
