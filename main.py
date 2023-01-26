@@ -360,7 +360,7 @@ def start_variables():
                                      print_on_language(1, 38), print_on_language(1, 12), print_on_language(1, 39),
                                      print_on_language(1, 40)]
 
-    root.title(print_on_language(1, 15) + ' ' + version)
+    root.title(print_on_language(1, 15) + ', ' + version)
     mode_selection()
 
 
@@ -383,7 +383,7 @@ button_frame = Frame(root)
 button_frame.pack()
 
 if len(delayed_start) != 0:
-    root.title('Causal relationships in school ' + version)
+    root.title('Causal relationships in school, ' + version)
     fix_configuration()
 else:
     start_variables()
