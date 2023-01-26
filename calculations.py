@@ -5,6 +5,10 @@ import os
 configuration, indexes, supported_parameters = [], [], []
 
 
+def get_supported_parameters():
+    return supported_parameters
+
+
 def set_variables(configuration_file):
     global configuration
     configuration = configuration_file

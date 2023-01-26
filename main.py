@@ -57,6 +57,7 @@ def set_dataset_parameters(file_location):
 data, name_columns = set_dataset_parameters(file_loc)
 
 # Dataset settings
+dataset_parameters = ['name', 'sex', 'parallel', 'letter', 'causes', 'time_causes', 'previous_causes']
 name = data[int(calculations.read_from_configuration(3)) - 1]
 sex = data[int(calculations.read_from_configuration(4)) - 1]
 parallel = data[int(calculations.read_from_configuration(5)) - 1]
@@ -135,20 +136,34 @@ def exit_screen(message=None):
     exit_button(0, 1)
 
 
-def apply_dataset():
+def apply_dataset(changes):
+    supported_parameters = calculations.get_supported_parameters()
+    for i in range(len(dataset_parameters)):
+        if not changes[i].get().isdigit() or not 0 < int(changes[i].get()) < len(dataset_parameters) + 1:
+            messagebox.showerror("Error", "Incorrect column values")
+            return
+        else:
+            change_configuration(supported_parameters[3 + i], indexes[3 + i], changes[i].get())
     if len(calculations.check_configuration(only_dataset=True)) != 0:
-        messagebox.showerror("Error", "incorrect column values or incorrect dataset")
+        messagebox.showerror("Error", "Incorrect column values or incorrect dataset")
         return
     else:
-        global indexes, list_incidents, name, sex, parallel, letter, causes, time_causes, previous_causes
-        indexes = calculations.check_configuration(only_indexes=True)
-        name = data[int(calculations.read_from_configuration(3)) - 1]
-        sex = data[int(calculations.read_from_configuration(4)) - 1]
-        parallel = data[int(calculations.read_from_configuration(5)) - 1]
-        letter = data[int(calculations.read_from_configuration(6)) - 1]
-        causes = data[int(calculations.read_from_configuration(7)) - 1]
-        time_causes = data[int(calculations.read_from_configuration(8)) - 1]
-        previous_causes = data[int(calculations.read_from_configuration(9)) - 1]
+        global list_incidents, name, sex, parallel, letter, causes, time_causes, previous_causes, configuration
+        configuration = open("configuration", 'r').read().split('\n')
+        name = data[int(configuration[indexes[3]][str(configuration[indexes[3]]).find("'") + 1:
+                                                  str(configuration[indexes[3]]).rfind("'")]) - 1]
+        sex = data[int(configuration[indexes[4]][str(configuration[indexes[4]]).find("'") + 1:
+                                                 str(configuration[indexes[4]]).rfind("'")]) - 1]
+        parallel = data[int(configuration[indexes[5]][str(configuration[indexes[5]]).find("'") + 1:
+                                                      str(configuration[indexes[5]]).rfind("'")]) - 1]
+        letter = data[int(configuration[indexes[6]][str(configuration[indexes[6]]).find("'") + 1:
+                                                    str(configuration[indexes[6]]).rfind("'")]) - 1]
+        causes = data[int(configuration[indexes[7]][str(configuration[indexes[7]]).find("'") + 1:
+                                                    str(configuration[indexes[7]]).rfind("'")]) - 1]
+        time_causes = data[int(configuration[indexes[8]][str(configuration[indexes[8]]).find("'") + 1:
+                                                         str(configuration[indexes[8]]).rfind("'")]) - 1]
+        previous_causes = data[int(configuration[indexes[9]][str(configuration[indexes[9]]).find("'") + 1:
+                                                             str(configuration[indexes[9]]).rfind("'")]) - 1]
         # Convert time
         for i in range(data.shape[0]):
             time_causes[i] = int(str(time_causes[i]).replace(':', '')) if time_causes[i] != 0 else int(time_causes[i])
@@ -168,7 +183,7 @@ def check_dataset(new_file_loc):
     return True
 
 
-def change_dataset():
+def change_dataset(count_row):
     global data, name_columns, file_loc
     new_file_loc = askopenfilename()
     if new_file_loc != '':
@@ -178,15 +193,32 @@ def change_dataset():
         data, name_columns = set_dataset_parameters(new_file_loc)
         change_configuration('dataset_path', indexes[10], new_file_loc)
         file_loc = new_file_loc
-    settings_dataset()
+    window.winfo_children()[-2].destroy()
+    Label(window, text='Current dataset: ' + file_loc).grid(column=0, row=count_row + 1)
+    Button(window, text='Change', command=lambda: change_dataset(count_row)).grid(column=1, row=count_row + 1)
+
+
+def read_value(entries):
+    return [e.get() for e in entries]
 
 
 def settings_dataset():
     clear_window()
-    Label(window, text='Current dataset: ' + file_loc).grid(column=0, row=0)
-    Button(window, text='Change', command=change_dataset).grid(column=1, row=0)
-    back_button(0, 1, back_command=apply_dataset)
-    exit_button(1, 1)
+    Label(window, text='Column numbers in dataset:').grid(column=0, row=0)
+    count_row = 1
+    entries = []
+    for i in range(len(dataset_parameters)):
+        v = StringVar(root, value=str(configuration[indexes[3 + i]][str(configuration[indexes[3 + i]]).find("'") + 1:
+                                                                    str(configuration[indexes[3 + i]]).rfind("'")]))
+        Label(window, text=dataset_parameters[i]).grid(column=0, row=count_row, sticky=W)
+        value_entry = Entry(window, textvariable=v)
+        entries.append(value_entry)
+        value_entry.grid(column=0, row=count_row)
+        count_row = count_row + 1
+    Label(window, text='Current dataset: ' + file_loc).grid(column=0, row=count_row + 1)
+    Button(window, text='Change', command=lambda: change_dataset(count_row)).grid(column=1, row=count_row + 1)
+    back_button(0, count_row + 2, back_command=lambda: apply_dataset(entries))
+    exit_button(1, count_row + 2)
 
 
 def settings():
