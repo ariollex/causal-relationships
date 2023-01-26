@@ -3,6 +3,7 @@ import numpy
 from tkinter import *
 from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
+import webbrowser
 import os
 
 import error
@@ -258,6 +259,22 @@ def settings():
     clear_window()
     Button(window, text=print_on_language(1, 32), command=settings_dataset).grid(column=0, row=0)
     Button(window, text=print_on_language(1, 20), command=lambda: change_language(True)).grid(column=0, row=1)
+    Button(window, text=print_on_language(1, 43), command=about_program).grid(column=0, row=2)
+    back_button(0, 1)
+    exit_button(1, 1)
+
+
+def open_source_code():
+    webbrowser.open_new("https://github.com/Ariollex/causal-relationships-in-school")
+
+
+def about_program():
+    clear_window()
+    Label(window, text=print_on_language(1, 15)).grid(column=0, row=0)
+    Label(window, text=print_on_language(1, 44) + ': ' + version).grid(column=0, row=1)
+    Label(window, text=print_on_language(1, 45) + ': ' + 'Artem Agapkin').grid(column=0, row=2)
+    Button(window, text=print_on_language(1, 46) + ': ' + 'https://github.com/Ariollex/causal-relationships-in-school',
+           command=open_source_code).grid(column=0, row=3)
     back_button(0, 1)
     exit_button(1, 1)
 
