@@ -63,9 +63,9 @@ for i in range(data.shape[0]):
 
 def back_button(column_btn, count_row, translated=True):
     if not translated:
-        exit_btn = Button(button_frame, text='Back', command=lambda: mode_selection(clear=True))
+        exit_btn = Button(button_frame, text='Back', command=lambda: mode_selection())
     else:
-        exit_btn = Button(button_frame, text=print_on_language(1, 30), command=lambda: mode_selection(clear=True))
+        exit_btn = Button(button_frame, text=print_on_language(1, 30), command=lambda: mode_selection())
     exit_btn.grid(column=column_btn, row=count_row, padx=5, pady=5)
 
 
@@ -103,7 +103,7 @@ def clear_window(message=None):
     for widget in window.winfo_children():
         widget.destroy()
     if message is not None:
-        Label(window, text=message).grid(column=0, row=0)
+        Label(window, text=message).grid(column=0, row=0, fg='red')
 
 
 def change_language_process(files, index_language):
@@ -125,9 +125,8 @@ def settings():
     exit_button(1, 1)
 
 
-def mode_selection(clear=False):
-    if clear:
-        clear_window()
+def mode_selection():
+    clear_window()
     Label(window, text=print_on_language(1, 6) + '. ' + print_on_language(1, 7) + ':').grid(column=0, row=0)
 
     # Program operation mode selection
