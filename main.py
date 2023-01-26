@@ -118,6 +118,13 @@ def exit_screen(message=None):
     exit_button(0, 1)
 
 
+def settings():
+    clear_window()
+    Button(window, text=print_on_language(1, 20), command=lambda: change_language(True)).grid(column=0, row=0)
+    back_button(0, 1)
+    exit_button(1, 1)
+
+
 def mode_selection(clear=False):
     if clear:
         clear_window()
@@ -126,7 +133,7 @@ def mode_selection(clear=False):
     # Program operation mode selection
     Button(window, text=modes[0], command=mode_causal_relationship).grid(column=0, row=1)
     Button(window, text=modes[1], command=mode_graph).grid(column=0, row=2)
-    Button(window, text=print_on_language(1, 20), command=lambda: change_language(True)).grid(column=0, row=3)
+    Button(window, text=print_on_language(1, 31), command=settings).grid(column=0, row=3)
     exit_button(0, 4)
 
 
