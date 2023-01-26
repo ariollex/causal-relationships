@@ -31,7 +31,7 @@ if len(missing_parameters) != 0:
 set_variables(configuration, indexes)
 errors = calculations.check_parameters()
 if len(errors) > 0:
-    print(*['- ' + errors[i] for i in range(len(errors))], sep='\n')
+    [error.warning(errors[i]) for i in range(len(errors))]
     delayed_start.append('invalid_parameters_values')
 
 # Version
