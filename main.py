@@ -379,13 +379,17 @@ def fix_configuration():
     if len(delayed_start) == 0:
         start_variables()
     elif 'invalid_language' in delayed_start:
+        messagebox.showwarning('Warning', 'The language is not defined. Please select a language.')
         change_language(delayed_start_var=True)
         delayed_start.remove('invalid_language')
     elif 'invalid_path_dataset' in delayed_start:
+        messagebox.showwarning('Warning', 'The dataset is not defined. Please select a dataset and its characteristics.'
+                               )
         settings_dataset(buttons=False)
         delayed_start.remove('invalid_path_dataset')
         delayed_start.remove('invalid_parameters_values')
     elif 'invalid_parameters_values' in delayed_start:
+        messagebox.showwarning('Warning', 'The dataset is not defined. Please select a dataset characteristics.')
         settings_dataset(buttons=False)
         delayed_start.remove('invalid_parameters_values')
 
