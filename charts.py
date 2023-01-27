@@ -13,19 +13,19 @@ def set_variables(example_list_incidents, example_causes, example_parallel, exam
     previous_causes = example_previous_causes
 
 
-def graph_selection(choice_graph, data):
+def chart_selection(choice_graph, data):
     plt.close('all')
     if choice_graph == 0:
-        graph_number_of_incidents_to_students(data)
+        chart_number_of_incidents_to_students(data)
     elif choice_graph == 1:
-        graph_incidents_on_parallel(data)
+        chart_incidents_on_parallel(data)
     elif choice_graph == 2:
-        correlation_graph(data)
+        correlation_chart(data)
     elif choice_graph == 3:
-        boxplot(data)
+        chart_boxplot(data)
 
 
-def boxplot(data):
+def chart_boxplot(data):
     global previous_causes
     previous_causes = previous_causes  # Исправляет предупреждение
     incident_count = previous_causes.value_counts().sort_values(ascending=False).index.values
@@ -34,7 +34,7 @@ def boxplot(data):
     plt.show()
 
 
-def graph_number_of_incidents_to_students(data):
+def chart_number_of_incidents_to_students(data):
     plt.hist(causes, bins=2, label=print_on_language(1, 12) + ' / ' + print_on_language(1, 13) + ', %: ' + str(
         round((len(list_incidents) / data.shape[0] * 100), 3)))
     plt.xlabel(print_on_language(1, 12))
@@ -45,7 +45,7 @@ def graph_number_of_incidents_to_students(data):
     plt.show()
 
 
-def graph_incidents_on_parallel(data):
+def chart_incidents_on_parallel(data):
     causes_df = data[[4] + [2]]
     causes_df.groupby(2).sum().plot(kind='bar', rot=0)
     plt.xlabel(print_on_language(1, 17))
@@ -56,7 +56,7 @@ def graph_incidents_on_parallel(data):
     plt.show()
 
 
-def correlation_graph(data):
+def correlation_chart(data):
     sns.heatmap(data.drop([0, 1, 3], axis=1).corr(method='pearson', min_periods=1, numeric_only=False),
                 linewidths=0.1, annot=True)
     plt.legend([], loc='upper right',

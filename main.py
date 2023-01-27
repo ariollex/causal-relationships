@@ -12,7 +12,7 @@ import os
 import error
 import calculations
 import print_data
-import graphs
+import charts
 from strings import set_language, set_variables, print_on_language
 
 # Disable warnings
@@ -20,7 +20,7 @@ pandas.options.mode.chained_assignment = None
 
 # Delayed start
 delayed_start = []
-modes, available_graphs, list_incidents, parameters_dataset, parameters_dataset_translated = [], [], [], [], []
+modes, available_charts, list_incidents, parameters_dataset, parameters_dataset_translated = [], [], [], [], []
 
 # Configuration
 if not os.path.exists('configuration'):
@@ -342,7 +342,7 @@ def mode_causal_relationship_process(user_selection, info):
 
 def mode_graph():
     clear_window()
-    list_graphs_numbered = print_data.print_selection_list(available_graphs)
+    list_graphs_numbered = print_data.print_selection_list(available_charts)
     Label(window, text=print_on_language(1, 10) + ':')
     count_row = len(list_graphs_numbered)
     for i in range(count_row):
@@ -352,21 +352,21 @@ def mode_graph():
     exit_button(1, count_row + 1)
 
 
-def mode_graph_process(choice_graph):
-    graphs.set_variables(list_incidents, causes, parallel, name_columns, previous_causes)
-    graphs.graph_selection(choice_graph, data)
-    count_row = len(available_graphs)
+def mode_graph_process(choice_chart):
+    charts.set_variables(list_incidents, causes, parallel, name_columns, previous_causes)
+    charts.chart_selection(choice_chart, data)
+    count_row = len(available_charts)
     back_button(0, count_row + 1)
     exit_button(1, count_row + 1)
 
 
 def start_variables():
-    global modes, available_graphs, parameters_dataset_translated, list_incidents
+    global modes, available_charts, parameters_dataset_translated, list_incidents
     # Modes
     modes = [print_on_language(1, 8), print_on_language(1, 9)]
 
     # Available graphs
-    available_graphs = [print_on_language(1, 5), print_on_language(1, 18), print_on_language(1, 19),
+    available_charts = [print_on_language(1, 5), print_on_language(1, 18), print_on_language(1, 19),
                         print_on_language(1, 56)]
 
     # Translated dataset parameters
