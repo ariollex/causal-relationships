@@ -139,8 +139,6 @@ def change_language(back_btn=None, delayed_start_var=False):
             Button(window, text=files[i].replace('strings_', '').replace('.xlsx', ''),
                    command=lambda j=i: change_language_process(files, j, delayed_start_var)).grid(column=0, row=count_row)
             count_row = count_row + 1
-    Label(window, text='Please note that if the dataset and the program language are different, there may be errors.') \
-        .grid(column=0, row=count_row + 1)
     column_btn = 0
     translated = False
     if back_btn:
