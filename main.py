@@ -6,6 +6,7 @@ from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
 import webbrowser
 import requests
+import zipfile
 import os
 
 import error
@@ -25,7 +26,7 @@ modes, available_graphs, list_incidents, parameters_dataset, parameters_dataset_
 if not os.path.exists('configuration'):
     url_configuration = 'https://raw.githubusercontent.com/Ariollex/causal-relationships-in-school/main/configuration'
     messagebox.showwarning('Warning!', 'The configuration file was not found. Downloading from ' + url_configuration)
-    response = requests.get(url_configuration)
+    response = requests.get(url_configuration, timeout=None)
     with open('configuration', "wb") as file:
         file.write(response.content)
 
@@ -51,12 +52,20 @@ version = 'v' + version + '-' + prefix
 
 # Language
 if not os.path.exists('languages') or not os.listdir('languages'):
-    messagebox.showerror('Error', 'Missing language files')
-    exit()
+    url_languages = \
+        'https://raw.githubusercontent.com/Ariollex/causal-relationships-in-school/main/languages/languages.zip'
+    messagebox.showwarning('Warning!', 'The language files was not found. Downloading from ' + url_languages)
+    response = requests.get(url_languages, timeout=None)
+    with open('languages-' + version, "wb") as file:
+        file.write(response.content)
+    archive = 'languages-' + version
+    with zipfile.ZipFile(archive, 'r') as zip_file:
+        zip_file.extractall('languages')
+    os.remove(archive)
 
 language = calculations.read_from_configuration(2)
 if not set_language(language):
-    delayed_start.insert(0, 'invalid_language')
+    delayed_start.append('invalid_language')
     language_status = 'undefined'
 else:
     language_status = 'active'
