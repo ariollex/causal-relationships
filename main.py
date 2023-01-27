@@ -137,7 +137,8 @@ def change_language(back_btn=None, delayed_start_var=False):
     for i in range(len(files)):
         if files[i][:8] == 'strings_':
             Button(window, text=files[i].replace('strings_', '').replace('.xlsx', ''),
-                   command=lambda j=i: change_language_process(files, j, delayed_start_var)).grid(column=0, row=count_row)
+                   command=lambda j=i: change_language_process(files, j, delayed_start_var))\
+                .grid(column=0, row=count_row)
             count_row = count_row + 1
     column_btn = 0
     translated = False
@@ -301,7 +302,7 @@ def mode_selection():
 
     # Program operation mode selection
     Button(window, text=modes[0], command=mode_causal_relationship).grid(column=0, row=1)
-    Button(window, text=modes[1], command=mode_graph).grid(column=0, row=2)
+    Button(window, text=modes[1], command=mode_chart).grid(column=0, row=2)
     Button(window, text=print_on_language(1, 31), command=settings).grid(column=0, row=3)
     exit_button(0, 4)
 
@@ -339,19 +340,19 @@ def mode_causal_relationship_process(user_selection, info):
     exit_button(1, 2)
 
 
-def mode_graph():
+def mode_chart():
     clear_window()
     list_graphs_numbered = print_data.print_selection_list(available_charts)
     Label(window, text=print_on_language(1, 10) + ':')
     count_row = len(list_graphs_numbered)
     for i in range(count_row):
-        Button(window, text=list_graphs_numbered[i], command=lambda j=i: mode_graph_process(j)) \
+        Button(window, text=list_graphs_numbered[i], command=lambda j=i: mode_chart_process(j)) \
             .grid(column=0, row=i + 1, sticky=W)
     back_button(0, count_row + 1)
     exit_button(1, count_row + 1)
 
 
-def mode_graph_process(choice_chart):
+def mode_chart_process(choice_chart):
     charts.set_variables(list_incidents, causes, parallel, name_columns, previous_causes)
     charts.chart_selection(choice_chart, data)
     count_row = len(available_charts)
