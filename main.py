@@ -276,17 +276,22 @@ def settings():
     exit_button(1, 1)
 
 
-def open_source_code():
-    webbrowser.open_new('https://github.com/Ariollex/causal-relationships-in-school')
+def open_link(link):
+    webbrowser.open_new(link)
 
 
 def about_program():
     clear_window()
     Label(window, text=print_on_language(1, 15)).grid(column=0, row=0)
-    Label(window, text=print_on_language(1, 44) + ': ' + version).grid(column=0, row=1)
-    Label(window, text=print_on_language(1, 45) + ': ' + 'Artem Agapkin').grid(column=0, row=2)
+    Button(window, text=print_on_language(1, 44) + ': ' + version,
+           command=lambda: open_link('https://github.com/Ariollex/causal-relationships-in-school/releases'))\
+        .grid(column=0, row=1)
+    Button(window, text=print_on_language(1, 45) + ': Artem Agapkin',
+           command=lambda: open_link('https://github.com/Ariollex'))\
+        .grid(column=0, row=2)
     Button(window, text=print_on_language(1, 46) + ': ' + 'https://github.com/Ariollex/causal-relationships-in-school',
-           command=open_source_code).grid(column=0, row=3)
+           command=lambda: open_link('https://github.com/Ariollex/causal-relationships-in-school'))\
+        .grid(column=0, row=3)
     back_button(0, 1, back_command=lambda: settings())
     exit_button(1, 1)
 
