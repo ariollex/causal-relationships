@@ -45,6 +45,9 @@ version = 'v' + version + '-' + prefix
 language = calculations.read_from_configuration(2)
 if not set_language(language):
     delayed_start.insert(0, 'invalid_language')
+    language_status = 'undefined'
+else:
+    language_status = 'active'
 
 # Dataset
 file_loc = calculations.read_from_configuration(10)
@@ -63,9 +66,11 @@ def set_dataset_parameters(file_location):
 
 if 'invalid_path_dataset' not in delayed_start:
     data, name_columns = set_dataset_parameters(file_loc)
+else:
+    data = None
 
 # Dataset settings
-if not ('invalid_parameters_values' in delayed_start):
+if 'invalid_parameters_values' not in delayed_start and data is not None:
     name = data[int(calculations.read_from_configuration(3)) - 1]
     sex = data[int(calculations.read_from_configuration(4)) - 1]
     parallel = data[int(calculations.read_from_configuration(5)) - 1]
@@ -133,13 +138,13 @@ def clear_window(message=None):
 
 
 def change_language_process(files, index_language, delayed_start_var=False):
+    global language_status, delayed_start
     new_language = files[index_language].replace('strings_', '').replace('.xlsx', '')
     set_language(new_language)
+    language_status = 'active'
     if delayed_start_var:
-        fix_configuration()
-    else:
-        start_variables()
-        mode_selection()
+        delayed_start.remove('invalid_language')
+    start_variables()
 
 
 def exit_screen(message=None):
@@ -150,17 +155,17 @@ def exit_screen(message=None):
 
 def apply_dataset(changes, delayed_start_var=False):
     if file_loc is None:
-        messagebox.showerror('Error!', 'Undefined dataset')
+        messagebox.showerror(print_on_language(1, 41), print_on_language(1, 55))
         return
     supported_parameters = calculations.get_supported_parameters()
     for i in range(len(parameters_dataset)):
         if not changes[i].get().isdigit() or not 0 < int(changes[i].get()) < len(parameters_dataset) + 1:
-            messagebox.showerror("Error", "Incorrect column values")
+            messagebox.showerror(print_on_language(1, 41), print_on_language(1, 53))
             return
         else:
             change_configuration(supported_parameters[3 + i], indexes[3 + i], changes[i].get())
     if len(calculations.check_configuration(only_dataset=True)) != 0:
-        messagebox.showerror("Error", "Incorrect column values or incorrect dataset")
+        messagebox.showerror(print_on_language(1, 41), print_on_language(1, 54))
         return
     else:
         global list_incidents, name, sex, parallel, letter, causes, time_causes, previous_causes, configuration
@@ -189,7 +194,7 @@ def apply_dataset(changes, delayed_start_var=False):
         mode_selection()
     else:
         start_variables()
-        messagebox.showinfo(title='Success', message='Successfully applied')
+        messagebox.showinfo(title=print_on_language(1, 51), message=print_on_language(1, 52))
         fix_configuration()
 
 
@@ -203,67 +208,46 @@ def check_dataset(new_file_loc):
     return True
 
 
-def change_dataset(count_row, translated=True):
+def change_dataset(count_row):
     global data, name_columns, file_loc
     new_file_loc = askopenfilename()
     if new_file_loc != '':
         if not check_dataset(new_file_loc):
-            if translated:
-                messagebox.showerror(print_on_language(1, 41), print_on_language(1, 42))
-            else:
-                messagebox.showerror('Error', 'Broken dataset')
+            messagebox.showerror(print_on_language(1, 41), print_on_language(1, 42))
             return
         data, name_columns = set_dataset_parameters(new_file_loc)
         change_configuration('dataset_path', indexes[10], new_file_loc)
         file_loc = new_file_loc
     window.winfo_children()[-2].destroy()
-    if translated:
-        Label(window, text=print_on_language(1, 34) + ': ' + str(file_loc)).grid(column=0, row=count_row + 1)
-        Button(window, text=print_on_language(1, 35), command=lambda: change_dataset(count_row)) \
-            .grid(column=1, row=count_row + 1)
-    else:
-        Label(window, text='Current dataset: ' + str(file_loc)).grid(column=0, row=count_row + 1)
-        Button(window, text='Change', command=lambda: change_dataset(count_row, translated=False))
+    Label(window, text=print_on_language(1, 34) + ': ' + str(file_loc)).grid(column=0, row=count_row + 1)
+    Button(window, text=print_on_language(1, 35), command=lambda: change_dataset(count_row)) \
+        .grid(column=1, row=count_row + 1)
 
 
 def settings_dataset(buttons=True):
     global parameters_dataset
     clear_window()
-    if not buttons:
-        Label(window, text='Column numbers in dataset').grid(column=0, row=0)
-    else:
-        Label(window, text=print_on_language(1, 33)).grid(column=0, row=0)
+    Label(window, text=print_on_language(1, 33)).grid(column=0, row=0)
     count_row = 1
     parameters_dataset = calculations.get_parameters_dataset()
     entries = []
     for i in range(len(parameters_dataset)):
         v = StringVar(root, value=str(configuration[indexes[3 + i]][str(configuration[indexes[3 + i]]).find("'") + 1:
                                                                     str(configuration[indexes[3 + i]]).rfind("'")]))
-        if buttons:
-            Label(window, text=parameters_dataset_translated[i]).grid(column=0, row=count_row, sticky=W)
-        else:
-            Label(window, text=parameters_dataset[i]).grid(column=0, row=count_row, sticky=W)
+        Label(window, text=parameters_dataset_translated[i]).grid(column=0, row=count_row, sticky=W)
         value_entry = Entry(window, textvariable=v)
         entries.append(value_entry)
         value_entry.grid(column=1, row=count_row)
         count_row = count_row + 1
+    Label(window, text=print_on_language(1, 34) + ': ' + str(file_loc)).grid(column=0, row=count_row + 1)
+    Button(window, text=print_on_language(1, 35), command=lambda: change_dataset(count_row)) \
+        .grid(column=1, row=count_row + 1)
     if not buttons:
-        Label(window, text='Current dataset: ' + str(file_loc)).grid(column=0, row=count_row + 1)
-        Button(window, text='Change', command=lambda: change_dataset(count_row, translated=False))
-    else:
-        Label(window, text=print_on_language(1, 34) + ': ' + str(file_loc)).grid(column=0, row=count_row + 1)
-        Button(window, text=print_on_language(1, 35), command=lambda: change_dataset(count_row)) \
-            .grid(column=1, row=count_row + 1)
-    if not buttons:
-        if file_loc is None:
-            Button(window, text='Change', command=lambda: change_dataset(count_row, translated=False)) \
-                .grid(column=1, row=count_row + 1)
-        Button(button_frame, text='Apply', command=lambda: apply_dataset(entries, delayed_start_var=True)). \
-            grid(column=0, row=count_row + 2)
-        exit_button(1, count_row + 2, False)
+        Button(button_frame, text=print_on_language(1, 50),
+               command=lambda: apply_dataset(entries, delayed_start_var=True)).grid(column=0, row=count_row + 2)
     else:
         back_button(0, count_row + 2, back_command=lambda: apply_dataset(entries))
-        exit_button(1, count_row + 2)
+    exit_button(1, count_row + 2)
 
 
 def settings():
@@ -276,7 +260,7 @@ def settings():
 
 
 def open_source_code():
-    webbrowser.open_new("https://github.com/Ariollex/causal-relationships-in-school")
+    webbrowser.open_new('https://github.com/Ariollex/causal-relationships-in-school')
 
 
 def about_program():
@@ -355,16 +339,12 @@ def mode_graph_process(choice_graph):
 
 
 def start_variables():
-    global modes, available_graphs, list_incidents, parameters_dataset_translated
+    global modes, available_graphs, parameters_dataset_translated, list_incidents
     # Modes
     modes = [print_on_language(1, 8), print_on_language(1, 9)]
 
     # Available graphs
     available_graphs = [print_on_language(1, 5), print_on_language(1, 18), print_on_language(1, 19)]
-
-    # Creating a list of incidents
-    list_incidents = calculations.make_list_incidents(data, name, sex, parallel, letter, causes,
-                                                      time_causes, previous_causes)
 
     # Translated dataset parameters
     parameters_dataset_translated = [print_on_language(1, 36), print_on_language(1, 37), print_on_language(1, 17),
@@ -372,26 +352,46 @@ def start_variables():
                                      print_on_language(1, 40)]
 
     root.title(print_on_language(1, 15) + ', ' + version)
-    mode_selection()
+
+    if configuration_status == 'normal':
+        # Creating a list of incidents
+        list_incidents = calculations.make_list_incidents(data, name, sex, parallel, letter, causes,
+                                                          time_causes, previous_causes)
+        mode_selection()
+    else:
+        fix_configuration()
 
 
 def fix_configuration():
-    if len(delayed_start) == 0:
-        start_variables()
-    elif 'invalid_language' in delayed_start:
+    global list_incidents, language_status, configuration_status
+    # Language
+    if 'invalid_language' in delayed_start:
+        root.update()
         messagebox.showwarning('Warning', 'The language is not defined. Please select a language.')
         change_language(delayed_start_var=True)
-        delayed_start.remove('invalid_language')
+    elif language_status != 'active':
+        language_status = 'active'
+        start_variables()
+    # Invalid path dataset
     elif 'invalid_path_dataset' in delayed_start:
-        messagebox.showwarning('Warning', 'The dataset is not defined. Please select a dataset and its characteristics.'
-                               )
+        root.update()
+        messagebox.showwarning(print_on_language(1, 47), print_on_language(1, 48))
         settings_dataset(buttons=False)
         delayed_start.remove('invalid_path_dataset')
         delayed_start.remove('invalid_parameters_values')
+    # Invalid parameters_values
     elif 'invalid_parameters_values' in delayed_start:
-        messagebox.showwarning('Warning', 'The dataset is not defined. Please select a dataset characteristics.')
+        root.update()
+        messagebox.showwarning(print_on_language(1, 47), print_on_language(1, 49))
         settings_dataset(buttons=False)
         delayed_start.remove('invalid_parameters_values')
+    # check for normal status
+    elif len(delayed_start) == 0:
+        # Creating a list of incidents
+        list_incidents = calculations.make_list_incidents(data, name, sex, parallel, letter, causes,
+                                                          time_causes, previous_causes)
+        configuration_status = 'normal'
+        mode_selection()
 
 
 root = Tk()
@@ -403,7 +403,10 @@ button_frame.pack()
 
 if len(delayed_start) != 0:
     root.title('Causal relationships in school, ' + version)
+    configuration_status = 'break'
+    language_status = 'break'
     fix_configuration()
 else:
+    configuration_status = 'normal'
     start_variables()
 root.mainloop()
