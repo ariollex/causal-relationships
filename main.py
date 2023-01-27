@@ -50,6 +50,10 @@ prefix = calculations.read_from_configuration(1)
 version = 'v' + version + '-' + prefix
 
 # Language
+if not os.path.exists('languages') or not os.listdir('languages'):
+    messagebox.showerror('Error', 'Missing language files')
+    exit()
+
 language = calculations.read_from_configuration(2)
 if not set_language(language):
     delayed_start.insert(0, 'invalid_language')
