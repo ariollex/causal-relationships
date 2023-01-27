@@ -92,11 +92,11 @@ def back_button(column_btn, count_row, translated=True, back_command=lambda: mod
     exit_btn.grid(column=column_btn, row=count_row, padx=5, pady=5)
 
 
-def exit_button(column_btn, count_row, translated=True):
+def exit_button(column_btn, count_row, translated=True, exit_command=lambda: exit()):
     if not translated:
-        exit_btn = Button(button_frame, text='Exit', command=exit)
+        exit_btn = Button(button_frame, text='Exit', command=exit_command)
     else:
-        exit_btn = Button(button_frame, text=print_on_language(1, 21), command=exit)
+        exit_btn = Button(button_frame, text=print_on_language(1, 21), command=exit_command)
     exit_btn.grid(column=column_btn, row=count_row, padx=5, pady=5)
 
 
@@ -153,7 +153,7 @@ def exit_screen(message=None):
     exit_button(0, 1)
 
 
-def apply_dataset(changes, delayed_start_var=False):
+def apply_dataset(changes, delayed_start_var=False, apply_exit=None):
     if file_loc is None:
         messagebox.showerror(print_on_language(1, 41), print_on_language(1, 55))
         return
@@ -190,7 +190,9 @@ def apply_dataset(changes, delayed_start_var=False):
         # Re-creating a list of incidents
         list_incidents = calculations.make_list_incidents(data, name, sex, parallel, letter, causes,
                                                           time_causes, previous_causes)
-    if not delayed_start_var:
+    if apply_exit:
+        exit()
+    elif not delayed_start_var:
         settings()
     else:
         start_variables()
@@ -247,7 +249,7 @@ def settings_dataset(buttons=True):
                command=lambda: apply_dataset(entries, delayed_start_var=True)).grid(column=0, row=count_row + 2)
     else:
         back_button(0, count_row + 2, back_command=lambda: apply_dataset(entries))
-    exit_button(1, count_row + 2)
+    exit_button(1, count_row + 2, exit_command=lambda: apply_dataset(entries, apply_exit=True))
 
 
 def settings():
