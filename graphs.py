@@ -2,13 +2,15 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from strings import print_on_language
 
-list_incidents, causes, parallel, name_columns, language_texts = [], [], [], [], []
+list_incidents, causes, parallel, name_columns, language_texts, previous_causes = [], [], [], [], [], []
 
 
-def set_variables(example_list_incidents, example_causes, example_parallel, example_name_columns):
-    global list_incidents, causes, parallel, name_columns
+def set_variables(example_list_incidents, example_causes, example_parallel, example_name_columns,
+                  example_previous_causes):
+    global list_incidents, causes, parallel, name_columns, previous_causes
     name_columns = example_name_columns
-    list_incidents, causes, parallel = example_list_incidents, example_causes, example_parallel
+    list_incidents, causes, parallel, = example_list_incidents, example_causes, example_parallel
+    previous_causes = example_previous_causes
 
 
 def graph_selection(choice_graph, data):
@@ -19,6 +21,17 @@ def graph_selection(choice_graph, data):
         graph_incidents_on_parallel(data)
     elif choice_graph == 2:
         correlation_graph(data)
+    elif choice_graph == 3:
+        boxplot(data)
+
+
+def boxplot(data):
+    global previous_causes
+    previous_causes = previous_causes  # Исправляет предупреждение
+    incident_count = previous_causes.value_counts().sort_values(ascending=False).index.values
+    sns.boxplot(y=previous_causes, x=parallel, data=data[previous_causes.isin(incident_count)], orient="h")
+    plt.legend([], loc='upper right', title='2 - ' + str(name_columns[2]) + '\n6 - ' + str(name_columns[6]))
+    plt.show()
 
 
 def graph_number_of_incidents_to_students(data):

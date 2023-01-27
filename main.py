@@ -353,7 +353,7 @@ def mode_graph():
 
 
 def mode_graph_process(choice_graph):
-    graphs.set_variables(list_incidents, causes, parallel, name_columns)
+    graphs.set_variables(list_incidents, causes, parallel, name_columns, previous_causes)
     graphs.graph_selection(choice_graph, data)
     count_row = len(available_graphs)
     back_button(0, count_row + 1)
@@ -366,7 +366,8 @@ def start_variables():
     modes = [print_on_language(1, 8), print_on_language(1, 9)]
 
     # Available graphs
-    available_graphs = [print_on_language(1, 5), print_on_language(1, 18), print_on_language(1, 19)]
+    available_graphs = [print_on_language(1, 5), print_on_language(1, 18), print_on_language(1, 19),
+                        print_on_language(1, 56)]
 
     # Translated dataset parameters
     parameters_dataset_translated = [print_on_language(1, 36), print_on_language(1, 37), print_on_language(1, 17),
