@@ -122,7 +122,7 @@ def change_language(back_btn=None, delayed_start_var=False):
     column_btn = 0
     translated = False
     if back_btn:
-        back_button(column_btn, count_row + 2)
+        back_button(column_btn, count_row + 2, back_command=lambda: settings())
         column_btn = column_btn + 1
         translated = True
     exit_button(column_btn, count_row + 2, translated)
@@ -191,7 +191,7 @@ def apply_dataset(changes, delayed_start_var=False):
         list_incidents = calculations.make_list_incidents(data, name, sex, parallel, letter, causes,
                                                           time_causes, previous_causes)
     if not delayed_start_var:
-        mode_selection()
+        settings()
     else:
         start_variables()
         messagebox.showinfo(title=print_on_language(1, 51), message=print_on_language(1, 52))
@@ -270,7 +270,7 @@ def about_program():
     Label(window, text=print_on_language(1, 45) + ': ' + 'Artem Agapkin').grid(column=0, row=2)
     Button(window, text=print_on_language(1, 46) + ': ' + 'https://github.com/Ariollex/causal-relationships-in-school',
            command=open_source_code).grid(column=0, row=3)
-    back_button(0, 1)
+    back_button(0, 1, back_command=lambda: settings())
     exit_button(1, 1)
 
 
@@ -314,7 +314,7 @@ def mode_causal_relationship_process(user_selection, info):
 
     # Calculations: conclusions
     Label(window, text=calculations.conclusions(list_incidents, user_selection, info)).grid(column=0, row=1)
-    back_button(0, 2)
+    back_button(0, 2, back_command=lambda: mode_causal_relationship())
     exit_button(1, 2)
 
 
