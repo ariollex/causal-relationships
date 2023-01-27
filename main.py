@@ -48,6 +48,9 @@ if not set_language(language):
 
 # Dataset
 file_loc = calculations.read_from_configuration(10)
+if not os.path.exists(file_loc):
+    delayed_start.append('invalid_path_dataset')
+    file_loc = None
 
 
 def set_dataset_parameters(file_location):
@@ -58,7 +61,8 @@ def set_dataset_parameters(file_location):
     return dataset, dataset_name_columns
 
 
-data, name_columns = set_dataset_parameters(file_loc)
+if 'invalid_path_dataset' not in delayed_start:
+    data, name_columns = set_dataset_parameters(file_loc)
 
 # Dataset settings
 if not ('invalid_parameters_values' in delayed_start):
@@ -145,6 +149,9 @@ def exit_screen(message=None):
 
 
 def apply_dataset(changes, delayed_start_var=False):
+    if file_loc is None:
+        messagebox.showerror('Error!', 'Undefined dataset')
+        return
     supported_parameters = calculations.get_supported_parameters()
     for i in range(len(parameters_dataset)):
         if not changes[i].get().isdigit() or not 0 < int(changes[i].get()) < len(parameters_dataset) + 1:
@@ -211,11 +218,11 @@ def change_dataset(count_row, translated=True):
         file_loc = new_file_loc
     window.winfo_children()[-2].destroy()
     if translated:
-        Label(window, text=print_on_language(1, 34) + ': ' + file_loc).grid(column=0, row=count_row + 1)
+        Label(window, text=print_on_language(1, 34) + ': ' + str(file_loc)).grid(column=0, row=count_row + 1)
         Button(window, text=print_on_language(1, 35), command=lambda: change_dataset(count_row)) \
             .grid(column=1, row=count_row + 1)
     else:
-        Label(window, text='Current dataset: ' + file_loc).grid(column=0, row=count_row + 1)
+        Label(window, text='Current dataset: ' + str(file_loc)).grid(column=0, row=count_row + 1)
         Button(window, text='Change', command=lambda: change_dataset(count_row, translated=False))
 
 
@@ -241,14 +248,17 @@ def settings_dataset(buttons=True):
         value_entry.grid(column=1, row=count_row)
         count_row = count_row + 1
     if not buttons:
-        Label(window, text='Current dataset: ' + file_loc).grid(column=0, row=count_row + 1)
+        Label(window, text='Current dataset: ' + str(file_loc)).grid(column=0, row=count_row + 1)
         Button(window, text='Change', command=lambda: change_dataset(count_row, translated=False))
     else:
-        Label(window, text=print_on_language(1, 34) + ': ' + file_loc).grid(column=0, row=count_row + 1)
+        Label(window, text=print_on_language(1, 34) + ': ' + str(file_loc)).grid(column=0, row=count_row + 1)
         Button(window, text=print_on_language(1, 35), command=lambda: change_dataset(count_row)) \
             .grid(column=1, row=count_row + 1)
     if not buttons:
-        Button(window, text='Apply', command=lambda: apply_dataset(entries, delayed_start_var=True)). \
+        if file_loc is None:
+            Button(window, text='Change', command=lambda: change_dataset(count_row, translated=False)) \
+                .grid(column=1, row=count_row + 1)
+        Button(button_frame, text='Apply', command=lambda: apply_dataset(entries, delayed_start_var=True)). \
             grid(column=0, row=count_row + 2)
         exit_button(1, count_row + 2, False)
     else:
@@ -371,6 +381,10 @@ def fix_configuration():
     elif 'invalid_language' in delayed_start:
         change_language(delayed_start_var=True)
         delayed_start.remove('invalid_language')
+    elif 'invalid_path_dataset' in delayed_start:
+        settings_dataset(buttons=False)
+        delayed_start.remove('invalid_path_dataset')
+        delayed_start.remove('invalid_parameters_values')
     elif 'invalid_parameters_values' in delayed_start:
         settings_dataset(buttons=False)
         delayed_start.remove('invalid_parameters_values')
