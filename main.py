@@ -5,6 +5,7 @@ from tkinter import *
 from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
 import webbrowser
+import requests
 import os
 
 import error
@@ -21,7 +22,14 @@ delayed_start = []
 modes, available_graphs, list_incidents, parameters_dataset, parameters_dataset_translated = [], [], [], [], []
 
 # Configuration
-configuration = open("configuration", 'r').read().split('\n')
+if not os.path.exists('configuration'):
+    url_configuration = 'https://raw.githubusercontent.com/Ariollex/causal-relationships-in-school/main/configuration'
+    messagebox.showwarning('Warning!', 'The configuration file was not found. Downloading from ' + url_configuration)
+    response = requests.get(url_configuration)
+    with open('configuration', "wb") as file:
+        file.write(response.content)
+
+configuration = open('configuration', 'r').read().split('\n')
 calculations.set_variables(configuration)
 indexes, warnings, missing_parameters = calculations.check_configuration()
 if len(warnings) != 0:
@@ -145,12 +153,6 @@ def change_language_process(files, index_language, delayed_start_var=False):
     if delayed_start_var:
         delayed_start.remove('invalid_language')
     start_variables()
-
-
-def exit_screen(message=None):
-    if message is not None:
-        clear_window(message)
-    exit_button(0, 1)
 
 
 def apply_dataset(changes, delayed_start_var=False, apply_exit=None):
