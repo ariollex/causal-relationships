@@ -149,10 +149,28 @@ def change_language(back_btn=None, delayed_start_var=False):
     exit_button(column_btn, count_row + 2, translated)
 
 
+def disable_scroll():
+    scrollbar.pack_forget()
+    container.pack_forget()
+
+
+def active_scroll():
+    setup_scroll()
+    canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+    canvas.configure(yscrollcommand=scrollbar.set, scrollregion=canvas.bbox(ALL))
+    container.pack()
+    canvas.pack(side="left", fill="both", expand=True)
+    scrollbar.pack(side="right", fill="y")
+    scrollbar.config()
+
+
 def clear_window(message=None):
+    disable_scroll()
     for widget in button_frame.winfo_children():
         widget.destroy()
     for widget in window.winfo_children():
+        widget.destroy()
+    for widget in scrollable_frame.winfo_children():
         widget.destroy()
     if message is not None:
         Label(window, text=message, fg='red').grid(column=0, row=0)
@@ -318,30 +336,32 @@ def mode_causal_relationship():
     info = []
     list_incidents_numbered = print_data.print_list_incidents(list_incidents)
     Label(window, text=print_on_language(1, 0)).grid(column=0, row=0)
+    active_scroll()
     count_row = len(list_incidents_numbered)
     for i in range(count_row):
-        Button(window, text=list_incidents_numbered[i], command=lambda j=i: mode_causal_relationship_process(j, info)) \
-            .grid(column=0, row=i + 1, sticky=W)
+        Button(scrollable_frame, text=list_incidents_numbered[i],
+               command=lambda j=i: mode_causal_relationship_process(j, info)).grid(column=0, row=i + 1, sticky=W)
     back_button(0, count_row + 1)
     exit_button(1, count_row + 1)
 
 
 def mode_causal_relationship_process(user_selection, info):
     clear_window()
+    active_scroll()
     if list_incidents[user_selection][1] == print_on_language(1, 4) or (print_on_language(3, 2) == 0):
         user_choice_text = print_on_language(1, 2) + ' ' + str(user_selection + 1) + '. ' + print_on_language(2, 2) + \
                            ': ' + str(list_incidents[user_selection][0])
     else:
         user_choice_text = print_on_language(1, 2) + ' ' + str(user_selection + 1) + '. ' + print_on_language(3, 2) + \
                            ': ' + str(list_incidents[user_selection][0])
-    Label(window, text=user_choice_text).grid(column=0, row=0, sticky=W)
+    Label(scrollable_frame, text=user_choice_text).grid(column=0, row=0, sticky=W)
 
     # Calculations: search for matching information
     calculations.intersection_of_classes(list_incidents, user_selection, info, 0)
     calculations.intersection_of_time(list_incidents, user_selection, info, 0)
 
     # Calculations: conclusions
-    Label(window, text=calculations.conclusions(list_incidents, user_selection, info)).grid(column=0, row=1)
+    Label(scrollable_frame, text=calculations.conclusions(list_incidents, user_selection, info)).grid(column=0, row=1)
     back_button(0, 2, back_command=lambda: mode_causal_relationship())
     exit_button(1, 2)
 
@@ -427,8 +447,31 @@ root = Tk()
 root.minsize(500, 150)
 window = Frame(root)
 window.pack(expand=True)
+
+container = Frame(root)
+canvas = Canvas(container)
+scrollbar = Scrollbar(container, orient="vertical", command=canvas.yview)
+scrollable_frame = Frame(canvas)
+
+
+def setup_scroll():
+    global container, canvas, scrollbar, scrollable_frame
+    container = Frame(root)
+    canvas = Canvas(container)
+    scrollbar = Scrollbar(container, orient="vertical", command=canvas.yview)
+    scrollable_frame = Frame(canvas)
+
+    scrollable_frame.bind(
+        "<Configure>",
+        lambda e: canvas.configure(
+            scrollregion=canvas.bbox("all")
+        )
+    )
+
+
+setup_scroll()
 button_frame = Frame(root)
-button_frame.pack()
+button_frame.pack(side="bottom")
 
 if len(delayed_start) != 0:
     root.title('Causal relationships in school, ' + version)
