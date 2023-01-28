@@ -201,7 +201,13 @@ def apply_dataset(changes, delayed_start_var=False, apply_exit=None):
                                                              str(configuration[indexes[9]]).rfind("'")]) - 1]
         # Convert time
         for i in range(data.shape[0]):
-            time_causes[i] = int(str(time_causes[i]).replace(':', '')) if time_causes[i] != 0 else int(time_causes[i])
+            if str(time_causes[i]).replace(':', '').isdigit():
+                time_causes[i] = int(str(time_causes[i]).replace(':', '')) if time_causes[i] != 0 \
+                    else int(time_causes[i])
+            else:
+                messagebox.showerror(print_on_language(1, 41), print_on_language(1, 53))
+                return
+
         # Re-creating a list of incidents
         list_incidents = calculations.make_list_incidents(data, name, sex, parallel, letter, causes,
                                                           time_causes, previous_causes)
