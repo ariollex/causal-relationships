@@ -159,18 +159,26 @@ def change_language(back_btn=None, delayed_start_var=False):
 
 
 def disable_scroll():
-    scrollbar.pack_forget()
+    # h_scrollbar.pack_forget()
+    v_scrollbar.pack_forget()
     container.pack_forget()
 
 
 def active_scroll():
     setup_scroll()
     canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
-    canvas.configure(yscrollcommand=scrollbar.set, scrollregion=canvas.bbox(ALL))
+    canvas.configure(yscrollcommand=v_scrollbar.set, scrollregion=canvas.bbox(ALL))
     container.pack()
-    canvas.pack(side="left", fill="both", expand=True)
-    scrollbar.pack(side="right", fill="y")
-    scrollbar.config()
+    canvas.pack(side='left', fill='both')
+    v_scrollbar.pack(side="right", fill="y", expand=1)
+    # h_scrollbar.pack(side="bottom", fill="x")
+    v_scrollbar.config()
+    # h_scrollbar.config()
+
+
+# bind scrolling to mousewheel
+# def _scroll_canvas(event):
+#     canvas.yview_scroll(-1 * (int(event.delta / 100)), "units")
 
 
 def clear_window(message=None):
@@ -351,7 +359,7 @@ def mode_causal_relationship_process(user_selection, info):
     else:
         user_choice_text = print_on_language(1, 2) + ' ' + str(user_selection + 1) + '. ' + print_on_language(3, 2) + \
                            ': ' + str(list_incidents[user_selection][0])
-    Label(scrollable_frame, text=user_choice_text).grid(column=0, row=0, sticky=W)
+    Label(window, text=user_choice_text).grid(column=0, row=0, sticky=W)
 
     # Calculations: search for matching information
     calculations.intersection_of_classes(list_incidents, user_selection, info, 0)
@@ -447,26 +455,23 @@ root = Tk()
 root.minsize(500, 150)
 window = Frame(root)
 window.pack(expand=True)
-
 container = Frame(root)
 canvas = Canvas(container)
-scrollbar = Scrollbar(container, orient="vertical", command=canvas.yview)
+v_scrollbar = Scrollbar(container, orient="vertical", command=canvas.yview)
+h_scrollbar = Scrollbar(container, orient="horizontal", command=canvas.xview)
 scrollable_frame = Frame(canvas)
 
 
 def setup_scroll():
-    global container, canvas, scrollbar, scrollable_frame
+    global container, canvas, v_scrollbar, h_scrollbar, scrollable_frame
     container = Frame(root)
+    container.pack()
     canvas = Canvas(container)
-    scrollbar = Scrollbar(container, orient="vertical", command=canvas.yview)
+    v_scrollbar = Scrollbar(container, orient="vertical", command=canvas.yview)
+    # h_scrollbar = Scrollbar(container, orient="horizontal", command=canvas.xview)
     scrollable_frame = Frame(canvas)
-
-    scrollable_frame.bind(
-        "<Configure>",
-        lambda e: canvas.configure(
-            scrollregion=canvas.bbox("all")
-        )
-    )
+    scrollable_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+    # root.bind_all("<MouseWheel>", _scroll_canvas)
 
 
 setup_scroll()
