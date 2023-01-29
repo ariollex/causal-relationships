@@ -90,8 +90,9 @@ if 'invalid_path_dataset' not in delayed_start:
 else:
     data = None
 
-# Dataset settings
-if 'invalid_parameters_values' not in delayed_start and data is not None:
+
+def set_dataset_parameters():
+    global name, sex, parallel, letter, causes, time_causes, previous_causes
     name = data[int(calculations.read_from_configuration(3)) - 1]
     sex = data[int(calculations.read_from_configuration(4)) - 1]
     parallel = data[int(calculations.read_from_configuration(5)) - 1]
@@ -100,6 +101,14 @@ if 'invalid_parameters_values' not in delayed_start and data is not None:
     time_causes = data[int(calculations.read_from_configuration(8)) - 1]
     previous_causes = data[int(calculations.read_from_configuration(9)) - 1]
 
+
+name, sex, parallel, letter, causes, time_causes, previous_causes = \
+    pandas.Index([]), pandas.Index([]), pandas.Index([]), pandas.Index([]), pandas.Index([]), pandas.Index([]), \
+    pandas.Index([])
+
+# Dataset settings
+if 'invalid_parameters_values' not in delayed_start and data is not None:
+    set_dataset_parameters()
     # Convert time
     for i in range(data.shape[0]):
         time_causes[i] = int(str(time_causes[i]).replace(':', '')) if time_causes[i] != 0 else int(time_causes[i])
@@ -137,7 +146,7 @@ def change_language(back_btn=None, delayed_start_var=False):
     for i in range(len(files)):
         if files[i][:8] == 'strings_':
             Button(window, text=files[i].replace('strings_', '').replace('.xlsx', ''),
-                   command=lambda j=i: change_language_process(files, j, delayed_start_var))\
+                   command=lambda j=i: change_language_process(files, j, delayed_start_var)) \
                 .grid(column=0, row=count_row)
             count_row = count_row + 1
     column_btn = 0
@@ -204,13 +213,7 @@ def apply_dataset(changes, delayed_start_var=False, apply_exit=None):
         global list_incidents, name, sex, parallel, letter, causes, time_causes, previous_causes, configuration
         configuration = open("configuration", 'r').read().split('\n')
         calculations.set_variables(configuration)
-        name = data[int(calculations.read_from_configuration(3)) - 1]
-        sex = data[int(calculations.read_from_configuration(4)) - 1]
-        parallel = data[int(calculations.read_from_configuration(5)) - 1]
-        letter = data[int(calculations.read_from_configuration(6)) - 1]
-        causes = data[int(calculations.read_from_configuration(7)) - 1]
-        time_causes = data[int(calculations.read_from_configuration(8)) - 1]
-        previous_causes = data[int(calculations.read_from_configuration(9)) - 1]
+        set_dataset_parameters()
         # Convert time
         for i in range(data.shape[0]):
             if str(time_causes[i]).replace(':', '').isdigit():
@@ -302,13 +305,13 @@ def about_program():
     clear_window()
     Label(window, text=print_on_language(1, 15)).grid(column=0, row=0)
     Button(window, text=print_on_language(1, 44) + ': ' + version,
-           command=lambda: open_link('https://github.com/Ariollex/causal-relationships-in-school/releases'))\
+           command=lambda: open_link('https://github.com/Ariollex/causal-relationships-in-school/releases')) \
         .grid(column=0, row=1)
     Button(window, text=print_on_language(1, 45) + ': Artem Agapkin',
-           command=lambda: open_link('https://github.com/Ariollex'))\
+           command=lambda: open_link('https://github.com/Ariollex')) \
         .grid(column=0, row=2)
     Button(window, text=print_on_language(1, 46) + ': ' + 'https://github.com/Ariollex/causal-relationships-in-school',
-           command=lambda: open_link('https://github.com/Ariollex/causal-relationships-in-school'))\
+           command=lambda: open_link('https://github.com/Ariollex/causal-relationships-in-school')) \
         .grid(column=0, row=3)
     back_button(0, 1, back_command=lambda: settings())
     exit_button(1, 1)
