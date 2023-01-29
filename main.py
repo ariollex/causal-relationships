@@ -203,20 +203,14 @@ def apply_dataset(changes, delayed_start_var=False, apply_exit=None):
     else:
         global list_incidents, name, sex, parallel, letter, causes, time_causes, previous_causes, configuration
         configuration = open("configuration", 'r').read().split('\n')
-        name = data[int(configuration[indexes[3]][str(configuration[indexes[3]]).find("'") + 1:
-                                                  str(configuration[indexes[3]]).rfind("'")]) - 1]
-        sex = data[int(configuration[indexes[4]][str(configuration[indexes[4]]).find("'") + 1:
-                                                 str(configuration[indexes[4]]).rfind("'")]) - 1]
-        parallel = data[int(configuration[indexes[5]][str(configuration[indexes[5]]).find("'") + 1:
-                                                      str(configuration[indexes[5]]).rfind("'")]) - 1]
-        letter = data[int(configuration[indexes[6]][str(configuration[indexes[6]]).find("'") + 1:
-                                                    str(configuration[indexes[6]]).rfind("'")]) - 1]
-        causes = data[int(configuration[indexes[7]][str(configuration[indexes[7]]).find("'") + 1:
-                                                    str(configuration[indexes[7]]).rfind("'")]) - 1]
-        time_causes = data[int(configuration[indexes[8]][str(configuration[indexes[8]]).find("'") + 1:
-                                                         str(configuration[indexes[8]]).rfind("'")]) - 1]
-        previous_causes = data[int(configuration[indexes[9]][str(configuration[indexes[9]]).find("'") + 1:
-                                                             str(configuration[indexes[9]]).rfind("'")]) - 1]
+        calculations.set_variables(configuration)
+        name = data[int(calculations.read_from_configuration(3)) - 1]
+        sex = data[int(calculations.read_from_configuration(4)) - 1]
+        parallel = data[int(calculations.read_from_configuration(5)) - 1]
+        letter = data[int(calculations.read_from_configuration(6)) - 1]
+        causes = data[int(calculations.read_from_configuration(7)) - 1]
+        time_causes = data[int(calculations.read_from_configuration(8)) - 1]
+        previous_causes = data[int(calculations.read_from_configuration(9)) - 1]
         # Convert time
         for i in range(data.shape[0]):
             if str(time_causes[i]).replace(':', '').isdigit():
@@ -372,6 +366,9 @@ def mode_chart():
     Label(window, text=print_on_language(1, 10) + ':')
     count_row = len(list_graphs_numbered)
     for i in range(count_row):
+        if i == 3:
+            if len(parallel.value_counts().values) < 7 or len(previous_causes.value_counts().values) < 7:
+                continue
         Button(window, text=list_graphs_numbered[i], command=lambda j=i: mode_chart_process(j)) \
             .grid(column=0, row=i + 1, sticky=W)
     back_button(0, count_row + 1)

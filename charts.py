@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
+import pandas
 import seaborn as sns
 from strings import print_on_language
+from calculations import read_from_configuration
 
 list_incidents, causes, parallel, name_columns, language_texts, previous_causes = [], [], [], [], [], []
 
@@ -23,16 +25,6 @@ def chart_selection(choice_graph, data):
         correlation_chart(data)
     elif choice_graph == 3:
         chart_boxplot(data)
-
-
-def chart_boxplot(data):
-    global previous_causes
-    previous_causes = previous_causes  # Исправляет предупреждение
-    incident_count = previous_causes.value_counts().sort_values(ascending=False).index.values
-    sns.boxplot(y=previous_causes, x=parallel, data=data[previous_causes.isin(incident_count)], orient="h")
-    plt.locator_params(axis='x', nbins=max(parallel) + 1)
-    plt.legend([], loc='upper right', title='2 - ' + str(name_columns[2]) + '\n6 - ' + str(name_columns[6]))
-    plt.show()
 
 
 def chart_number_of_incidents_to_students(data):
@@ -58,9 +50,33 @@ def chart_incidents_on_parallel(data):
 
 
 def correlation_chart(data):
-    sns.heatmap(data.drop([0, 1, 3], axis=1).corr(method='pearson', min_periods=1, numeric_only=False),
+    name_index = int(read_from_configuration(3)) - 1
+    sex_index = int(read_from_configuration(4)) - 1
+    letter_index = int(read_from_configuration(6)) - 1
+    parallel_index = int(read_from_configuration(5)) - 1
+    incidents_index = int(read_from_configuration(7)) - 1
+    time_index = int(read_from_configuration(8)) - 1
+    previous_causes_index = int(read_from_configuration(9)) - 1
+    sns.heatmap(data.drop([name_index, sex_index, letter_index], axis=1).corr(method='pearson', min_periods=1,
+                                                                              numeric_only=False),
                 linewidths=0.1, annot=True)
     plt.legend([], loc='upper right',
-               title='2 - ' + str(name_columns[2]) + '\n4 - ' + str(name_columns[4]) +
-                     '\n5 - ' + str(name_columns[5]) + '\n6 - ' + str(name_columns[6]))
+               title=str(parallel_index) + ' - ' + str(name_columns[parallel_index]) + '\n' +
+                       str(incidents_index) + ' - ' + str(name_columns[incidents_index]) + '\n' +
+                       str(time_index) + ' - ' + str(name_columns[time_index]) + '\n' +
+                       str(previous_causes_index) + ' - ' + str(name_columns[previous_causes_index]))
+    plt.show()
+
+
+def chart_boxplot(data):
+    global previous_causes, parallel
+    previous_causes_index = int(read_from_configuration(9)) - 1
+    parallel_index = int(read_from_configuration(5)) - 1
+    previous_causes = pandas.Index(previous_causes)
+    incident_count = previous_causes.value_counts().sort_values(ascending=False).index.values
+    sns.boxplot(y=previous_causes, x=parallel, data=data[previous_causes.isin(incident_count)], orient="h")
+    plt.locator_params(axis='x', nbins=max(parallel) + 1)
+    plt.legend([], loc='upper right',
+               title=str(parallel_index) + ' - ' + str(name_columns[parallel_index]) + '\n' +
+                       str(previous_causes_index) + ' - ' + str(name_columns[previous_causes_index]))
     plt.show()
