@@ -30,6 +30,7 @@ def chart_boxplot(data):
     previous_causes = previous_causes  # Исправляет предупреждение
     incident_count = previous_causes.value_counts().sort_values(ascending=False).index.values
     sns.boxplot(y=previous_causes, x=parallel, data=data[previous_causes.isin(incident_count)], orient="h")
+    plt.locator_params(axis='x', nbins=max(parallel) + 1)
     plt.legend([], loc='upper right', title='2 - ' + str(name_columns[2]) + '\n6 - ' + str(name_columns[6]))
     plt.show()
 
