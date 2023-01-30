@@ -46,8 +46,8 @@ if len(errors) > 0:
     delayed_start.append('invalid_parameters_values')
 
 # Version
-version = calculations.read_from_configuration(0)
-prefix = calculations.read_from_configuration(1)
+version = '0.2.1'
+prefix = 'alpha'
 version = 'v' + version + '-' + prefix
 
 # Language
@@ -63,7 +63,7 @@ if not os.path.exists('languages') or not os.listdir('languages'):
         zip_file.extractall('languages')
     os.remove(archive)
 
-language = calculations.read_from_configuration(2)
+language = calculations.read_from_configuration(0)
 if not set_language(language):
     delayed_start.append('invalid_language')
     language_status = 'undefined'
@@ -71,7 +71,7 @@ else:
     language_status = 'active'
 
 # Dataset
-file_loc = calculations.read_from_configuration(10)
+file_loc = calculations.read_from_configuration(8)
 if not os.path.exists(file_loc):
     delayed_start.append('invalid_path_dataset')
     file_loc = None
@@ -93,13 +93,13 @@ else:
 
 def set_dataset_parameters():
     global name, sex, parallel, letter, causes, time_causes, previous_causes
-    name = data[int(calculations.read_from_configuration(3)) - 1]
-    sex = data[int(calculations.read_from_configuration(4)) - 1]
-    parallel = data[int(calculations.read_from_configuration(5)) - 1]
-    letter = data[int(calculations.read_from_configuration(6)) - 1]
-    causes = data[int(calculations.read_from_configuration(7)) - 1]
-    time_causes = data[int(calculations.read_from_configuration(8)) - 1]
-    previous_causes = data[int(calculations.read_from_configuration(9)) - 1]
+    name = data[int(calculations.read_from_configuration(1)) - 1]
+    sex = data[int(calculations.read_from_configuration(2)) - 1]
+    parallel = data[int(calculations.read_from_configuration(3)) - 1]
+    letter = data[int(calculations.read_from_configuration(4)) - 1]
+    causes = data[int(calculations.read_from_configuration(5)) - 1]
+    time_causes = data[int(calculations.read_from_configuration(6)) - 1]
+    previous_causes = data[int(calculations.read_from_configuration(7)) - 1]
 
 
 name, sex, parallel, letter, causes, time_causes, previous_causes = \
@@ -213,7 +213,7 @@ def apply_dataset(changes, delayed_start_var=False, apply_exit=None):
             messagebox.showerror(print_on_language(1, 41), print_on_language(1, 53))
             return
         else:
-            change_configuration(supported_parameters[3 + i], indexes[3 + i], changes[i].get())
+            change_configuration(supported_parameters[1 + i], indexes[1 + i], changes[i].get())
     if len(calculations.check_configuration(only_dataset=True)) != 0:
         messagebox.showerror(print_on_language(1, 41), print_on_language(1, 54))
         return
@@ -262,7 +262,7 @@ def change_dataset(count_row):
             messagebox.showerror(print_on_language(1, 41), print_on_language(1, 42))
             return
         data, name_columns = set_dataset_parameters(new_file_loc)
-        change_configuration('dataset_path', indexes[10], new_file_loc)
+        change_configuration('dataset_path', indexes[8], new_file_loc)
         file_loc = new_file_loc
     window.winfo_children()[-2].destroy()
     Label(window, text=print_on_language(1, 34) + ': ' + str(file_loc)).grid(column=0, row=count_row + 1)
@@ -278,8 +278,8 @@ def settings_dataset(buttons=True):
     parameters_dataset = calculations.get_parameters_dataset()
     entries = []
     for i in range(len(parameters_dataset)):
-        v = StringVar(root, value=str(configuration[indexes[3 + i]][str(configuration[indexes[3 + i]]).find("'") + 1:
-                                                                    str(configuration[indexes[3 + i]]).rfind("'")]))
+        v = StringVar(root, value=str(configuration[indexes[1 + i]][str(configuration[indexes[1 + i]]).find("'") + 1:
+                                                                    str(configuration[indexes[1 + i]]).rfind("'")]))
         Label(window, text=parameters_dataset_translated[i]).grid(column=0, row=count_row, sticky=W)
         value_entry = Entry(window, textvariable=v)
         entries.append(value_entry)

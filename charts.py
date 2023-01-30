@@ -50,13 +50,13 @@ def chart_incidents_on_parallel(data):
 
 
 def correlation_chart(data):
-    name_index = int(read_from_configuration(3)) - 1
-    sex_index = int(read_from_configuration(4)) - 1
-    letter_index = int(read_from_configuration(6)) - 1
-    parallel_index = int(read_from_configuration(5)) - 1
-    incidents_index = int(read_from_configuration(7)) - 1
-    time_index = int(read_from_configuration(8)) - 1
-    previous_causes_index = int(read_from_configuration(9)) - 1
+    name_index = int(read_from_configuration(1)) - 1
+    sex_index = int(read_from_configuration(2)) - 1
+    parallel_index = int(read_from_configuration(3)) - 1
+    letter_index = int(read_from_configuration(4)) - 1
+    incidents_index = int(read_from_configuration(5)) - 1
+    time_index = int(read_from_configuration(6)) - 1
+    previous_causes_index = int(read_from_configuration(7)) - 1
     sns.heatmap(data.drop([name_index, sex_index, letter_index], axis=1).corr(method='pearson', min_periods=1,
                                                                               numeric_only=False),
                 linewidths=0.1, annot=True)
@@ -70,8 +70,8 @@ def correlation_chart(data):
 
 def chart_boxplot(data):
     global previous_causes, parallel
-    previous_causes_index = int(read_from_configuration(9)) - 1
-    parallel_index = int(read_from_configuration(5)) - 1
+    previous_causes_index = int(read_from_configuration(7)) - 1
+    parallel_index = int(read_from_configuration(3)) - 1
     previous_causes = pandas.Index(previous_causes)
     incident_count = previous_causes.value_counts().sort_values(ascending=False).index.values
     sns.boxplot(y=previous_causes, x=parallel, data=data[previous_causes.isin(incident_count)], orient="h")
