@@ -15,6 +15,11 @@ import print_data
 import charts
 from strings import set_language, set_variables, print_on_language
 
+# Version
+version = '0.2.1'
+prefix = 'alpha'
+version = 'v' + version + '-' + prefix
+
 # Disable warnings
 pandas.options.mode.chained_assignment = None
 
@@ -24,7 +29,12 @@ modes, available_charts, list_incidents, parameters_dataset, parameters_dataset_
 
 # Configuration
 if not os.path.exists('configuration'):
-    url_configuration = 'https://raw.githubusercontent.com/Ariollex/causal-relationships-in-school/main/configuration'
+    if prefix == '':
+        url_configuration = \
+            'https://raw.githubusercontent.com/Ariollex/causal-relationships-in-school/main/configuration'
+    else:
+        url_configuration = \
+            'https://raw.githubusercontent.com/Ariollex/causal-relationships-in-school/dev/configuration'
     messagebox.showwarning('Warning!', 'The configuration file was not found. Downloading from ' + url_configuration)
     response = requests.get(url_configuration, timeout=None)
     with open('configuration', "wb") as file:
@@ -45,15 +55,14 @@ if len(errors) > 0:
     [error.warning(errors[i]) for i in range(len(errors))]
     delayed_start.append('invalid_parameters_values')
 
-# Version
-version = '0.2.1'
-prefix = 'alpha'
-version = 'v' + version + '-' + prefix
-
 # Language
 if not os.path.exists('languages') or not os.listdir('languages'):
-    url_languages = \
-        'https://raw.githubusercontent.com/Ariollex/causal-relationships-in-school/main/languages/languages.zip'
+    if prefix == '':
+        url_languages = \
+            'https://raw.githubusercontent.com/Ariollex/causal-relationships-in-school/main/languages/languages.zip'
+    else:
+        url_languages = \
+            'https://raw.githubusercontent.com/Ariollex/causal-relationships-in-school/dev/languages/languages.zip'
     messagebox.showwarning('Warning!', 'The language files was not found. Downloading from ' + url_languages)
     response = requests.get(url_languages, timeout=None)
     with open('languages-' + version, "wb") as file:
