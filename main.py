@@ -201,6 +201,7 @@ def clear_window(message=None):
         widget.destroy()
     for widget in scrollable_frame.winfo_children():
         widget.destroy()
+    window.pack(expand=True)
     if message is not None:
         Label(window, text=message, fg='red').grid(column=0, row=0)
 
@@ -350,6 +351,7 @@ def mode_selection():
 
 def mode_causal_relationship():
     clear_window()
+    window.pack(expand=False)
     info = []
     list_incidents_numbered = print_data.print_list_incidents(list_incidents)
     Label(window, text=print_on_language(1, 0)).grid(column=0, row=0)
@@ -477,7 +479,7 @@ scrollable_frame = Frame(canvas)
 def setup_scroll():
     global container, canvas, v_scrollbar, h_scrollbar, scrollable_frame
     container = Frame(root)
-    container.pack()
+    container.pack(expand=True)
     canvas = Canvas(container)
     v_scrollbar = Scrollbar(container, orient="vertical", command=canvas.yview)
     # h_scrollbar = Scrollbar(container, orient="horizontal", command=canvas.xview)
