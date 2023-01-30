@@ -218,7 +218,10 @@ def change_language_process(files, index_language, delayed_start_var=False):
 
 def apply_dataset(changes, delayed_start_var=False, apply_exit=None):
     if file_loc is None:
-        messagebox.showerror(print_on_language(1, 41), print_on_language(1, 55))
+        if apply_exit:
+            exit()
+        else:
+            messagebox.showerror(print_on_language(1, 41), print_on_language(1, 55))
         return
     supported_parameters = calculations.get_supported_parameters()
     for i in range(len(parameters_dataset)):
