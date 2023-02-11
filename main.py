@@ -10,6 +10,7 @@ import zipfile
 import os
 
 import error
+import debug
 import calculations
 import print_data
 import charts
@@ -18,10 +19,11 @@ from strings import set_language, set_variables, print_on_language
 # Version
 version = '0.2.3'
 prefix = 'alpha'
+is_debug = True
 if prefix == '':
     version = 'v' + version
 else:
-    version = 'v' + version + '-' + prefix
+    version = 'v' + version + '-' + prefix + ('-debug' if is_debug else '')
 
 # Disable warnings
 pandas.options.mode.chained_assignment = None
@@ -29,6 +31,9 @@ pandas.options.mode.chained_assignment = None
 # Delayed start
 delayed_start = []
 modes, available_charts, list_incidents, parameters_dataset, parameters_dataset_translated = [], [], [], [], []
+
+if is_debug:
+    print(debug.i(), 'Starting... \n' + debug.i(), 'Version:', version, 'with debug.')
 
 # Configuration
 if not os.path.exists('configuration'):
@@ -38,24 +43,33 @@ if not os.path.exists('configuration'):
     else:
         url_configuration = \
             'https://raw.githubusercontent.com/Ariollex/causal-relationships-in-school/dev/configuration'
+    if is_debug:
+        print(debug.w(), 'Missing configuration file! Trying to get a file from', url_configuration)
     messagebox.showwarning('Warning!', 'The configuration file was not found. Downloading from ' + url_configuration)
     response = requests.get(url_configuration, timeout=None)
     with open('configuration', "wb") as file:
         file.write(response.content)
+    if is_debug:
+        print(debug.s(), 'Configuration has been successfully restored.')
 
+if is_debug:
+    print(debug.i(), 'Opening configuration...')
 configuration = open('configuration', 'r').read().split('\n')
 calculations.set_variables(configuration)
 indexes, warnings, missing_parameters = calculations.check_configuration()
 if len(warnings) != 0:
-    [error.warning(warnings[i]) for i in range(len(warnings))]
+    if is_debug:
+        [debug.w() + error.warning(warnings[i]) for i in range(len(warnings))]
 if len(missing_parameters) != 0:
+    # TODO: Предложить скачать исправленный файл пользователю
     error.error('These required parameters are not defined:', 0)
     print(*['- ' + missing_parameters[i] for i in range(len(missing_parameters))], sep='\n')
     error.broken_configuration()
 set_variables(configuration, indexes)
 errors = calculations.check_parameters()
 if len(errors) > 0:
-    [error.warning(errors[i]) for i in range(len(errors))]
+    if is_debug:
+        [debug.w() + error.warning(errors[i]) for i in range(len(errors))]
     delayed_start.append('invalid_parameters_values')
 
 # Language
@@ -66,6 +80,8 @@ if not os.path.exists('languages') or not os.listdir('languages'):
     else:
         url_languages = \
             'https://raw.githubusercontent.com/Ariollex/causal-relationships-in-school/dev/languages/languages.zip'
+    if is_debug:
+        print(debug.w(), 'Missing language file! Trying to get a file from', url_languages)
     messagebox.showwarning('Warning!', 'The language files was not found. Downloading from ' + url_languages)
     response = requests.get(url_languages, timeout=None)
     with open('languages-' + version, "wb") as file:
@@ -74,19 +90,31 @@ if not os.path.exists('languages') or not os.listdir('languages'):
     with zipfile.ZipFile(archive, 'r') as zip_file:
         zip_file.extractall('languages')
     os.remove(archive)
+    if is_debug:
+        print(debug.s(), 'Languages has been successfully restored.')
 
 language = calculations.read_from_configuration(0)
 if not set_language(language):
+    if is_debug:
+        print(debug.w(), 'Incorrect language is selected! Trying to give a choice later')
     delayed_start.append('invalid_language')
     language_status = 'undefined'
 else:
     language_status = 'active'
+    if is_debug:
+        print(debug.i(), 'Language successfully applied')
 
 # Dataset
 file_loc = calculations.read_from_configuration(8)
 if not os.path.exists(file_loc):
     delayed_start.append('invalid_path_dataset')
     file_loc = None
+
+if is_debug:
+    if len(delayed_start) != 0:
+        print(debug.w(), 'Delayed start is enabled!')
+    else:
+        print(debug.i(), 'Data from configuration has been successfully applied')
 
 
 def set_dataset_parameters(file_location):
@@ -127,6 +155,8 @@ if 'invalid_parameters_values' not in delayed_start and data is not None:
 
 
 def back_button(column_btn, count_row, translated=True, back_command=lambda: mode_selection()):
+    if is_debug:
+        print(debug.i(), 'Going back...')
     if not translated:
         exit_btn = Button(button_frame, text='Back', command=back_command)
     else:
@@ -134,7 +164,8 @@ def back_button(column_btn, count_row, translated=True, back_command=lambda: mod
     exit_btn.grid(column=column_btn, row=count_row, padx=5, pady=5)
 
 
-def exit_button(column_btn, count_row, translated=True, exit_command=lambda: exit()):
+def exit_button(column_btn, count_row, translated=True, exit_command=lambda: exit(debug.i() + ' Exiting...' if is_debug
+                                                                                  else '')):
     if not translated:
         exit_btn = Button(button_frame, text='Exit', command=exit_command)
     else:
@@ -153,6 +184,9 @@ def change_configuration(option, line, argument):
 def change_language(back_btn=None, delayed_start_var=False):
     files = os.listdir('languages')
     clear_window()
+    # TODO: Сделать пометку выбранному языку
+    if is_debug:
+        print(debug.i(), 'The language menu are open')
     Label(window, text='Available languages:').grid(column=0, row=0)
     count_row = 1
     for i in range(len(files)):
@@ -194,6 +228,8 @@ def active_scroll():
 
 
 def clear_window(message=None):
+    if is_debug:
+        print(debug.i(), 'Clearing the screen')
     disable_scroll()
     for widget in button_frame.winfo_children():
         widget.destroy()
@@ -251,7 +287,7 @@ def apply_dataset(changes, delayed_start_var=False, apply_exit=None):
         list_incidents = calculations.make_list_incidents(data, name, sex, parallel, letter, causes,
                                                           time_causes, previous_causes)
     if apply_exit:
-        exit()
+        exit(debug.i() + ' Exiting...' if is_debug else '')
     elif not delayed_start_var:
         settings()
     else:
@@ -264,8 +300,12 @@ def check_dataset(new_file_loc):
     try:
         pandas.read_excel(new_file_loc)
     except ValueError:
+        if is_debug:
+            print(debug.e, 'Incorrect dataset is selected')
         return False
     if len(list(pandas.read_excel(new_file_loc))) < 7:
+        if is_debug:
+            print(debug.e, 'The selected dataset contains too little data')
         return False
     return True
 
@@ -289,6 +329,8 @@ def change_dataset(count_row):
 def settings_dataset(buttons=True):
     global parameters_dataset
     clear_window()
+    if is_debug:
+        print(debug.i(), 'The dataset settings are open')
     Label(window, text=print_on_language(1, 33)).grid(column=0, row=0)
     count_row = 1
     parameters_dataset = calculations.get_parameters_dataset()
@@ -314,6 +356,8 @@ def settings_dataset(buttons=True):
 
 def settings():
     clear_window()
+    if is_debug:
+        print(debug.i(), 'The settings are open')
     Button(window, text=print_on_language(1, 32), command=settings_dataset).grid(column=0, row=0)
     Button(window, text=print_on_language(1, 20), command=lambda: change_language(True)).grid(column=0, row=1)
     Button(window, text=print_on_language(1, 43), command=about_program).grid(column=0, row=2)
@@ -322,11 +366,15 @@ def settings():
 
 
 def open_link(link):
+    if is_debug:
+        print(debug.i(), 'Open link', link)
     webbrowser.open_new(link)
 
 
 def about_program():
     clear_window()
+    if is_debug:
+        print(debug.i(), 'The "About program" menu is open')
     Label(window, text=print_on_language(1, 15)).grid(column=0, row=0)
     Button(window, text=print_on_language(1, 44) + ': ' + version,
            command=lambda: open_link('https://github.com/Ariollex/causal-relationships-in-school/releases')) \
@@ -343,6 +391,8 @@ def about_program():
 
 def mode_selection():
     clear_window()
+    if is_debug:
+        print(debug.i(), 'The main menu is open')
     Label(window, text=print_on_language(1, 6) + '. ' + print_on_language(1, 7) + ':').grid(column=0, row=0)
 
     # Program operation mode selection
@@ -353,6 +403,8 @@ def mode_selection():
 
 
 def mode_causal_relationship():
+    if is_debug:
+        print(debug.i(), 'The causal relationship menu is open')
     clear_window()
     window.pack(expand=False)
     info = []
@@ -390,6 +442,8 @@ def mode_causal_relationship_process(user_selection, info):
 
 def mode_chart():
     clear_window()
+    if is_debug:
+        print(debug.i(), 'The charts menu is open')
     list_graphs_numbered = print_data.print_selection_list(available_charts)
     Label(window, text=print_on_language(1, 10) + ':')
     count_row = len(list_graphs_numbered)
@@ -404,6 +458,8 @@ def mode_chart():
 
 
 def mode_chart_process(choice_chart):
+    if is_debug:
+        print(debug.i(), 'Displaying a chart...')
     charts.set_variables(list_incidents, causes, parallel, name_columns, previous_causes)
     charts.chart_selection(choice_chart, data)
     count_row = len(available_charts)
@@ -468,6 +524,9 @@ def fix_configuration():
         mode_selection()
 
 
+if is_debug:
+    print(debug.i(), 'Creating a window...')
+
 root = Tk()
 root.minsize(500, 150)
 window = Frame(root)
@@ -499,8 +558,12 @@ if len(delayed_start) != 0:
     root.title('Causal relationships in school, ' + version)
     configuration_status = 'break'
     language_status = 'break'
+    if is_debug:
+        print(debug.i(), 'Launch a window for correction')
     fix_configuration()
 else:
     configuration_status = 'normal'
+    if is_debug:
+        print(debug.i(), 'Applying constants...')
     start_variables()
 root.mainloop()
