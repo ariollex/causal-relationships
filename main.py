@@ -16,8 +16,8 @@ import charts
 from strings import set_language, set_variables, print_on_language
 
 # Version
-version = '0.2.2'
-prefix = ''
+version = '0.2.3'
+prefix = 'alpha'
 if prefix == '':
     version = 'v' + version
 else:
