@@ -37,7 +37,7 @@ if is_debug:
     print(debug.i(), 'Starting... \n' + debug.i(), 'Version:', version, 'with debug.')
 
 # Configuration
-if not os.path.exists('configuration'):
+if not os.path.exists(os.getcwd() + '/configuration'):
     if prefix == '':
         url_configuration = \
             'https://raw.githubusercontent.com/Ariollex/causal-relationships-in-school/main/configuration'
@@ -46,16 +46,16 @@ if not os.path.exists('configuration'):
             'https://raw.githubusercontent.com/Ariollex/causal-relationships-in-school/dev/configuration'
     if is_debug:
         print(debug.w(), 'Missing configuration file! Trying to get a file from', url_configuration)
-    messagebox.showwarning('Warning!', 'The configuration file was not found. Downloading from ' + url_configuration)
+    messagebox.showwarning('Warning!', 'The configuration file was not found.\nDownloading from ' + url_configuration)
     response = requests.get(url_configuration, timeout=None)
-    with open('configuration', "wb") as file:
+    with open(os.getcwd() + '/configuration', "wb") as file:
         file.write(response.content)
     if is_debug:
         print(debug.s(), 'Configuration has been successfully restored.')
 
 if is_debug:
     print(debug.i(), 'Opening configuration...')
-configuration = open('configuration', 'r').read().split('\n')
+configuration = open(os.getcwd() + '/configuration', 'r').read().split('\n')
 calculations.set_variables(configuration)
 indexes, warnings, missing_parameters = calculations.check_configuration()
 if len(warnings) != 0:
@@ -70,11 +70,11 @@ set_variables(configuration, indexes)
 errors = calculations.check_parameters()
 if len(errors) > 0:
     if is_debug:
-        [debug.w() + error.warning(errors[i]) for i in range(len(errors))]
+        [str(debug.w()) + str(error.warning(errors[i])) for i in range(len(errors))]
     delayed_start.append('invalid_parameters_values')
 
 # Language
-if not os.path.exists('languages') or not os.listdir('languages'):
+if not os.path.exists(os.getcwd() + '/languages') or not os.listdir(os.getcwd() + '/languages'):
     if prefix == '':
         url_languages = \
             'https://raw.githubusercontent.com/Ariollex/causal-relationships-in-school/main/languages/languages.zip'
@@ -83,14 +83,16 @@ if not os.path.exists('languages') or not os.listdir('languages'):
             'https://raw.githubusercontent.com/Ariollex/causal-relationships-in-school/dev/languages/languages.zip'
     if is_debug:
         print(debug.w(), 'Missing language file! Trying to get a file from', url_languages)
-    messagebox.showwarning('Warning!', 'The language files was not found. Downloading from ' + url_languages)
+    messagebox.showwarning('Warning!', 'The language files was not found.\nDownloading from ' + url_languages)
     response = requests.get(url_languages, timeout=None)
-    with open('languages-' + version, "wb") as file:
+    with open(os.getcwd() + '/languages-' + version, "wb") as file:
         file.write(response.content)
-    archive = 'languages-' + version
+    archive = os.getcwd() + '/languages-' + version
     with zipfile.ZipFile(archive, 'r') as zip_file:
         zip_file.extractall('languages')
     os.remove(archive)
+    set_language(None)
+    delayed_start.append('invalid_language')
     if is_debug:
         print(debug.s(), 'Languages has been successfully restored.')
 
@@ -156,8 +158,6 @@ if 'invalid_parameters_values' not in delayed_start and data is not None:
 
 
 def back_button(column_btn, count_row, translated=True, back_command=lambda: mode_selection()):
-    if is_debug:
-        print(debug.i(), 'Going back...')
     if not translated:
         exit_btn = Button(button_frame, text='Back', command=back_command)
     else:
@@ -183,8 +183,8 @@ def change_configuration(option, line, argument):
 
 
 def change_language(back_btn=None, delayed_start_var=False):
-    files = os.listdir('languages')
     clear_window()
+    files = os.listdir(os.getcwd() + '/languages')
     # TODO: Сделать пометку выбранному языку
     if is_debug:
         print(debug.i(), 'The language menu are open')
@@ -206,44 +206,49 @@ def change_language(back_btn=None, delayed_start_var=False):
 
 
 def disable_scroll():
-    if container is not None:
-        canvas.delete('all')
-        scrollable_frame.pack_forget()
-        v_scrollbar.pack_forget()
-        container.pack_forget()
+    global status_scroll
+    canvas.delete('all')
+    scrollable_frame.pack_forget()
+    v_scrollbar.pack_forget()
+    container.pack_forget()
+    status_scroll = 'disabled'
 
 
 def active_scroll():
-    global canvas_frame
+    global canvas_frame, status_scroll
     setup_scroll()
     container.pack(fill='both', expand=True)
     canvas_frame = canvas.configure(yscrollcommand=v_scrollbar.set)
     scrollable_frame.bind("<Configure>", lambda e: on_canvas_configure(e))
     root.bind_all("<MouseWheel>", scroll_canvas)
-    canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+    canvas.create_window((0, 0), window=scrollable_frame, anchor='nw')
     canvas.pack(side='left', fill='both', expand=True)
     v_scrollbar.pack(side="right", fill="y", expand=True)
-    # h_scrollbar.pack(side="bottom", fill="x")
+    status_scroll = 'active'
+    # h_scrollbar.pack(side="bottom", fill="x", expand=True))
 
 
 # bind scrolling to mousewheel
 def scroll_canvas(event):
     if platform.system() == 'Windows':
-        canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+        canvas.yview_scroll(int(-1 * (event.delta / 120)), 'units')
     elif platform.system() == 'Darwin':
-        canvas.yview_scroll(int(-1 * event.delta), "units")
+        canvas.yview_scroll(int(-1 * event.delta), 'units')
     else:
         if event.num == 4:
-            canvas.yview_scroll(-1, "units")
+            canvas.yview_scroll(-1, 'units')
         elif event.num == 5:
-            canvas.yview_scroll(1, "units")
+            canvas.yview_scroll(1, 'units')
 
 
 def clear_window(message=None):
     if is_debug:
         print(debug.i(), 'Clearing the screen')
-    disable_scroll()
+    if status_scroll == 'active':
+        disable_scroll()
     for widget in button_frame.winfo_children():
+        widget.destroy()
+    for widget in head.winfo_children():
         widget.destroy()
     for widget in window.winfo_children():
         widget.destroy()
@@ -413,23 +418,27 @@ def mode_selection():
 
 
 def mode_causal_relationship():
+    clear_window()
+    window.pack_forget()
     if is_debug:
         print(debug.i(), 'The causal relationship menu is open')
-    clear_window()
     info = []
     list_incidents_numbered = print_data.print_list_incidents(list_incidents)
-    Label(window, text=print_on_language(1, 0)).grid(column=0, row=0)
+    Label(head, text=print_on_language(1, 0)).grid(column=0, row=0)
     active_scroll()
     count_row = len(list_incidents_numbered)
     for i in range(count_row):
         Button(scrollable_frame, text=list_incidents_numbered[i],
-               command=lambda j=i: mode_causal_relationship_process(j, info)).grid(column=0, row=i + 1, sticky=W)
+               command=lambda j=i: mode_causal_relationship_process(j, info)).grid(column=0, row=i + 1)
     back_button(0, count_row + 1)
     exit_button(1, count_row + 1)
 
 
 def mode_causal_relationship_process(user_selection, info):
     clear_window()
+    window.pack_forget()
+    if is_debug:
+        print(debug.i(), 'The causal relationship menu about student is open')
     active_scroll()
     if list_incidents[user_selection][1] == print_on_language(1, 4) or (print_on_language(3, 2) == 0):
         user_choice_text = print_on_language(1, 2) + ' ' + str(user_selection + 1) + '. ' + print_on_language(2, 2) + \
@@ -437,7 +446,7 @@ def mode_causal_relationship_process(user_selection, info):
     else:
         user_choice_text = print_on_language(1, 2) + ' ' + str(user_selection + 1) + '. ' + print_on_language(3, 2) + \
                            ': ' + str(list_incidents[user_selection][0])
-    Label(window, text=user_choice_text).grid(column=0, row=0, sticky=W)
+    Label(head, text=user_choice_text).grid(column=0, row=0, sticky=W)
 
     # Calculations: search for matching information
     calculations.intersection_of_classes(list_incidents, user_selection, info, 0)
@@ -505,7 +514,6 @@ def fix_configuration():
     global list_incidents, language_status, configuration_status
     # Language
     if 'invalid_language' in delayed_start:
-        root.update()
         messagebox.showwarning('Warning', 'The language is not defined. Please select a language.')
         change_language(delayed_start_var=True)
     elif language_status != 'active':
@@ -513,14 +521,12 @@ def fix_configuration():
         start_variables()
     # Invalid path dataset
     elif 'invalid_path_dataset' in delayed_start:
-        root.update()
         messagebox.showwarning(print_on_language(1, 47), print_on_language(1, 48))
         settings_dataset(buttons=False)
         delayed_start.remove('invalid_path_dataset')
         delayed_start.remove('invalid_parameters_values')
     # Invalid parameters_values
     elif 'invalid_parameters_values' in delayed_start:
-        root.update()
         messagebox.showwarning(print_on_language(1, 47), print_on_language(1, 49))
         settings_dataset(buttons=False)
         delayed_start.remove('invalid_parameters_values')
@@ -539,7 +545,6 @@ def on_canvas_configure(event):
 
 
 def height_window():
-    root.update()
     if scrollable_frame.winfo_height() > canvas.winfo_height():
         height = scrollable_frame.winfo_height() - 4
     else:
@@ -553,6 +558,8 @@ if is_debug:
 root = Tk()
 root.minsize(600, 200)
 window = Frame(root)
+head = Frame(root)
+head.pack(side='top')
 window.pack(expand=True)
 container, canvas, v_scrollbar, h_scrollbar, scrollable_frame, canvas_frame = \
     Frame(), Canvas(), Scrollbar(), Scrollbar(), Frame(), int()
@@ -566,6 +573,7 @@ def setup_scroll():
     scrollable_frame = Frame(canvas)
 
 
+status_scroll = 'disabled'
 button_frame = Frame(root)
 button_frame.pack(side="bottom")
 
