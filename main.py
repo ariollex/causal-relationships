@@ -156,8 +156,6 @@ if 'invalid_parameters_values' not in delayed_start and data is not None:
 
 
 def back_button(column_btn, count_row, translated=True, back_command=lambda: mode_selection()):
-    if is_debug:
-        print(debug.i(), 'Going back...')
     if not translated:
         exit_btn = Button(button_frame, text='Back', command=back_command)
     else:
@@ -416,10 +414,10 @@ def mode_selection():
 
 
 def mode_causal_relationship():
-    if is_debug:
-        print(debug.i(), 'The causal relationship menu is open')
     clear_window()
     window.pack_forget()
+    if is_debug:
+        print(debug.i(), 'The causal relationship menu is open')
     info = []
     list_incidents_numbered = print_data.print_list_incidents(list_incidents)
     Label(head, text=print_on_language(1, 0)).grid(column=0, row=0)
@@ -435,6 +433,8 @@ def mode_causal_relationship():
 def mode_causal_relationship_process(user_selection, info):
     clear_window()
     window.pack_forget()
+    if is_debug:
+        print(debug.i(), 'The causal relationship menu about student is open')
     active_scroll()
     if list_incidents[user_selection][1] == print_on_language(1, 4) or (print_on_language(3, 2) == 0):
         user_choice_text = print_on_language(1, 2) + ' ' + str(user_selection + 1) + '. ' + print_on_language(2, 2) + \
