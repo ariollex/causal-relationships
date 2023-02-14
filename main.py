@@ -246,6 +246,8 @@ def clear_window(message=None):
         disable_scroll()
     for widget in button_frame.winfo_children():
         widget.destroy()
+    for widget in head.winfo_children():
+        widget.destroy()
     for widget in window.winfo_children():
         widget.destroy()
     window.pack(expand=True)
