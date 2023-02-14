@@ -538,7 +538,7 @@ def on_canvas_configure(event):
 
 
 def height_window():
-    root.update()
+    # root.update_idletasks()
     if scrollable_frame.winfo_height() > canvas.winfo_height():
         height = scrollable_frame.winfo_height() - 4
     else:
