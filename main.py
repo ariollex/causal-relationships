@@ -206,22 +206,25 @@ def change_language(back_btn=None, delayed_start_var=False):
 
 
 def disable_scroll():
-    # canvas.delete('all')
+    global status_scroll
+    canvas.delete('all')
     scrollable_frame.pack_forget()
     v_scrollbar.pack_forget()
     container.pack_forget()
+    status_scroll = 'disabled'
 
 
 def active_scroll():
-    global canvas_frame
+    global canvas_frame, status_scroll
     setup_scroll()
     container.pack(fill='both', expand=True)
     canvas_frame = canvas.configure(yscrollcommand=v_scrollbar.set)
     scrollable_frame.bind("<Configure>", lambda e: on_canvas_configure(e))
     root.bind_all("<MouseWheel>", scroll_canvas)
-    canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+    canvas.create_window((0, 0), window=scrollable_frame, anchor='nw')
     canvas.pack(side='left', fill='both', expand=True)
     v_scrollbar.pack(side="right", fill="y", expand=True)
+    status_scroll = 'active'
     # h_scrollbar.pack(side="bottom", fill="x", expand=True))
 
 
@@ -241,7 +244,8 @@ def scroll_canvas(event):
 def clear_window(message=None):
     if is_debug:
         print(debug.i(), 'Clearing the screen')
-    disable_scroll()
+    if status_scroll == 'active':
+        disable_scroll()
     for widget in button_frame.winfo_children():
         widget.destroy()
     for widget in window.winfo_children():
@@ -415,20 +419,22 @@ def mode_causal_relationship():
     if is_debug:
         print(debug.i(), 'The causal relationship menu is open')
     clear_window()
+    window.pack_forget()
     info = []
     list_incidents_numbered = print_data.print_list_incidents(list_incidents)
-    Label(window, text=print_on_language(1, 0)).grid(column=0, row=0)
+    Label(head, text=print_on_language(1, 0)).grid(column=0, row=0)
     active_scroll()
     count_row = len(list_incidents_numbered)
     for i in range(count_row):
         Button(scrollable_frame, text=list_incidents_numbered[i],
-               command=lambda j=i: mode_causal_relationship_process(j, info)).grid(column=0, row=i + 1, sticky=W)
+               command=lambda j=i: mode_causal_relationship_process(j, info)).grid(column=0, row=i + 1)
     back_button(0, count_row + 1)
     exit_button(1, count_row + 1)
 
 
 def mode_causal_relationship_process(user_selection, info):
     clear_window()
+    window.pack_forget()
     active_scroll()
     if list_incidents[user_selection][1] == print_on_language(1, 4) or (print_on_language(3, 2) == 0):
         user_choice_text = print_on_language(1, 2) + ' ' + str(user_selection + 1) + '. ' + print_on_language(2, 2) + \
@@ -436,7 +442,7 @@ def mode_causal_relationship_process(user_selection, info):
     else:
         user_choice_text = print_on_language(1, 2) + ' ' + str(user_selection + 1) + '. ' + print_on_language(3, 2) + \
                            ': ' + str(list_incidents[user_selection][0])
-    Label(window, text=user_choice_text).grid(column=0, row=0, sticky=W)
+    Label(head, text=user_choice_text).grid(column=0, row=0, sticky=W)
 
     # Calculations: search for matching information
     calculations.intersection_of_classes(list_incidents, user_selection, info, 0)
@@ -552,6 +558,8 @@ if is_debug:
 root = Tk()
 root.minsize(600, 200)
 window = Frame(root)
+head = Frame(root)
+head.pack(side='top')
 window.pack(expand=True)
 container, canvas, v_scrollbar, h_scrollbar, scrollable_frame, canvas_frame = \
     Frame(), Canvas(), Scrollbar(), Scrollbar(), Frame(), int()
@@ -565,6 +573,7 @@ def setup_scroll():
     scrollable_frame = Frame(canvas)
 
 
+status_scroll = 'disabled'
 button_frame = Frame(root)
 button_frame.pack(side="bottom")
 
