@@ -46,7 +46,7 @@ if not os.path.exists(os.getcwd() + '/configuration'):
             'https://raw.githubusercontent.com/Ariollex/causal-relationships-in-school/dev/configuration'
     if is_debug:
         print(debug.w(), 'Missing configuration file! Trying to get a file from', url_configuration)
-    messagebox.showwarning('Warning!', 'The configuration file was not found. Downloading from ' + url_configuration)
+    messagebox.showwarning('Warning!', 'The configuration file was not found.\nDownloading from ' + url_configuration)
     response = requests.get(url_configuration, timeout=None)
     with open(os.getcwd() + '/configuration', "wb") as file:
         file.write(response.content)
@@ -83,7 +83,7 @@ if not os.path.exists(os.getcwd() + '/languages') or not os.listdir(os.getcwd() 
             'https://raw.githubusercontent.com/Ariollex/causal-relationships-in-school/dev/languages/languages.zip'
     if is_debug:
         print(debug.w(), 'Missing language file! Trying to get a file from', url_languages)
-    messagebox.showwarning('Warning!', 'The language files was not found. Downloading from ' + url_languages)
+    messagebox.showwarning('Warning!', 'The language files was not found.\nDownloading from ' + url_languages)
     response = requests.get(url_languages, timeout=None)
     with open(os.getcwd() + '/languages-' + version, "wb") as file:
         file.write(response.content)
