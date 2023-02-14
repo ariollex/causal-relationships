@@ -70,7 +70,7 @@ set_variables(configuration, indexes)
 errors = calculations.check_parameters()
 if len(errors) > 0:
     if is_debug:
-        [debug.w() + error.warning(errors[i]) for i in range(len(errors))]
+        [str(debug.w()) + str(error.warning(errors[i])) for i in range(len(errors))]
     delayed_start.append('invalid_parameters_values')
 
 # Language
