@@ -1,6 +1,7 @@
 from sys import exit
 import pandas
 import numpy
+import platform
 from tkinter import *
 from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
@@ -205,26 +206,36 @@ def change_language(back_btn=None, delayed_start_var=False):
 
 
 def disable_scroll():
-    # h_scrollbar.pack_forget()
+    canvas.delete('all')
+    scrollable_frame.pack_forget()
     v_scrollbar.pack_forget()
     container.pack_forget()
 
 
 def active_scroll():
+    global canvas_frame
     setup_scroll()
+    container.pack(fill='both', expand=True)
+    canvas_frame = canvas.configure(yscrollcommand=v_scrollbar.set)
+    scrollable_frame.bind("<Configure>", lambda e: on_canvas_configure(e))
+    root.bind_all("<MouseWheel>", scroll_canvas)
     canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
-    canvas.configure(yscrollcommand=v_scrollbar.set, scrollregion=canvas.bbox(ALL))
-    container.pack()
-    canvas.pack(side='left', fill='both')
-    v_scrollbar.pack(side="right", fill="y", expand=1)
-    # h_scrollbar.pack(side="bottom", fill="x")
-    v_scrollbar.config()
-    # h_scrollbar.config()
+    canvas.pack(side='left', fill='both', expand=True)
+    v_scrollbar.pack(side="right", fill="y", expand=True)
+    # h_scrollbar.pack(side="bottom", fill="x", expand=True))
 
 
 # bind scrolling to mousewheel
-# def _scroll_canvas(event):
-#     canvas.yview_scroll(-1 * (int(event.delta / 100)), "units")
+def scroll_canvas(event):
+    if platform.system() == 'Windows':
+        canvas.yview_scroll(int(-1 * (event.delta / 120)), 'units')
+    elif platform.system() == 'Darwin':
+        canvas.yview_scroll(int(-1 * event.delta), 'units')
+    else:
+        if event.num == 4:
+            canvas.yview_scroll(-1, 'units')
+        elif event.num == 5:
+            canvas.yview_scroll(1, 'units')
 
 
 def clear_window(message=None):
@@ -234,8 +245,6 @@ def clear_window(message=None):
     for widget in button_frame.winfo_children():
         widget.destroy()
     for widget in window.winfo_children():
-        widget.destroy()
-    for widget in scrollable_frame.winfo_children():
         widget.destroy()
     window.pack(expand=True)
     if message is not None:
@@ -406,7 +415,6 @@ def mode_causal_relationship():
     if is_debug:
         print(debug.i(), 'The causal relationship menu is open')
     clear_window()
-    window.pack(expand=False)
     info = []
     list_incidents_numbered = print_data.print_list_incidents(list_incidents)
     Label(window, text=print_on_language(1, 0)).grid(column=0, row=0)
@@ -524,33 +532,39 @@ def fix_configuration():
         mode_selection()
 
 
+def on_canvas_configure(event):
+    canvas.configure(scrollregion=height_window())
+    canvas.itemconfig(canvas_frame, width=event.width)
+
+
+def height_window():
+    root.update()
+    if scrollable_frame.winfo_height() > canvas.winfo_height():
+        height = scrollable_frame.winfo_height() - 4
+    else:
+        height = canvas.winfo_height() - 4
+    return 0, 0, height, height
+
+
 if is_debug:
     print(debug.i(), 'Creating a window...')
 
 root = Tk()
-root.minsize(500, 150)
+root.minsize(600, 200)
 window = Frame(root)
 window.pack(expand=True)
-container = Frame(root)
-canvas = Canvas(container)
-v_scrollbar = Scrollbar(container, orient="vertical", command=canvas.yview)
-h_scrollbar = Scrollbar(container, orient="horizontal", command=canvas.xview)
-scrollable_frame = Frame(canvas)
+container, canvas, v_scrollbar, h_scrollbar, scrollable_frame, canvas_frame = \
+    Frame(), Canvas(), Scrollbar(), Scrollbar(), Frame(), int()
 
 
 def setup_scroll():
     global container, canvas, v_scrollbar, h_scrollbar, scrollable_frame
     container = Frame(root)
-    container.pack(expand=True)
     canvas = Canvas(container)
     v_scrollbar = Scrollbar(container, orient="vertical", command=canvas.yview)
-    # h_scrollbar = Scrollbar(container, orient="horizontal", command=canvas.xview)
     scrollable_frame = Frame(canvas)
-    scrollable_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
-    # root.bind_all("<MouseWheel>", _scroll_canvas)
 
 
-setup_scroll()
 button_frame = Frame(root)
 button_frame.pack(side="bottom")
 
