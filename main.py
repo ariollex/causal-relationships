@@ -37,7 +37,7 @@ if is_debug:
     print(debug.i(), 'Starting... \n' + debug.i(), 'Version:', version, 'with debug.')
 
 # Configuration
-if not os.path.exists('configuration'):
+if not os.path.exists(os.getcwd() + '/configuration'):
     if prefix == '':
         url_configuration = \
             'https://raw.githubusercontent.com/Ariollex/causal-relationships-in-school/main/configuration'
@@ -48,14 +48,14 @@ if not os.path.exists('configuration'):
         print(debug.w(), 'Missing configuration file! Trying to get a file from', url_configuration)
     messagebox.showwarning('Warning!', 'The configuration file was not found. Downloading from ' + url_configuration)
     response = requests.get(url_configuration, timeout=None)
-    with open('configuration', "wb") as file:
+    with open(os.getcwd() + '/configuration', "wb") as file:
         file.write(response.content)
     if is_debug:
         print(debug.s(), 'Configuration has been successfully restored.')
 
 if is_debug:
     print(debug.i(), 'Opening configuration...')
-configuration = open('configuration', 'r').read().split('\n')
+configuration = open(os.getcwd() + '/configuration', 'r').read().split('\n')
 calculations.set_variables(configuration)
 indexes, warnings, missing_parameters = calculations.check_configuration()
 if len(warnings) != 0:
@@ -74,7 +74,7 @@ if len(errors) > 0:
     delayed_start.append('invalid_parameters_values')
 
 # Language
-if not os.path.exists('languages') or not os.listdir('languages'):
+if not os.path.exists(os.getcwd() + '/languages') or not os.listdir(os.getcwd() + '/languages'):
     if prefix == '':
         url_languages = \
             'https://raw.githubusercontent.com/Ariollex/causal-relationships-in-school/main/languages/languages.zip'
@@ -84,10 +84,10 @@ if not os.path.exists('languages') or not os.listdir('languages'):
     if is_debug:
         print(debug.w(), 'Missing language file! Trying to get a file from', url_languages)
     messagebox.showwarning('Warning!', 'The language files was not found. Downloading from ' + url_languages)
-    response = requests.get(url_languages, timeout=None)
-    with open('languages-' + version, "wb") as file:
+    response = requests.get(url_languages, timeout='123')
+    with open(os.getcwd() + '/languages-' + version, "wb") as file:
         file.write(response.content)
-    archive = 'languages-' + version
+    archive = os.getcwd() + '/languages-' + version
     with zipfile.ZipFile(archive, 'r') as zip_file:
         zip_file.extractall('languages')
     os.remove(archive)
@@ -206,7 +206,7 @@ def change_language(back_btn=None, delayed_start_var=False):
 
 
 def disable_scroll():
-    canvas.delete('all')
+    # canvas.delete('all')
     scrollable_frame.pack_forget()
     v_scrollbar.pack_forget()
     container.pack_forget()
@@ -504,7 +504,7 @@ def fix_configuration():
     global list_incidents, language_status, configuration_status
     # Language
     if 'invalid_language' in delayed_start:
-        root.update()
+        # root.update()
         messagebox.showwarning('Warning', 'The language is not defined. Please select a language.')
         change_language(delayed_start_var=True)
     elif language_status != 'active':
@@ -512,14 +512,14 @@ def fix_configuration():
         start_variables()
     # Invalid path dataset
     elif 'invalid_path_dataset' in delayed_start:
-        root.update()
+        # root.update()
         messagebox.showwarning(print_on_language(1, 47), print_on_language(1, 48))
         settings_dataset(buttons=False)
         delayed_start.remove('invalid_path_dataset')
         delayed_start.remove('invalid_parameters_values')
     # Invalid parameters_values
     elif 'invalid_parameters_values' in delayed_start:
-        root.update()
+        # root.update()
         messagebox.showwarning(print_on_language(1, 47), print_on_language(1, 49))
         settings_dataset(buttons=False)
         delayed_start.remove('invalid_parameters_values')
