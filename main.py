@@ -91,6 +91,8 @@ if not os.path.exists(os.getcwd() + '/languages') or not os.listdir(os.getcwd() 
     with zipfile.ZipFile(archive, 'r') as zip_file:
         zip_file.extractall('languages')
     os.remove(archive)
+    set_language(None)
+    delayed_start.append('invalid_language')
     if is_debug:
         print(debug.s(), 'Languages has been successfully restored.')
 
@@ -181,8 +183,8 @@ def change_configuration(option, line, argument):
 
 
 def change_language(back_btn=None, delayed_start_var=False):
-    files = os.listdir('languages')
     clear_window()
+    files = os.listdir(os.getcwd() + '/languages')
     # TODO: Сделать пометку выбранному языку
     if is_debug:
         print(debug.i(), 'The language menu are open')
@@ -512,7 +514,6 @@ def fix_configuration():
     global list_incidents, language_status, configuration_status
     # Language
     if 'invalid_language' in delayed_start:
-        root.update_idletasks()
         messagebox.showwarning('Warning', 'The language is not defined. Please select a language.')
         change_language(delayed_start_var=True)
     elif language_status != 'active':
@@ -520,14 +521,12 @@ def fix_configuration():
         start_variables()
     # Invalid path dataset
     elif 'invalid_path_dataset' in delayed_start:
-        root.update_idletasks()
         messagebox.showwarning(print_on_language(1, 47), print_on_language(1, 48))
         settings_dataset(buttons=False)
         delayed_start.remove('invalid_path_dataset')
         delayed_start.remove('invalid_parameters_values')
     # Invalid parameters_values
     elif 'invalid_parameters_values' in delayed_start:
-        root.update_idletasks()
         messagebox.showwarning(print_on_language(1, 47), print_on_language(1, 49))
         settings_dataset(buttons=False)
         delayed_start.remove('invalid_parameters_values')
@@ -546,7 +545,6 @@ def on_canvas_configure(event):
 
 
 def height_window():
-    root.update_idletasks()
     if scrollable_frame.winfo_height() > canvas.winfo_height():
         height = scrollable_frame.winfo_height() - 4
     else:
