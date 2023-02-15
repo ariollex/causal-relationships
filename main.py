@@ -75,6 +75,7 @@ if len(errors) > 0:
 
 # Language
 if not os.path.exists(os.getcwd() + '/languages') or not os.listdir(os.getcwd() + '/languages'):
+    global language
     if prefix == '':
         url_languages = \
             'https://raw.githubusercontent.com/Ariollex/causal-relationships-in-school/main/languages/languages.zip'
@@ -91,8 +92,8 @@ if not os.path.exists(os.getcwd() + '/languages') or not os.listdir(os.getcwd() 
     with zipfile.ZipFile(archive, 'r') as zip_file:
         zip_file.extractall('languages')
     os.remove(archive)
-    set_language(None)
-    delayed_start.append('invalid_language')
+    set_language(str(None))
+    calculations.set_variables(open(os.getcwd() + '/configuration', 'r').read().split('\n'))
     if is_debug:
         print(debug.s(), 'Languages has been successfully restored.')
 
@@ -185,14 +186,20 @@ def change_configuration(option, line, argument):
 def change_language(back_btn=None, delayed_start_var=False):
     clear_window()
     files = os.listdir(os.getcwd() + '/languages')
-    # TODO: Сделать пометку выбранному языку
     if is_debug:
         print(debug.i(), 'The language menu are open')
     Label(window, text='Available languages:').grid(column=0, row=0)
     count_row = 1
     for i in range(len(files)):
         if files[i][:8] == 'strings_':
-            Button(window, text=files[i].replace('strings_', '').replace('.xlsx', ''),
+            if language == files[i].replace('strings_', '').replace('.xlsx', ''):
+                if delayed_start_var:
+                    text = ' ' + '(selected)'
+                else:
+                    text = ' (' + print_on_language(1, 57) + ')'
+            else:
+                text = ''
+            Button(window, text=files[i].replace('strings_', '').replace('.xlsx', '') + text,
                    command=lambda j=i: change_language_process(files, j, delayed_start_var)) \
                 .grid(column=0, row=count_row)
             count_row = count_row + 1
@@ -258,12 +265,13 @@ def clear_window(message=None):
 
 
 def change_language_process(files, index_language, delayed_start_var=False):
-    global language_status, delayed_start
+    global language_status, delayed_start, language
     new_language = files[index_language].replace('strings_', '').replace('.xlsx', '')
     set_language(new_language)
     language_status = 'active'
     if delayed_start_var:
         delayed_start.remove('invalid_language')
+    language = new_language
     start_variables()
 
 
@@ -406,6 +414,7 @@ def about_program():
 
 def mode_selection():
     clear_window()
+    root.update()
     if is_debug:
         print(debug.i(), 'The main menu is open')
     Label(window, text=print_on_language(1, 6) + '. ' + print_on_language(1, 7) + ':').grid(column=0, row=0)
