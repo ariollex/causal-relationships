@@ -347,7 +347,7 @@ def check_dataset(new_file_loc):
 
 def change_dataset(file_btn_text):
     global data, name_columns, file_loc
-    new_file_loc = askopenfilename()
+    new_file_loc = askopenfilename(filetypes=[("Excel file", "*.xlsx"), ("Excel file 97-2003", "*.xls")])
     if new_file_loc != '':
         if not check_dataset(new_file_loc):
             messagebox.showerror(print_on_language(1, 41), print_on_language(1, 42))
