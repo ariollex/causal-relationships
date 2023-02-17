@@ -149,7 +149,7 @@ def set_dataset_columns():
 
 name, sex, parallel, letter, causes, time_causes, previous_causes = \
     pandas.Index([]), pandas.Index([]), pandas.Index([]), pandas.Index([]), pandas.Index([]), pandas.Index([]), \
-    pandas.Index([])
+        pandas.Index([])
 
 # Dataset settings
 if 'invalid_parameters_values' not in delayed_start and data is not None:
@@ -345,7 +345,7 @@ def check_dataset(new_file_loc):
     return True
 
 
-def change_dataset():
+def change_dataset(file_btn_text):
     global data, name_columns, file_loc
     new_file_loc = askopenfilename()
     if new_file_loc != '':
@@ -355,19 +355,26 @@ def change_dataset():
         data, name_columns = set_dataset_parameters(new_file_loc)
         change_configuration('dataset_path', indexes[8], new_file_loc)
         file_loc = new_file_loc
-    scrollable_frame.winfo_children()[1].destroy()
-    if file_loc is not None and '/' in file_loc:
-        Button(scrollable_frame, text=print_on_language(1, 34) + ': ' + str(file_loc[file_loc.rfind('/') + 1:]),
-               command=lambda: show_path(file_loc)).grid(column=0, row=1, sticky='w')
-    else:
-        Label(scrollable_frame, text=print_on_language(1, 34) + ': ' + str(None)) \
-            .grid(column=0, row=1, sticky='w')
-    Button(scrollable_frame, text=print_on_language(1, 35), command=lambda: change_dataset()) \
-        .grid(column=1, row=1, sticky='e')
+        if file_loc is not None and '/' in file_loc:
+            file_btn_text.set(print_on_language(1, 34) + ': ' + short_filename(file_loc))
+        else:
+            file_btn_text.set(print_on_language(1, 34) + ': ' + str(None))
 
 
 def show_path(file_location):
-    messagebox.showinfo(print_on_language(1, 59), file_location)
+    if file_location is not None:
+        messagebox.showinfo(print_on_language(1, 59), file_location)
+    else:
+        messagebox.showinfo(print_on_language(1, 59), print_on_language(1, 62))
+
+
+def short_filename(file_path):
+    if file_path is not None and '/' in file_path:
+        filename = str(file_path[file_path.rfind('/') + 1:])
+        filename = (filename[:31] + '...') if len(filename) >= 33 else filename + ' ' * (33 - len(filename))
+        return filename
+    else:
+        return str(None) + ' ' * 49
 
 
 def settings_dataset(buttons=True):
@@ -380,13 +387,11 @@ def settings_dataset(buttons=True):
     if is_debug:
         print(debug.i(), 'The dataset settings are open')
     Label(scrollable_frame, text=print_on_language(1, 59), background='#DCDCDC').grid(column=0, row=0, sticky='w')
-    if file_loc is not None and '/' in file_loc:
-        Button(scrollable_frame, text=print_on_language(1, 34) + ': ' + str(file_loc[file_loc.rfind('/') + 1:]),
-               command=lambda: show_path(file_loc)).grid(column=0, row=1, sticky='w')
-    else:
-        Label(scrollable_frame, text=print_on_language(1, 34) + ': ' + str(None)) \
-            .grid(column=0, row=1, sticky='w')
-    Button(scrollable_frame, text=print_on_language(1, 35), command=lambda: change_dataset()) \
+    file_btn_text = StringVar()
+    Button(scrollable_frame, textvariable=file_btn_text, command=lambda: show_path(file_loc)) \
+        .grid(column=0, row=1, sticky='w')
+    file_btn_text.set(print_on_language(1, 34) + ': ' + short_filename(file_loc))
+    Button(scrollable_frame, text=print_on_language(1, 35), command=lambda: change_dataset(file_btn_text)) \
         .grid(column=1, row=1, sticky='e')
     Label(scrollable_frame).grid(column=0, row=2)
     ttk.Separator(scrollable_frame, orient='horizontal').grid(column=0, row=2, columnspan=4, sticky='we')
