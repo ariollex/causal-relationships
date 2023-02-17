@@ -62,7 +62,6 @@ if len(warnings) != 0:
     if is_debug:
         [debug.w() + error.warning(warnings[i]) for i in range(len(warnings))]
 if len(missing_parameters) != 0:
-    # TODO: Предложить скачать исправленный файл пользователю
     error.error('These required parameters are not defined:', 0)
     print(*['- ' + missing_parameters[i] for i in range(len(missing_parameters))], sep='\n')
     error.broken_configuration()
@@ -155,7 +154,13 @@ if 'invalid_parameters_values' not in delayed_start and data is not None:
     set_dataset_columns()
     # Convert time
     for i in range(data.shape[0]):
-        time_causes[i] = int(str(time_causes[i]).replace(':', '')) if time_causes[i] != 0 else int(time_causes[i])
+        if str(time_causes[i]).replace(':', '').isdigit():
+            if time_causes[i] != 0:
+                time_causes[i] = int(str(time_causes[i]).replace(':', ''))
+                if len(str(time_causes[i])) < 6:
+                    time_causes[i] = str(0) + str(time_causes[i])
+            else:
+                time_causes[i] = int(time_causes[i])
 
 
 def back_button(column_btn, count_row, translated=True, back_command=lambda: mode_selection()):
@@ -300,8 +305,12 @@ def apply_dataset(changes, delayed_start_var=False, apply_exit=None):
         # Convert time
         for i in range(data.shape[0]):
             if str(time_causes[i]).replace(':', '').isdigit():
-                time_causes[i] = int(str(time_causes[i]).replace(':', '')) if time_causes[i] != 0 \
-                    else int(time_causes[i])
+                if time_causes[i] != 0:
+                    time_causes[i] = int(str(time_causes[i]).replace(':', ''))
+                    if len(str(time_causes[i])) < 6:
+                        time_causes[i] = str(0) + str(time_causes[i])
+                else:
+                    time_causes[i] = int(time_causes[i])
             else:
                 messagebox.showerror(print_on_language(1, 41), print_on_language(1, 53))
                 return

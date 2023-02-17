@@ -108,10 +108,11 @@ def intersection_of_time(example_list_incidents, user_selection, info, func):
                 count = count + 1
             elif func == 1:
                 students.append(example_list_incidents[i][0])
+                incident_time = example_list_incidents[i][3]
     if func == 0:
         info.append([count, example_list_incidents[user_selection][3]])
     elif func == 1:
-        return students
+        return students, incident_time
 
 
 def intersection_of_previous_causes(example_list_incidents, participants):
@@ -125,9 +126,9 @@ def intersection_of_previous_causes(example_list_incidents, participants):
 
 def conclusions(example_list_incidents, user_selection, info):
     student_name = example_list_incidents[user_selection][0]
-    participants = None
+    participants, incident_time = None, None
     if info[1][0] != 0:
-        participants = intersection_of_time(example_list_incidents, user_selection, info, 1)
+        participants, incident_time = intersection_of_time(example_list_incidents, user_selection, info, 1)
     elif info[0][0] != 0:
         participants = intersection_of_classes(example_list_incidents, user_selection, info, 1)
     maximum = (
@@ -136,10 +137,12 @@ def conclusions(example_list_incidents, user_selection, info):
     class_matters = (1 if info[0][0] != 0 else 0)
     time_matters = (1 if info[1][0] != 0 else 0)
     if time_matters == 1 and class_matters == 1:
-        return print_data.is_fight(1, participants, info[0][1], suspicious, maximum, student_name)
+        return print_data.is_fight(1, participants, info[0][1], suspicious, maximum, student_name, incident_time)
     elif time_matters == 1 and class_matters == 0:
-        return print_data.is_fight(0, participants, 0, suspicious, maximum, student_name)
+        return print_data.is_fight(0, participants, 0, suspicious, maximum, student_name, incident_time)
     elif time_matters == 0 and class_matters == 1:
         return print_data.is_incident_in_classroom(participants, info[0][1], suspicious, maximum, student_name)
     else:
-        return print_data.is_personal_incident(student_name, info[0][1])
+        if str(info[1][1]).isdigit():
+             incident_time = info[1][1]
+        return print_data.is_personal_incident(student_name, info[0][1], incident_time)
