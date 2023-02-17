@@ -147,7 +147,7 @@ def set_dataset_columns():
 
 name, sex, parallel, letter, causes, time_causes, previous_causes = \
     pandas.Index([]), pandas.Index([]), pandas.Index([]), pandas.Index([]), pandas.Index([]), pandas.Index([]), \
-        pandas.Index([])
+    pandas.Index([])
 
 # Dataset settings
 if 'invalid_parameters_values' not in delayed_start and data is not None:
@@ -372,6 +372,7 @@ def settings_dataset(buttons=True):
     root.update_idletasks()
     clear_window()
     active_scroll()
+    head.pack_forget()
     window.pack_forget()
     if is_debug:
         print(debug.i(), 'The dataset settings are open')
@@ -399,13 +400,12 @@ def settings_dataset(buttons=True):
         entries.append(value_entry)
         value_entry.grid(column=1, row=count_row, sticky='e')
         count_row = count_row + 1
-    Label(scrollable_frame).grid(column=0, row=count_row + 1)
     if not buttons:
         Button(button_frame, text=print_on_language(1, 50),
-               command=lambda: apply_dataset(entries, delayed_start_var=True)).grid(column=0, row=count_row + 2)
+               command=lambda: apply_dataset(entries, delayed_start_var=True)).grid(column=0, row=count_row + 1)
     else:
-        back_button(0, count_row + 2, back_command=lambda: apply_dataset(entries))
-    exit_button(1, count_row + 2, exit_command=lambda: apply_dataset(entries, apply_exit=True))
+        back_button(0, count_row + 1, back_command=lambda: apply_dataset(entries))
+    exit_button(1, count_row + 1, exit_command=lambda: apply_dataset(entries, apply_exit=True))
 
 
 def settings():
@@ -586,9 +586,9 @@ def on_canvas_configure(event):
 
 def height_window():
     if scrollable_frame.winfo_height() > canvas.winfo_height():
-        height = scrollable_frame.winfo_height() - 4
+        height = scrollable_frame.winfo_height()
     else:
-        height = canvas.winfo_height() - 4
+        height = canvas.winfo_height()
     return 0, 0, height, height
 
 
@@ -596,7 +596,7 @@ if is_debug:
     print(debug.i(), 'Creating a window...')
 
 root = Tk()
-root.minsize(600, 200)
+root.minsize(600, 250)
 window = Frame(root)
 head = Frame(root)
 head.pack(side='top')
