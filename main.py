@@ -264,6 +264,7 @@ def clear_window(message=None):
         widget.destroy()
     for widget in window.winfo_children():
         widget.destroy()
+    head.pack(side='top')
     window.pack(expand=True)
     if message is not None:
         Label(window, text=message, fg='red').grid(column=0, row=0)
