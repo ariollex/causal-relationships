@@ -147,7 +147,7 @@ def set_dataset_columns():
 
 name, sex, parallel, letter, causes, time_causes, previous_causes = \
     pandas.Index([]), pandas.Index([]), pandas.Index([]), pandas.Index([]), pandas.Index([]), pandas.Index([]), \
-    pandas.Index([])
+        pandas.Index([])
 
 # Dataset settings
 if 'invalid_parameters_values' not in delayed_start and data is not None:
@@ -357,7 +357,7 @@ def change_dataset():
         Button(scrollable_frame, text=print_on_language(1, 34) + ': ' + str(file_loc[file_loc.rfind('/') + 1:]),
                command=lambda: show_path(file_loc)).grid(column=0, row=1, sticky='w')
     else:
-        Label(scrollable_frame, text=print_on_language(1, 34) + ': ' + str(None))\
+        Label(scrollable_frame, text=print_on_language(1, 34) + ': ' + str(None)) \
             .grid(column=0, row=1, sticky='w')
     Button(scrollable_frame, text=print_on_language(1, 35), command=lambda: change_dataset()) \
         .grid(column=1, row=1, sticky='e')
@@ -380,7 +380,7 @@ def settings_dataset(buttons=True):
         Button(scrollable_frame, text=print_on_language(1, 34) + ': ' + str(file_loc[file_loc.rfind('/') + 1:]),
                command=lambda: show_path(file_loc)).grid(column=0, row=1, sticky='w')
     else:
-        Label(scrollable_frame, text=print_on_language(1, 34) + ': ' + str(None))\
+        Label(scrollable_frame, text=print_on_language(1, 34) + ': ' + str(None)) \
             .grid(column=0, row=1, sticky='w')
     Button(scrollable_frame, text=print_on_language(1, 35), command=lambda: change_dataset()) \
         .grid(column=1, row=1, sticky='e')
@@ -608,7 +608,7 @@ container, canvas, v_scrollbar, h_scrollbar, scrollable_frame, canvas_frame = \
 def setup_scroll():
     global container, canvas, v_scrollbar, h_scrollbar, scrollable_frame
     container = Frame(root)
-    canvas = Canvas(container)
+    canvas = Canvas(container, highlightthickness=0)
     v_scrollbar = Scrollbar(container, orient="vertical", command=canvas.yview)
     scrollable_frame = Frame(canvas)
 
