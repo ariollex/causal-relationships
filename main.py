@@ -342,7 +342,7 @@ def check_dataset(new_file_loc):
     return True
 
 
-def change_dataset(count_row):
+def change_dataset():
     global data, name_columns, file_loc
     new_file_loc = askopenfilename()
     if new_file_loc != '':
@@ -352,32 +352,54 @@ def change_dataset(count_row):
         data, name_columns = set_dataset_parameters(new_file_loc)
         change_configuration('dataset_path', indexes[8], new_file_loc)
         file_loc = new_file_loc
-    window.winfo_children()[-2].destroy()
-    Label(window, text=print_on_language(1, 34) + ': ' + str(file_loc)).grid(column=0, row=count_row + 1)
-    Button(window, text=print_on_language(1, 35), command=lambda: change_dataset(count_row)) \
-        .grid(column=1, row=count_row + 1)
+    scrollable_frame.winfo_children()[1].destroy()
+    if file_loc is not None and '/' in file_loc:
+        Button(scrollable_frame, text=print_on_language(1, 34) + ': ' + str(file_loc[file_loc.rfind('/') + 1:]),
+               command=lambda: show_path(file_loc)).grid(column=0, row=1, sticky='w')
+    else:
+        Label(scrollable_frame, text=print_on_language(1, 34) + ': ' + str(None))\
+            .grid(column=0, row=1, sticky='w')
+    Button(scrollable_frame, text=print_on_language(1, 35), command=lambda: change_dataset()) \
+        .grid(column=1, row=1, sticky='e')
+
+
+def show_path(file_location):
+    messagebox.showinfo(print_on_language(1, 59), file_location)
 
 
 def settings_dataset(buttons=True):
     global parameters_dataset
+    root.update_idletasks()
     clear_window()
+    active_scroll()
+    window.pack_forget()
     if is_debug:
         print(debug.i(), 'The dataset settings are open')
-    Label(window, text=print_on_language(1, 33)).grid(column=0, row=0)
-    count_row = 1
+    Label(scrollable_frame, text=print_on_language(1, 59)).grid(column=0, row=0, sticky='w')
+    if file_loc is not None and '/' in file_loc:
+        Button(scrollable_frame, text=print_on_language(1, 34) + ': ' + str(file_loc[file_loc.rfind('/') + 1:]),
+               command=lambda: show_path(file_loc)).grid(column=0, row=1, sticky='w')
+    else:
+        Label(scrollable_frame, text=print_on_language(1, 34) + ': ' + str(None))\
+            .grid(column=0, row=1, sticky='w')
+    Button(scrollable_frame, text=print_on_language(1, 35), command=lambda: change_dataset()) \
+        .grid(column=1, row=1, sticky='e')
+    Label(scrollable_frame).grid(column=0, row=2)
+    Label(scrollable_frame, text=print_on_language(1, 33)).grid(column=0, row=3, sticky='w')
+    Label(scrollable_frame, text=print_on_language(1, 61)).grid(column=0, row=4, sticky='w')
+    Label(scrollable_frame, text=print_on_language(1, 60)).grid(column=1, row=4, sticky='e')
+    count_row = 5
     parameters_dataset = calculations.get_parameters_dataset()
     entries = []
     for i in range(len(parameters_dataset)):
         v = StringVar(root, value=str(configuration[indexes[1 + i]][str(configuration[indexes[1 + i]]).find("'") + 1:
                                                                     str(configuration[indexes[1 + i]]).rfind("'")]))
-        Label(window, text=parameters_dataset_translated[i]).grid(column=0, row=count_row, sticky=W)
-        value_entry = Entry(window, textvariable=v)
+        Label(scrollable_frame, text=parameters_dataset_translated[i]).grid(column=0, row=count_row, sticky='w')
+        value_entry = Entry(scrollable_frame, textvariable=v)
         entries.append(value_entry)
-        value_entry.grid(column=1, row=count_row)
+        value_entry.grid(column=1, row=count_row, sticky='e')
         count_row = count_row + 1
-    Label(window, text=print_on_language(1, 34) + ': ' + str(file_loc)).grid(column=0, row=count_row + 1)
-    Button(window, text=print_on_language(1, 35), command=lambda: change_dataset(count_row)) \
-        .grid(column=1, row=count_row + 1)
+    Label(scrollable_frame).grid(column=0, row=count_row + 1)
     if not buttons:
         Button(button_frame, text=print_on_language(1, 50),
                command=lambda: apply_dataset(entries, delayed_start_var=True)).grid(column=0, row=count_row + 2)
