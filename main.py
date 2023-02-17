@@ -5,6 +5,8 @@ import platform
 from tkinter import *
 from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
+from tkinter import ttk
+
 import webbrowser
 import requests
 import zipfile
@@ -377,7 +379,7 @@ def settings_dataset(buttons=True):
     window.pack_forget()
     if is_debug:
         print(debug.i(), 'The dataset settings are open')
-    Label(scrollable_frame, text=print_on_language(1, 59)).grid(column=0, row=0, sticky='w')
+    Label(scrollable_frame, text=print_on_language(1, 59), background='#DCDCDC').grid(column=0, row=0, sticky='w')
     if file_loc is not None and '/' in file_loc:
         Button(scrollable_frame, text=print_on_language(1, 34) + ': ' + str(file_loc[file_loc.rfind('/') + 1:]),
                command=lambda: show_path(file_loc)).grid(column=0, row=1, sticky='w')
@@ -387,7 +389,8 @@ def settings_dataset(buttons=True):
     Button(scrollable_frame, text=print_on_language(1, 35), command=lambda: change_dataset()) \
         .grid(column=1, row=1, sticky='e')
     Label(scrollable_frame).grid(column=0, row=2)
-    Label(scrollable_frame, text=print_on_language(1, 33)).grid(column=0, row=3, sticky='w')
+    ttk.Separator(scrollable_frame, orient='horizontal').grid(column=0, row=2, columnspan=4, sticky='we')
+    Label(scrollable_frame, text=print_on_language(1, 33), background='#DCDCDC').grid(column=0, row=3, sticky='w')
     Label(scrollable_frame, text=print_on_language(1, 61)).grid(column=0, row=4, sticky='w')
     Label(scrollable_frame, text=print_on_language(1, 60)).grid(column=1, row=4, sticky='e')
     count_row = 5
