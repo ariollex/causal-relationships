@@ -229,7 +229,7 @@ def disable_scroll():
 def active_scroll():
     global canvas_frame, status_scroll
     setup_scroll()
-    container.pack(fill='both', expand=True)
+    container.pack(fill='both', expand=True, padx=75, pady=5)
     canvas_frame = canvas.configure(yscrollcommand=v_scrollbar.set)
     scrollable_frame.bind("<Configure>", lambda e: on_canvas_configure(e))
     root.bind_all("<MouseWheel>", scroll_canvas)
