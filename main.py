@@ -370,7 +370,7 @@ def show_path(file_location):
 
 def settings_dataset(buttons=True):
     global parameters_dataset
-    root.update_idletasks()
+    root.update()
     clear_window()
     active_scroll()
     head.pack_forget()
