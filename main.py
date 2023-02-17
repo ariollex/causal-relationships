@@ -371,10 +371,10 @@ def show_path(file_location):
 def short_filename(file_path):
     if file_path is not None and '/' in file_path:
         filename = str(file_path[file_path.rfind('/') + 1:])
-        filename = (filename[:31] + '...') if len(filename) >= 33 else filename + ' ' * (33 - len(filename))
+        filename = (filename[:31] + '...') if len(filename) >= 33 else filename
         return filename
     else:
-        return str(None) + ' ' * 49
+        return str(None)
 
 
 def settings_dataset(buttons=True):
@@ -388,6 +388,7 @@ def settings_dataset(buttons=True):
         print(debug.i(), 'The dataset settings are open')
     Label(scrollable_frame, text=print_on_language(1, 59), background='#DCDCDC').grid(column=0, row=0, sticky='w')
     file_btn_text = StringVar()
+    Label(scrollable_frame, text=' ' * 93).grid(column=0, row=1, sticky='w')
     Button(scrollable_frame, textvariable=file_btn_text, command=lambda: show_path(file_loc)) \
         .grid(column=0, row=1, sticky='w')
     file_btn_text.set(print_on_language(1, 34) + ': ' + short_filename(file_loc))
