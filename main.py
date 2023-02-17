@@ -231,13 +231,13 @@ def disable_scroll():
 def active_scroll():
     global canvas_frame, status_scroll
     setup_scroll()
-    container.pack(fill='both', expand=True, padx=70, pady=5)
+    container.pack(fill='both', expand=True, padx=(70, 0), pady=5)
     canvas_frame = canvas.configure(yscrollcommand=v_scrollbar.set)
     scrollable_frame.bind("<Configure>", lambda e: on_canvas_configure(e))
     root.bind_all("<MouseWheel>", scroll_canvas)
     canvas.create_window((0, 0), window=scrollable_frame, anchor='nw')
     canvas.pack(side='left', fill='both', expand=True)
-    v_scrollbar.pack(side="right", fill="y", expand=True)
+    v_scrollbar.pack(side="right", fill="y")
     status_scroll = 'active'
     # h_scrollbar.pack(side="bottom", fill="x", expand=True))
 
@@ -406,7 +406,7 @@ def settings_dataset(buttons=True):
         v = StringVar(root, value=str(configuration[indexes[1 + i]][str(configuration[indexes[1 + i]]).find("'") + 1:
                                                                     str(configuration[indexes[1 + i]]).rfind("'")]))
         Label(scrollable_frame, text=parameters_dataset_translated[i]).grid(column=0, row=count_row, sticky='w')
-        value_entry = Entry(scrollable_frame, textvariable=v)
+        value_entry = Entry(scrollable_frame, textvariable=v, width=10)
         entries.append(value_entry)
         value_entry.grid(column=1, row=count_row, sticky='e')
         count_row = count_row + 1
