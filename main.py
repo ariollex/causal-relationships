@@ -149,7 +149,7 @@ def set_dataset_columns():
 
 name, sex, parallel, letter, causes, time_causes, previous_causes = \
     pandas.Index([]), pandas.Index([]), pandas.Index([]), pandas.Index([]), pandas.Index([]), pandas.Index([]), \
-        pandas.Index([])
+    pandas.Index([])
 
 # Dataset settings
 if 'invalid_parameters_values' not in delayed_start and data is not None:
@@ -388,7 +388,7 @@ def settings_dataset(buttons=True):
         print(debug.i(), 'The dataset settings are open')
     Label(scrollable_frame, text=print_on_language(1, 59), background='#DCDCDC').grid(column=0, row=0, sticky='w')
     file_btn_text = StringVar()
-    Label(scrollable_frame, text=' ' * 93).grid(column=0, row=1, sticky='w')
+    Label(scrollable_frame, text=' ' * 110).grid(column=0, row=1, sticky='w')
     Button(scrollable_frame, textvariable=file_btn_text, command=lambda: show_path(file_loc)) \
         .grid(column=0, row=1, sticky='w')
     file_btn_text.set(print_on_language(1, 34) + ': ' + short_filename(file_loc))
