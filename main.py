@@ -492,7 +492,7 @@ def mode_causal_relationship():
     count_row = len(list_incidents_numbered)
     for i in range(count_row):
         Button(scrollable_frame, text=list_incidents_numbered[i],
-               command=lambda j=i: mode_causal_relationship_information(j, info)).grid(column=0, row=i + 1)
+               command=lambda j=i: mode_causal_relationship_information(j, info)).grid(column=0, row=i + 1, sticky='w')
     back_button(0, count_row + 1)
     exit_button(1, count_row + 1)
 
