@@ -510,7 +510,7 @@ def mode_causal_relationship_information(user_selection, info):
     if is_debug:
         print(debug.i(), 'The causal relationship menu about student is open')
     active_scroll()
-    Label(scrollable_frame, text=' ' * 150).grid()
+    Label(scrollable_frame, text=' ' * 135).grid()
     if list_incidents[user_selection][1] == print_on_language(1, 4) or (print_on_language(3, 2) == 0):
         user_choice_text = print_on_language(1, 2) + ' ' + str(user_selection + 1) + '. ' + print_on_language(2, 2) + \
                            ': ' + str(list_incidents[user_selection][0])
