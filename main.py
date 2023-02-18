@@ -277,11 +277,7 @@ def clear_window(message=None):
         print(debug.i(), 'Clearing the screen')
     if status_scroll == 'active':
         disable_scroll()
-    for widget in button_frame.winfo_children():
-        widget.destroy()
-    for widget in head.winfo_children():
-        widget.destroy()
-    for widget in window.winfo_children():
+    for widget in button_frame.winfo_children() + head.winfo_children() + window.winfo_children():
         widget.destroy()
     head.pack(side='top')
     window.pack(expand=True)
@@ -448,7 +444,7 @@ def settings():
 
 def open_link(link):
     if is_debug:
-        print(debug.i(), 'Open link', link)
+        print(debug.i(), 'Opening link', link)
     webbrowser.open_new(link)
 
 

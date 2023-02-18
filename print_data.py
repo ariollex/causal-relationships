@@ -35,5 +35,5 @@ def full_information(is_fight, in_class, participants, student_class, suspicious
     if suspicious:
         incident_result = incident_result + '\n' + print_on_language(1, 24) + ' ' + str(maximum[0]) + ' ' + \
                           ', ' + print_on_language(2, 24) + '\n' + str(maximum[1]) + ' ' + print_on_language(3,
-                                                                                                            24) + '\n'
+                                                                                                             24) + '\n'
     return student_result, incident_result
