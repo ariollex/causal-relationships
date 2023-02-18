@@ -249,6 +249,7 @@ def active_scroll():
 # Для scroll_canvas
 last_event = 0
 count_drop = 0
+drop_value = 3
 
 
 # Привязка прокрутки к мыши
@@ -258,13 +259,13 @@ def scroll_canvas(event):
         canvas.yview_scroll(int(-1 * (event.delta / 120)), 'units')
     elif platform.system() == 'Darwin':
         v_event = last_event
-        count_drop = count_drop + abs(int(-1 * event.delta))//int(-1 * event.delta)
+        count_drop = count_drop + abs(int(-1 * event.delta)) // int(-1 * event.delta)
         if v_event == 0:
             v_event = count_drop
-        if abs(count_drop) > 5:
-            count_drop = (abs(count_drop)//count_drop)*5
+        if abs(count_drop) > drop_value:
+            count_drop = (abs(count_drop) // count_drop) * drop_value
         elif count_drop == 0:
-            count_drop = abs(int(-1 * event.delta))//int(-1 * event.delta)
+            count_drop = abs(int(-1 * event.delta)) // int(-1 * event.delta)
             v_event = count_drop
         canvas.yview_scroll(v_event, 'units')
         last_event = v_event
