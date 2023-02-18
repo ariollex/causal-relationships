@@ -21,8 +21,8 @@ from strings import set_language, set_variables, print_on_language
 
 # Version
 version = '0.2.3'
-prefix = 'alpha'
-is_debug = True
+prefix = 'beta'
+is_debug = False
 if prefix == '':
     version = 'v' + version
 else:
