@@ -495,33 +495,39 @@ def mode_causal_relationship():
     count_row = len(list_incidents_numbered)
     for i in range(count_row):
         Button(scrollable_frame, text=list_incidents_numbered[i],
-               command=lambda j=i: mode_causal_relationship_process(j, info)).grid(column=0, row=i + 1)
+               command=lambda j=i: mode_causal_relationship_information(j, info)).grid(column=0, row=i + 1)
     back_button(0, count_row + 1)
     exit_button(1, count_row + 1)
 
 
-def mode_causal_relationship_process(user_selection, info):
+def mode_causal_relationship_information(user_selection, info):
     clear_window()
     window.pack_forget()
     if is_debug:
         print(debug.i(), 'The causal relationship menu about student is open')
     active_scroll()
+    Label(scrollable_frame, text=' ' * 150).grid()
     if list_incidents[user_selection][1] == print_on_language(1, 4) or (print_on_language(3, 2) == 0):
         user_choice_text = print_on_language(1, 2) + ' ' + str(user_selection + 1) + '. ' + print_on_language(2, 2) + \
                            ': ' + str(list_incidents[user_selection][0])
     else:
         user_choice_text = print_on_language(1, 2) + ' ' + str(user_selection + 1) + '. ' + print_on_language(3, 2) + \
                            ': ' + str(list_incidents[user_selection][0])
-    Label(head, text=user_choice_text).grid(column=0, row=0, sticky=W)
+    Label(head, text=user_choice_text).grid(column=0, row=0, sticky='w')
+    Label(scrollable_frame, text=print_on_language(1, 65), background='#DCDCDC').grid(column=0, row=1, sticky='w')
 
     # Calculations: search for matching information
     calculations.intersection_of_classes(list_incidents, user_selection, info, 0)
     calculations.intersection_of_time(list_incidents, user_selection, info, 0)
-
+    student_text, incident_text = calculations.conclusions(list_incidents, user_selection, info)
     # Calculations: conclusions
-    Label(scrollable_frame, text=calculations.conclusions(list_incidents, user_selection, info)).grid(column=0, row=1)
-    back_button(0, 2, back_command=lambda: mode_causal_relationship())
-    exit_button(1, 2)
+    Label(scrollable_frame, text=student_text).grid(column=0, row=2)
+    Label(scrollable_frame).grid(column=0, row=3)
+    ttk.Separator(scrollable_frame, orient='horizontal').grid(column=0, row=3, columnspan=4, sticky='we')
+    Label(scrollable_frame, text=print_on_language(1, 66), background='#DCDCDC').grid(column=0, row=4, sticky='w')
+    Label(scrollable_frame, text=incident_text).grid(column=0, row=5)
+    back_button(0, 4, back_command=lambda: mode_causal_relationship())
+    exit_button(1, 4)
 
 
 def mode_chart():
