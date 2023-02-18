@@ -1,7 +1,7 @@
 import os
 import numpy
 import pandas
-
+from tkinter import messagebox
 configuration, indexes, language_texts = [], [], []
 
 
@@ -21,7 +21,11 @@ def set_language(language):
         out.writelines(lines)
         out.close()
     if os.path.exists('languages/strings_' + str(language) + '.xlsx'):
-        language_texts = pandas.read_excel('languages/strings_' + str(language) + '.xlsx')
+        try:
+            language_texts = pandas.read_excel('languages/strings_' + str(language) + '.xlsx')
+        except PermissionError:
+            messagebox.showerror('Error', 'It looks like you have a language file open. Please close it.')
+            exit('E Exiting...')
         language_texts.replace(numpy.nan, 0, inplace=True)
         language_texts.columns = range(language_texts.columns.size)
         return True
