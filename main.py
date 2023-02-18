@@ -6,7 +6,6 @@ from tkinter import *
 from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
 from tkinter import ttk
-
 import webbrowser
 import requests
 import zipfile
@@ -21,7 +20,7 @@ from strings import set_language, set_variables, print_on_language
 
 # Version
 version = '0.2.3'
-prefix = 'beta'
+prefix = ''
 is_debug = False
 if prefix == '':
     version = 'v' + version
