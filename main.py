@@ -192,14 +192,10 @@ def change_configuration(option, line, argument):
 
 def change_language(back_btn=None, delayed_start_var=False):
     clear_window()
-    active_scroll()
-    window.pack_forget()
-    container.pack_forget()
-    container.pack(expand=True, padx=(110, 0), pady=5)
     files = os.listdir(os.getcwd() + '/languages')
     if is_debug:
         print(debug.i(), 'The language menu are open')
-    Label(head, text='Available languages:').grid(column=0, row=0)
+    Label(window, text='Available languages:').grid(column=0, row=0)
     count_row = 1
     for i in range(len(files)):
         if files[i][:8] == 'strings_':
@@ -210,7 +206,7 @@ def change_language(back_btn=None, delayed_start_var=False):
                     text = ' (' + print_on_language(1, 57) + ')'
             else:
                 text = ''
-            Button(scrollable_frame, text=files[i].replace('strings_', '').replace('.xlsx', '') + text,
+            Button(window, text=files[i].replace('strings_', '').replace('.xlsx', '') + text,
                    command=lambda j=i: change_language_process(files, j, delayed_start_var)) \
                 .grid(column=0, row=count_row)
             count_row = count_row + 1
