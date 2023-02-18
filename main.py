@@ -507,7 +507,6 @@ def mode_causal_relationship_information(user_selection, info):
     if is_debug:
         print(debug.i(), 'The causal relationship menu about student is open')
     active_scroll()
-    Label(scrollable_frame, text=' ' * 135).grid()
     if list_incidents[user_selection][1] == print_on_language(1, 4) or (print_on_language(3, 2) == 0):
         user_choice_text = print_on_language(1, 2) + ' ' + str(user_selection + 1) + '. ' + print_on_language(2, 2) + \
                            ': ' + str(list_incidents[user_selection][0])
@@ -525,6 +524,7 @@ def mode_causal_relationship_information(user_selection, info):
     Label(scrollable_frame, text=student_text).grid(column=0, row=2)
     Label(scrollable_frame).grid(column=0, row=3)
     ttk.Separator(scrollable_frame, orient='horizontal').grid(column=0, row=3, columnspan=4, sticky='we')
+    Label(scrollable_frame, text=' ' * 135).grid(row=3)
     Label(scrollable_frame, text=print_on_language(1, 66), background='#DCDCDC').grid(column=0, row=4, sticky='w')
     Label(scrollable_frame, text=incident_text).grid(column=0, row=5)
     back_button(0, 4, back_command=lambda: mode_causal_relationship())
