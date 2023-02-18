@@ -242,12 +242,28 @@ def active_scroll():
     # h_scrollbar.pack(side="bottom", fill="x", expand=True))
 
 
-# bind scrolling to mousewheel
+# Для scroll_canvas
+last_event = 0
+count_drop = 0
+
+
+# Привязка прокрутки к мыши
 def scroll_canvas(event):
+    global last_event, count_drop
     if platform.system() == 'Windows':
         canvas.yview_scroll(int(-1 * (event.delta / 120)), 'units')
     elif platform.system() == 'Darwin':
-        canvas.yview_scroll(int(-1 * event.delta), 'units')
+        v_event = last_event
+        count_drop = count_drop + abs(int(-1 * event.delta))//int(-1 * event.delta)
+        if v_event == 0:
+            v_event = count_drop
+        if abs(count_drop) > 5:
+            count_drop = (abs(count_drop)//count_drop)*5
+        elif count_drop == 0:
+            count_drop = abs(int(-1 * event.delta))//int(-1 * event.delta)
+            v_event = count_drop
+        canvas.yview_scroll(v_event, 'units')
+        last_event = v_event
     else:
         if event.num == 4:
             canvas.yview_scroll(-1, 'units')
