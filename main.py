@@ -164,21 +164,64 @@ if 'invalid_parameters_values' not in delayed_start and data is not None:
                 time_causes[i] = int(time_causes[i])
 
 
-def back_button(column_btn, count_row, translated=True, back_command=lambda: mode_selection()):
-    if not translated:
-        exit_btn = Button(button_frame, text='Back', command=back_command)
+def apply_constants():
+    global modes, available_charts, parameters_dataset_translated, list_incidents
+    # Modes
+    modes = [print_on_language(1, 8), print_on_language(1, 9)]
+
+    # Available graphs
+    available_charts = [print_on_language(1, 5), print_on_language(1, 18), print_on_language(1, 19),
+                        print_on_language(1, 56)]
+
+    # Translated dataset parameters
+    parameters_dataset_translated = [print_on_language(1, 36), print_on_language(1, 37), print_on_language(1, 17),
+                                     print_on_language(1, 38), print_on_language(1, 12), print_on_language(1, 39),
+                                     print_on_language(1, 40)]
+
+    root.title(print_on_language(1, 15) + ', ' + version)
+
+    if configuration_status == 'normal':
+        # Creating a list of incidents
+        list_incidents = calculations.make_list_incidents(data, name, sex, parallel, letter, causes,
+                                                          time_causes, previous_causes)
+        menu_main()
     else:
-        exit_btn = Button(button_frame, text=print_on_language(1, 30), command=back_command)
-    exit_btn.grid(column=column_btn, row=count_row, padx=5, pady=5)
+        fix_configuration()
 
 
-def exit_button(column_btn, count_row, translated=True, exit_command=lambda: exit(debug.i() + ' Exiting...' if is_debug
-                                                                                  else '')):
-    if not translated:
-        exit_btn = Button(button_frame, text='Exit', command=exit_command)
-    else:
-        exit_btn = Button(button_frame, text=print_on_language(1, 21), command=exit_command)
-    exit_btn.grid(column=column_btn, row=count_row, padx=5, pady=5)
+def open_link(link):
+    if is_debug:
+        print(debug.i(), 'Opening link', link)
+    webbrowser.open_new(link)
+
+
+def fix_configuration():
+    global list_incidents, language_status, configuration_status
+    # Language
+    if 'invalid_language' in delayed_start:
+        messagebox.showwarning('Warning', 'The language is not defined. Please select a language.')
+        menu_language(delayed_start_var=True)
+    elif language_status != 'active':
+        language_status = 'active'
+        apply_constants()
+    # Invalid path dataset
+    elif 'invalid_path_dataset' in delayed_start:
+        messagebox.showwarning(print_on_language(1, 47), print_on_language(1, 48))
+        menu_settings_dataset(buttons=False)
+        delayed_start.remove('invalid_path_dataset')
+        delayed_start.remove('invalid_parameters_values')
+    # Invalid parameters_values
+    elif 'invalid_parameters_values' in delayed_start:
+        messagebox.showwarning(print_on_language(1, 47), print_on_language(1, 49))
+        menu_settings_dataset(buttons=False)
+        delayed_start.remove('invalid_parameters_values')
+    # check for normal status
+    elif len(delayed_start) == 0:
+        # Creating a list of incidents
+        list_incidents = calculations.make_list_incidents(data, name, sex, parallel, letter, causes,
+                                                          time_causes, previous_causes)
+        configuration_status = 'normal'
+        menu_main()
 
 
 def change_configuration(option, line, argument):
@@ -189,42 +232,12 @@ def change_configuration(option, line, argument):
     out.close()
 
 
-def change_language(back_btn=None, delayed_start_var=False):
-    clear_window()
-    files = os.listdir(os.getcwd() + '/languages')
-    if is_debug:
-        print(debug.i(), 'The language menu are open')
-    Label(window, text='Available languages:').grid(column=0, row=0)
-    count_row = 1
-    for i in range(len(files)):
-        if files[i][:8] == 'strings_':
-            if language == files[i].replace('strings_', '').replace('.xlsx', ''):
-                if delayed_start_var:
-                    text = ' ' + '(selected)'
-                else:
-                    text = ' (' + print_on_language(1, 57) + ')'
-            else:
-                text = ''
-            Button(window, text=files[i].replace('strings_', '').replace('.xlsx', '') + text,
-                   command=lambda j=i: change_language_process(files, j, delayed_start_var)) \
-                .grid(column=0, row=count_row)
-            count_row = count_row + 1
-    column_btn = 0
-    translated = False
-    if back_btn:
-        back_button(column_btn, count_row + 2, back_command=lambda: settings())
-        column_btn = column_btn + 1
-        translated = True
-    exit_button(column_btn, count_row + 2, translated)
-
-
-def disable_scroll():
-    global status_scroll
-    canvas.delete('all')
-    scrollable_frame.pack_forget()
-    v_scrollbar.pack_forget()
-    container.pack_forget()
-    status_scroll = 'disabled'
+def setup_scroll():
+    global container, canvas, v_scrollbar, h_scrollbar, scrollable_frame
+    container = Frame(root)
+    canvas = Canvas(container, highlightthickness=0)
+    v_scrollbar = Scrollbar(container, orient="vertical", command=canvas.yview)
+    scrollable_frame = Frame(canvas)
 
 
 def active_scroll():
@@ -239,6 +252,28 @@ def active_scroll():
     v_scrollbar.pack(side="right", fill="y")
     status_scroll = 'active'
     # h_scrollbar.pack(side="bottom", fill="x", expand=True))
+
+
+def disable_scroll():
+    global status_scroll
+    canvas.delete('all')
+    scrollable_frame.pack_forget()
+    v_scrollbar.pack_forget()
+    container.pack_forget()
+    status_scroll = 'disabled'
+
+
+def on_canvas_configure(event):
+    canvas.configure(scrollregion=height_window())
+    canvas.itemconfig(canvas_frame, width=event.width)
+
+
+def height_window():
+    if scrollable_frame.winfo_height() > canvas.winfo_height():
+        height = scrollable_frame.winfo_height()
+    else:
+        height = canvas.winfo_height()
+    return 0, 0, height, height
 
 
 # Для scroll_canvas
@@ -283,15 +318,161 @@ def clear_window(message=None):
         Label(window, text=message, fg='red').grid(column=0, row=0)
 
 
-def change_language_process(files, index_language, delayed_start_var=False):
-    global language_status, delayed_start, language
-    new_language = files[index_language].replace('strings_', '').replace('.xlsx', '')
-    set_language(new_language)
-    language_status = 'active'
-    if delayed_start_var:
-        delayed_start.remove('invalid_language')
-    language = new_language
-    start_variables()
+def back_button(column_btn, count_row, translated=True, back_command=lambda: menu_main()):
+    if not translated:
+        exit_btn = Button(button_frame, text='Back', command=back_command)
+    else:
+        exit_btn = Button(button_frame, text=print_on_language(1, 30), command=back_command)
+    exit_btn.grid(column=column_btn, row=count_row, padx=5, pady=5)
+
+
+def exit_button(column_btn, count_row, translated=True, exit_command=lambda: exit(debug.i() + ' Exiting...' if is_debug
+                                                                                  else '')):
+    if not translated:
+        exit_btn = Button(button_frame, text='Exit', command=exit_command)
+    else:
+        exit_btn = Button(button_frame, text=print_on_language(1, 21), command=exit_command)
+    exit_btn.grid(column=column_btn, row=count_row, padx=5, pady=5)
+
+
+def menu_main():
+    clear_window()
+    root.update()
+    if is_debug:
+        print(debug.i(), 'The main menu is open')
+    Label(window, text=print_on_language(1, 6) + '. ' + print_on_language(1, 7) + ':').grid(column=0, row=0)
+
+    # Program operation mode selection
+    Button(window, text=modes[0], command=menu_causal_relationship).grid(column=0, row=1)
+    Button(window, text=modes[1], command=menu_charts).grid(column=0, row=2)
+    Button(window, text=print_on_language(1, 31), command=menu_settings).grid(column=0, row=3)
+    exit_button(0, 4)
+
+
+def menu_causal_relationship():
+    clear_window()
+    window.pack_forget()
+    if is_debug:
+        print(debug.i(), 'The causal relationship menu is open')
+    info = []
+    list_incidents_numbered = print_data.print_list_incidents(list_incidents)
+    Label(head, text=print_on_language(1, 0)).grid(column=0, row=0)
+    active_scroll()
+    count_row = len(list_incidents_numbered)
+    for i in range(count_row):
+        Button(scrollable_frame, text=list_incidents_numbered[i],
+               command=lambda j=i: menu_causal_relationship_information(j, info)).grid(column=0, row=i + 1, sticky='w')
+    back_button(0, count_row + 1)
+    exit_button(1, count_row + 1)
+
+
+def menu_causal_relationship_information(user_selection, info):
+    clear_window()
+    window.pack_forget()
+    if is_debug:
+        print(debug.i(), 'The causal relationship menu about student is open')
+    active_scroll()
+    if list_incidents[user_selection][1] == print_on_language(1, 4) or (print_on_language(3, 2) == 0):
+        user_choice_text = print_on_language(1, 2) + ' ' + str(user_selection + 1) + '. ' + print_on_language(2, 2) + \
+                           ': ' + str(list_incidents[user_selection][0])
+    else:
+        user_choice_text = print_on_language(1, 2) + ' ' + str(user_selection + 1) + '. ' + print_on_language(3, 2) + \
+                           ': ' + str(list_incidents[user_selection][0])
+    Label(head, text=user_choice_text).grid(column=0, row=0, sticky='w')
+    Label(scrollable_frame, text=print_on_language(1, 65), background='#DCDCDC').grid(column=0, row=1, sticky='w')
+
+    # Calculations: search for matching information
+    calculations.intersection_of_classes(list_incidents, user_selection, info, 0)
+    calculations.intersection_of_time(list_incidents, user_selection, info, 0)
+    student_text, incident_text = calculations.conclusions(list_incidents, user_selection, info)
+    # Calculations: conclusions
+    Label(scrollable_frame, text=student_text).grid(column=0, row=2)
+    Label(scrollable_frame).grid(column=0, row=3)
+    ttk.Separator(scrollable_frame, orient='horizontal').grid(column=0, row=3, columnspan=4, sticky='we')
+    Label(scrollable_frame, text=' ' * 135).grid(row=3)
+    Label(scrollable_frame, text=print_on_language(1, 66), background='#DCDCDC').grid(column=0, row=4, sticky='w')
+    Label(scrollable_frame, text=incident_text).grid(column=0, row=5)
+    back_button(0, 4, back_command=menu_causal_relationship)
+    exit_button(1, 4)
+
+
+def menu_charts():
+    clear_window()
+    if is_debug:
+        print(debug.i(), 'The charts menu is open')
+    list_graphs_numbered = print_data.print_selection_list(available_charts)
+    Label(window, text=print_on_language(1, 10) + ':')
+    count_row = len(list_graphs_numbered)
+    for i in range(count_row):
+        if i == 3:
+            if len(parallel.value_counts().values) < 7 or len(previous_causes.value_counts().values) < 7:
+                continue
+        Button(window, text=list_graphs_numbered[i], command=lambda j=i: mode_chart_process(j)) \
+            .grid(column=0, row=i + 1, sticky=W)
+    back_button(0, count_row + 1)
+    exit_button(1, count_row + 1)
+
+
+def mode_chart_process(choice_chart):
+    if is_debug:
+        print(debug.i(), 'Displaying a chart...')
+    charts.set_variables(list_incidents, causes, parallel, name_columns, previous_causes)
+    charts.chart_selection(choice_chart, data)
+    count_row = len(available_charts)
+    back_button(0, count_row + 1)
+    exit_button(1, count_row + 1)
+
+
+def menu_settings():
+    clear_window()
+    if is_debug:
+        print(debug.i(), 'The settings are open')
+    Button(window, text=print_on_language(1, 32), command=menu_settings_dataset).grid(column=0, row=0)
+    Button(window, text=print_on_language(1, 20), command=lambda: menu_language(True)).grid(column=0, row=1)
+    Button(window, text=print_on_language(1, 43), command=menu_about_program).grid(column=0, row=2)
+    back_button(0, 1)
+    exit_button(1, 1)
+
+
+def menu_settings_dataset(buttons=True):
+    global parameters_dataset
+    root.update()
+    clear_window()
+    active_scroll()
+    head.pack_forget()
+    window.pack_forget()
+    if is_debug:
+        print(debug.i(), 'The dataset settings are open')
+    Label(scrollable_frame, text=print_on_language(1, 59), background='#DCDCDC').grid(column=0, row=0, sticky='w')
+    file_btn_text = StringVar()
+    Label(scrollable_frame, text=' ' * 110).grid(column=0, row=1, sticky='w')
+    Button(scrollable_frame, textvariable=file_btn_text, command=lambda: show_path(file_loc)) \
+        .grid(column=0, row=1, sticky='w')
+    file_btn_text.set(print_on_language(1, 34) + ': ' + short_filename(file_loc))
+    Button(scrollable_frame, text=print_on_language(1, 35), command=lambda: change_dataset(file_btn_text)) \
+        .grid(column=1, row=1, sticky='e')
+    Label(scrollable_frame).grid(column=0, row=2)
+    ttk.Separator(scrollable_frame, orient='horizontal').grid(column=0, row=2, columnspan=4, sticky='we')
+    Label(scrollable_frame, text=print_on_language(1, 33), background='#DCDCDC').grid(column=0, row=3, sticky='w')
+    Label(scrollable_frame, text=print_on_language(1, 61)).grid(column=0, row=4, sticky='w')
+    Label(scrollable_frame, text=print_on_language(1, 60)).grid(column=1, row=4, sticky='e')
+    count_row = 5
+    parameters_dataset = calculations.get_parameters_dataset()
+    entries = []
+    for i in range(len(parameters_dataset)):
+        v = StringVar(root, value=str(configuration[indexes[1 + i]][str(configuration[indexes[1 + i]]).find("'") + 1:
+                                                                    str(configuration[indexes[1 + i]]).rfind("'")]))
+        Label(scrollable_frame, text=parameters_dataset_translated[i]).grid(column=0, row=count_row, sticky='w')
+        value_entry = Entry(scrollable_frame, textvariable=v, width=10)
+        entries.append(value_entry)
+        value_entry.grid(column=1, row=count_row, sticky='e')
+        count_row = count_row + 1
+    if not buttons:
+        Button(button_frame, text=print_on_language(1, 50),
+               command=lambda: apply_dataset(entries, delayed_start_var=True)).grid(column=0, row=count_row + 1)
+    else:
+        back_button(0, count_row + 1, back_command=lambda: apply_dataset(entries))
+    exit_button(1, count_row + 1, exit_command=lambda: apply_dataset(entries, apply_exit=True))
 
 
 def apply_dataset(changes, delayed_start_var=False, apply_exit=None):
@@ -335,9 +516,9 @@ def apply_dataset(changes, delayed_start_var=False, apply_exit=None):
     if apply_exit:
         exit(debug.i() + ' Exiting...' if is_debug else '')
     elif not delayed_start_var:
-        settings()
+        menu_settings()
     else:
-        start_variables()
+        apply_constants()
         messagebox.showinfo(title=print_on_language(1, 51), message=print_on_language(1, 52))
         fix_configuration()
 
@@ -388,65 +569,47 @@ def short_filename(file_path):
         return str(None)
 
 
-def settings_dataset(buttons=True):
-    global parameters_dataset
-    root.update()
+def menu_language(back_btn=None, delayed_start_var=False):
     clear_window()
-    active_scroll()
-    head.pack_forget()
-    window.pack_forget()
+    files = os.listdir(os.getcwd() + '/languages')
     if is_debug:
-        print(debug.i(), 'The dataset settings are open')
-    Label(scrollable_frame, text=print_on_language(1, 59), background='#DCDCDC').grid(column=0, row=0, sticky='w')
-    file_btn_text = StringVar()
-    Label(scrollable_frame, text=' ' * 110).grid(column=0, row=1, sticky='w')
-    Button(scrollable_frame, textvariable=file_btn_text, command=lambda: show_path(file_loc)) \
-        .grid(column=0, row=1, sticky='w')
-    file_btn_text.set(print_on_language(1, 34) + ': ' + short_filename(file_loc))
-    Button(scrollable_frame, text=print_on_language(1, 35), command=lambda: change_dataset(file_btn_text)) \
-        .grid(column=1, row=1, sticky='e')
-    Label(scrollable_frame).grid(column=0, row=2)
-    ttk.Separator(scrollable_frame, orient='horizontal').grid(column=0, row=2, columnspan=4, sticky='we')
-    Label(scrollable_frame, text=print_on_language(1, 33), background='#DCDCDC').grid(column=0, row=3, sticky='w')
-    Label(scrollable_frame, text=print_on_language(1, 61)).grid(column=0, row=4, sticky='w')
-    Label(scrollable_frame, text=print_on_language(1, 60)).grid(column=1, row=4, sticky='e')
-    count_row = 5
-    parameters_dataset = calculations.get_parameters_dataset()
-    entries = []
-    for i in range(len(parameters_dataset)):
-        v = StringVar(root, value=str(configuration[indexes[1 + i]][str(configuration[indexes[1 + i]]).find("'") + 1:
-                                                                    str(configuration[indexes[1 + i]]).rfind("'")]))
-        Label(scrollable_frame, text=parameters_dataset_translated[i]).grid(column=0, row=count_row, sticky='w')
-        value_entry = Entry(scrollable_frame, textvariable=v, width=10)
-        entries.append(value_entry)
-        value_entry.grid(column=1, row=count_row, sticky='e')
-        count_row = count_row + 1
-    if not buttons:
-        Button(button_frame, text=print_on_language(1, 50),
-               command=lambda: apply_dataset(entries, delayed_start_var=True)).grid(column=0, row=count_row + 1)
-    else:
-        back_button(0, count_row + 1, back_command=lambda: apply_dataset(entries))
-    exit_button(1, count_row + 1, exit_command=lambda: apply_dataset(entries, apply_exit=True))
+        print(debug.i(), 'The language menu are open')
+    Label(window, text='Available languages:').grid(column=0, row=0)
+    count_row = 1
+    for i in range(len(files)):
+        if files[i][:8] == 'strings_':
+            if language == files[i].replace('strings_', '').replace('.xlsx', ''):
+                if delayed_start_var:
+                    text = ' ' + '(selected)'
+                else:
+                    text = ' (' + print_on_language(1, 57) + ')'
+            else:
+                text = ''
+            Button(window, text=files[i].replace('strings_', '').replace('.xlsx', '') + text,
+                   command=lambda j=i: change_language_process(files, j, delayed_start_var)) \
+                .grid(column=0, row=count_row)
+            count_row = count_row + 1
+    column_btn = 0
+    translated = False
+    if back_btn:
+        back_button(column_btn, count_row + 2, back_command=menu_settings)
+        column_btn = column_btn + 1
+        translated = True
+    exit_button(column_btn, count_row + 2, translated)
 
 
-def settings():
-    clear_window()
-    if is_debug:
-        print(debug.i(), 'The settings are open')
-    Button(window, text=print_on_language(1, 32), command=settings_dataset).grid(column=0, row=0)
-    Button(window, text=print_on_language(1, 20), command=lambda: change_language(True)).grid(column=0, row=1)
-    Button(window, text=print_on_language(1, 43), command=about_program).grid(column=0, row=2)
-    back_button(0, 1)
-    exit_button(1, 1)
+def change_language_process(files, index_language, delayed_start_var=False):
+    global language_status, delayed_start, language
+    new_language = files[index_language].replace('strings_', '').replace('.xlsx', '')
+    set_language(new_language)
+    language_status = 'active'
+    if delayed_start_var:
+        delayed_start.remove('invalid_language')
+    language = new_language
+    apply_constants()
 
 
-def open_link(link):
-    if is_debug:
-        print(debug.i(), 'Opening link', link)
-    webbrowser.open_new(link)
-
-
-def about_program():
+def menu_about_program():
     clear_window()
     if is_debug:
         print(debug.i(), 'The "About program" menu is open')
@@ -460,168 +623,12 @@ def about_program():
     Button(window, text=print_on_language(1, 46) + ': ' + 'https://github.com/Ariollex/causal-relationships-in-school',
            command=lambda: open_link('https://github.com/Ariollex/causal-relationships-in-school')) \
         .grid(column=0, row=3)
-    back_button(0, 1, back_command=lambda: settings())
+    back_button(0, 1, back_command=menu_settings)
     exit_button(1, 1)
-
-
-def mode_selection():
-    clear_window()
-    root.update()
-    if is_debug:
-        print(debug.i(), 'The main menu is open')
-    Label(window, text=print_on_language(1, 6) + '. ' + print_on_language(1, 7) + ':').grid(column=0, row=0)
-
-    # Program operation mode selection
-    Button(window, text=modes[0], command=mode_causal_relationship).grid(column=0, row=1)
-    Button(window, text=modes[1], command=mode_chart).grid(column=0, row=2)
-    Button(window, text=print_on_language(1, 31), command=settings).grid(column=0, row=3)
-    exit_button(0, 4)
-
-
-def mode_causal_relationship():
-    clear_window()
-    window.pack_forget()
-    if is_debug:
-        print(debug.i(), 'The causal relationship menu is open')
-    info = []
-    list_incidents_numbered = print_data.print_list_incidents(list_incidents)
-    Label(head, text=print_on_language(1, 0)).grid(column=0, row=0)
-    active_scroll()
-    count_row = len(list_incidents_numbered)
-    for i in range(count_row):
-        Button(scrollable_frame, text=list_incidents_numbered[i],
-               command=lambda j=i: mode_causal_relationship_information(j, info)).grid(column=0, row=i + 1, sticky='w')
-    back_button(0, count_row + 1)
-    exit_button(1, count_row + 1)
-
-
-def mode_causal_relationship_information(user_selection, info):
-    clear_window()
-    window.pack_forget()
-    if is_debug:
-        print(debug.i(), 'The causal relationship menu about student is open')
-    active_scroll()
-    if list_incidents[user_selection][1] == print_on_language(1, 4) or (print_on_language(3, 2) == 0):
-        user_choice_text = print_on_language(1, 2) + ' ' + str(user_selection + 1) + '. ' + print_on_language(2, 2) + \
-                           ': ' + str(list_incidents[user_selection][0])
-    else:
-        user_choice_text = print_on_language(1, 2) + ' ' + str(user_selection + 1) + '. ' + print_on_language(3, 2) + \
-                           ': ' + str(list_incidents[user_selection][0])
-    Label(head, text=user_choice_text).grid(column=0, row=0, sticky='w')
-    Label(scrollable_frame, text=print_on_language(1, 65), background='#DCDCDC').grid(column=0, row=1, sticky='w')
-
-    # Calculations: search for matching information
-    calculations.intersection_of_classes(list_incidents, user_selection, info, 0)
-    calculations.intersection_of_time(list_incidents, user_selection, info, 0)
-    student_text, incident_text = calculations.conclusions(list_incidents, user_selection, info)
-    # Calculations: conclusions
-    Label(scrollable_frame, text=student_text).grid(column=0, row=2)
-    Label(scrollable_frame).grid(column=0, row=3)
-    ttk.Separator(scrollable_frame, orient='horizontal').grid(column=0, row=3, columnspan=4, sticky='we')
-    Label(scrollable_frame, text=' ' * 135).grid(row=3)
-    Label(scrollable_frame, text=print_on_language(1, 66), background='#DCDCDC').grid(column=0, row=4, sticky='w')
-    Label(scrollable_frame, text=incident_text).grid(column=0, row=5)
-    back_button(0, 4, back_command=lambda: mode_causal_relationship())
-    exit_button(1, 4)
-
-
-def mode_chart():
-    clear_window()
-    if is_debug:
-        print(debug.i(), 'The charts menu is open')
-    list_graphs_numbered = print_data.print_selection_list(available_charts)
-    Label(window, text=print_on_language(1, 10) + ':')
-    count_row = len(list_graphs_numbered)
-    for i in range(count_row):
-        if i == 3:
-            if len(parallel.value_counts().values) < 7 or len(previous_causes.value_counts().values) < 7:
-                continue
-        Button(window, text=list_graphs_numbered[i], command=lambda j=i: mode_chart_process(j)) \
-            .grid(column=0, row=i + 1, sticky=W)
-    back_button(0, count_row + 1)
-    exit_button(1, count_row + 1)
-
-
-def mode_chart_process(choice_chart):
-    if is_debug:
-        print(debug.i(), 'Displaying a chart...')
-    charts.set_variables(list_incidents, causes, parallel, name_columns, previous_causes)
-    charts.chart_selection(choice_chart, data)
-    count_row = len(available_charts)
-    back_button(0, count_row + 1)
-    exit_button(1, count_row + 1)
-
-
-def start_variables():
-    global modes, available_charts, parameters_dataset_translated, list_incidents
-    # Modes
-    modes = [print_on_language(1, 8), print_on_language(1, 9)]
-
-    # Available graphs
-    available_charts = [print_on_language(1, 5), print_on_language(1, 18), print_on_language(1, 19),
-                        print_on_language(1, 56)]
-
-    # Translated dataset parameters
-    parameters_dataset_translated = [print_on_language(1, 36), print_on_language(1, 37), print_on_language(1, 17),
-                                     print_on_language(1, 38), print_on_language(1, 12), print_on_language(1, 39),
-                                     print_on_language(1, 40)]
-
-    root.title(print_on_language(1, 15) + ', ' + version)
-
-    if configuration_status == 'normal':
-        # Creating a list of incidents
-        list_incidents = calculations.make_list_incidents(data, name, sex, parallel, letter, causes,
-                                                          time_causes, previous_causes)
-        mode_selection()
-    else:
-        fix_configuration()
-
-
-def fix_configuration():
-    global list_incidents, language_status, configuration_status
-    # Language
-    if 'invalid_language' in delayed_start:
-        messagebox.showwarning('Warning', 'The language is not defined. Please select a language.')
-        change_language(delayed_start_var=True)
-    elif language_status != 'active':
-        language_status = 'active'
-        start_variables()
-    # Invalid path dataset
-    elif 'invalid_path_dataset' in delayed_start:
-        messagebox.showwarning(print_on_language(1, 47), print_on_language(1, 48))
-        settings_dataset(buttons=False)
-        delayed_start.remove('invalid_path_dataset')
-        delayed_start.remove('invalid_parameters_values')
-    # Invalid parameters_values
-    elif 'invalid_parameters_values' in delayed_start:
-        messagebox.showwarning(print_on_language(1, 47), print_on_language(1, 49))
-        settings_dataset(buttons=False)
-        delayed_start.remove('invalid_parameters_values')
-    # check for normal status
-    elif len(delayed_start) == 0:
-        # Creating a list of incidents
-        list_incidents = calculations.make_list_incidents(data, name, sex, parallel, letter, causes,
-                                                          time_causes, previous_causes)
-        configuration_status = 'normal'
-        mode_selection()
-
-
-def on_canvas_configure(event):
-    canvas.configure(scrollregion=height_window())
-    canvas.itemconfig(canvas_frame, width=event.width)
-
-
-def height_window():
-    if scrollable_frame.winfo_height() > canvas.winfo_height():
-        height = scrollable_frame.winfo_height()
-    else:
-        height = canvas.winfo_height()
-    return 0, 0, height, height
 
 
 if is_debug:
     print(debug.i(), 'Creating a window...')
-
 root = Tk()
 root.minsize(600, 250)
 window = Frame(root)
@@ -630,16 +637,6 @@ head.pack(side='top')
 window.pack(expand=True)
 container, canvas, v_scrollbar, h_scrollbar, scrollable_frame, canvas_frame = \
     Frame(), Canvas(), Scrollbar(), Scrollbar(), Frame(), int()
-
-
-def setup_scroll():
-    global container, canvas, v_scrollbar, h_scrollbar, scrollable_frame
-    container = Frame(root)
-    canvas = Canvas(container, highlightthickness=0)
-    v_scrollbar = Scrollbar(container, orient="vertical", command=canvas.yview)
-    scrollable_frame = Frame(canvas)
-
-
 status_scroll = 'disabled'
 button_frame = Frame(root)
 button_frame.pack(side="bottom")
@@ -655,5 +652,5 @@ else:
     configuration_status = 'normal'
     if is_debug:
         print(debug.i(), 'Applying constants...')
-    start_variables()
+    apply_constants()
 root.mainloop()
