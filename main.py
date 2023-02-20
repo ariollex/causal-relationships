@@ -166,7 +166,7 @@ if 'invalid_parameters_values' not in delayed_start and data is not None:
                 time_causes[i] = int(time_causes[i])
 
 
-def apply_constants():
+def apply_constants(open_main_menu=True):
     global modes, available_charts, parameters_dataset_translated, list_incidents
     # Modes
     modes = [print_on_language(1, 8), print_on_language(1, 9)]
@@ -186,7 +186,10 @@ def apply_constants():
         # Creating a list of incidents
         list_incidents = calculations.make_list_incidents(data, name, sex, parallel, letter, causes,
                                                           time_causes, previous_causes)
-        menu_main()
+        if open_main_menu:
+            menu_main()
+        else:
+            menu_language(back_btn=True)
     else:
         fix_configuration()
 
@@ -615,7 +618,7 @@ def change_language_process(files, index_language, delayed_start_var=False):
     if delayed_start_var:
         delayed_start.remove('invalid_language')
     language = new_language
-    apply_constants()
+    apply_constants(open_main_menu=False)
 
 
 def menu_about_program():
