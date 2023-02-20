@@ -8,7 +8,9 @@ from tkinter.filedialog import askopenfilename
 from tkinter import ttk
 import webbrowser
 import requests
+import random
 import zipfile
+import json
 import os
 
 import error
@@ -193,6 +195,10 @@ def open_link(link):
     if is_debug:
         print(debug.i(), 'Opening link', link)
     webbrowser.open_new(link)
+
+
+def get_int(text):
+    return int(''.join([s for s in text.split() if s.isdigit()]))
 
 
 def fix_configuration():
@@ -618,7 +624,7 @@ def menu_about_program():
         print(debug.i(), 'The "About program" menu is open')
     Label(window, text=print_on_language(1, 15)).grid(column=0, row=0)
     Button(window, text=print_on_language(1, 44) + ': ' + version,
-           command=lambda: open_link('https://github.com/Ariollex/causal-relationships-in-school/releases')) \
+           command=check_updates) \
         .grid(column=0, row=1)
     Button(window, text=print_on_language(1, 45) + ': Artem Agapkin',
            command=lambda: open_link('https://github.com/Ariollex')) \
@@ -628,6 +634,51 @@ def menu_about_program():
         .grid(column=0, row=3)
     back_button(0, 1, back_command=menu_settings)
     exit_button(1, 1)
+
+
+def check_updates():
+    global count_click_ee
+    url = 'https://api.github.com/repos/ariollex/causal-relationships-in-school/releases/latest'
+    latest_response = requests.get(url)
+    if is_debug:
+        print(debug.i(), 'Checking for updates...')
+    if latest_response.status_code == 200:
+        if is_debug:
+            print(debug.i(), 'Server response received...')
+        response_data = json.loads(latest_response.text or latest_response.content)
+        latest_version = response_data['tag_name']
+        if latest_version <= version:
+            count_click_ee = count_click_ee + 1
+            if is_debug:
+                print(debug.i(), 'The latest update is already installed!')
+            if count_click_ee == 5:
+                count_click_ee = 0
+                easter_egg()
+            else:
+                messagebox.showinfo(print_on_language(1, 73), print_on_language(1, 69))
+        elif get_int(latest_version) > get_int(version):
+            if is_debug:
+                print(debug.i(), 'Update available!')
+            messagebox.showinfo(print_on_language(1, 73), print_on_language(1, 72) +
+                                'https://github.com/Ariollex/causal-relationships-in-school/releases/latest')
+    else:
+        if is_debug:
+            print(debug.e(), 'Update check error!')
+        messagebox.showinfo(print_on_language(1, 73), print_on_language(1, 71))
+
+
+def easter_egg():
+    quotes = [
+        '"Talk is cheap. Show me the code", - Linus Torvalds',
+        '"Programs must be written for people to read, and only incidentally for machines to execute", '
+        '- Harold Abelson',
+        '"Any fool can write code that a computer can understand. Good programmers write code that humans can '
+        'understand", - Martin Fowler',
+        '"If debugging is the process of removing software bugs, then programming must be the process of putting '
+        'them in", - Edsger W. Dijkstra',
+        '"The best way to predict the future is to invent it", - Alan Kay'
+    ]
+    messagebox.showinfo("Easter egg", 'Congratulations! \nYou found an Easter egg!\n\n' + random.choice(quotes))
 
 
 if is_debug:
@@ -643,6 +694,7 @@ container, canvas, v_scrollbar, h_scrollbar, scrollable_frame, canvas_frame = \
 status_scroll = 'disabled'
 button_frame = Frame(root)
 button_frame.pack(side="bottom")
+count_click_ee = 0
 
 if len(delayed_start) != 0:
     root.title('Causal relationships in school, ' + version)
