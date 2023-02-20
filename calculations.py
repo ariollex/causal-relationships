@@ -1,6 +1,10 @@
 import print_data
 import numpy
 import os
+from sklearn.datasets import load_iris
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
+
 
 configuration, indexes, supported_parameters, parameters_dataset = [], [], [], []
 incident_time = 0
@@ -23,6 +27,27 @@ def set_variables(configuration_file):
 def read_from_configuration(n):
     return configuration[indexes[n]][str(configuration[indexes[n]]).find("'") + 1:
                                      str(configuration[indexes[n]]).rfind("'")]
+
+
+def kmeans_test(list_incidents, columns):
+    iris = list_incidents
+    X = columns
+
+    sil_score_max = -1  # this is the minimum possible score
+
+    for n_clusters in range(2, 10):
+        model = KMeans(n_clusters=n_clusters, init='k-means++', max_iter=100, n_init=1)
+        labels = model.fit_predict(X)
+        sil_score = silhouette_score(X, labels)
+        print("The average silhouette score for %i clusters is %0.2f" % (n_clusters, sil_score))
+        if sil_score > sil_score_max:
+            sil_score_max = sil_score
+            best_n_clusters = n_clusters
+    kmeans = KMeans(n_clusters=best_n_clusters)
+    kmeans.fit(columns)
+    labels = kmeans.predict(columns)
+    print(list_incidents)
+    print(labels)
 
 
 def check_parameters():

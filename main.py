@@ -364,6 +364,9 @@ def menu_causal_relationship():
     if is_debug:
         print(debug.i(), 'The causal relationship menu is open')
     info = []
+    # TODO: определение кол-во кластеров
+    print(list_incidents)
+    calculations.kmeans_test(list_incidents, pandas.DataFrame(list_incidents).drop([0, 1, 2], axis=1))
     list_incidents_numbered = print_data.print_list_incidents(list_incidents)
     Label(head, text=print_on_language(1, 0)).grid(column=0, row=0)
     active_scroll()
