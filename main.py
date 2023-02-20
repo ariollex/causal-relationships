@@ -243,12 +243,12 @@ def setup_scroll():
 def active_scroll():
     global canvas_frame, status_scroll
     setup_scroll()
-    container.pack(fill='both', expand=True, padx=(70, 0), pady=5)
-    canvas_frame = canvas.configure(yscrollcommand=v_scrollbar.set)
-    scrollable_frame.bind("<Configure>", lambda e: on_canvas_configure(e))
-    root.bind_all("<MouseWheel>", scroll_canvas)
-    canvas.create_window((0, 0), window=scrollable_frame, anchor='nw')
-    canvas.pack(side='left', fill='both', expand=True)
+    container.pack(fill='both', expand=True)
+    canvas.configure(yscrollcommand=v_scrollbar.set)
+    canvas.bind("<Configure>", on_canvas_configure)
+    canvas.bind_all("<MouseWheel>", scroll_canvas)
+    canvas_frame = canvas.create_window((0, 0), window=scrollable_frame, anchor='nw')
+    canvas.pack(side='left', fill='both', expand=True, padx=(70, 0), pady=5)
     v_scrollbar.pack(side="right", fill="y")
     status_scroll = 'active'
     # h_scrollbar.pack(side="bottom", fill="x", expand=True))
