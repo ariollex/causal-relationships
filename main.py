@@ -565,7 +565,8 @@ def show_path(file_location):
 def short_filename(file_path):
     if file_path is not None and '/' in file_path:
         filename = str(file_path[file_path.rfind('/') + 1:])
-        filename = (filename[:31] + '...') if len(filename) >= 33 else filename
+        filename = (filename[:46 - len(print_on_language(1, 59))] + '...') \
+            if len(filename) + len(print_on_language(1, 59)) > 45 else filename
         return filename
     else:
         return str(None)
