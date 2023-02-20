@@ -248,7 +248,7 @@ def active_scroll():
     canvas.bind("<Configure>", on_canvas_configure)
     canvas.bind_all("<MouseWheel>", scroll_canvas)
     canvas_frame = canvas.create_window((0, 0), window=scrollable_frame, anchor='nw')
-    canvas.pack(side='left', fill='both', expand=True, padx=(70, 0), pady=5)
+    canvas.pack(side='left', fill='both', expand=True, padx=70, pady=5)
     v_scrollbar.pack(side="right", fill="y")
     status_scroll = 'active'
     # h_scrollbar.pack(side="bottom", fill="x", expand=True))
@@ -265,7 +265,7 @@ def disable_scroll():
 
 def on_canvas_configure(event):
     canvas.configure(scrollregion=height_window())
-    canvas.itemconfig(canvas_frame, width=event.width)
+    canvas.itemconfig(canvas_frame, width=event.width - 4)
 
 
 def height_window():
@@ -358,6 +358,7 @@ def menu_causal_relationship():
     list_incidents_numbered = print_data.print_list_incidents(list_incidents)
     Label(head, text=print_on_language(1, 0)).grid(column=0, row=0)
     active_scroll()
+    scrollable_frame.grid_columnconfigure(0, weight=1)
     count_row = len(list_incidents_numbered)
     for i in range(count_row):
         Button(scrollable_frame, text=list_incidents_numbered[i],
@@ -372,6 +373,7 @@ def menu_causal_relationship_information(user_selection, info):
     if is_debug:
         print(debug.i(), 'The causal relationship menu about student is open')
     active_scroll()
+    scrollable_frame.grid_columnconfigure(0, weight=1, minsize=300)
     if list_incidents[user_selection][1] == print_on_language(1, 4) or (print_on_language(3, 2) == 0):
         user_choice_text = print_on_language(1, 2) + ' ' + str(user_selection + 1) + '. ' + print_on_language(2, 2) + \
                            ': ' + str(list_incidents[user_selection][0])
@@ -389,7 +391,6 @@ def menu_causal_relationship_information(user_selection, info):
     Label(scrollable_frame, text=student_text).grid(column=0, row=2)
     Label(scrollable_frame).grid(column=0, row=3)
     ttk.Separator(scrollable_frame, orient='horizontal').grid(column=0, row=3, columnspan=4, sticky='we')
-    Label(scrollable_frame, text=' ' * 135).grid(row=3)
     Label(scrollable_frame, text=print_on_language(1, 66), background='#DCDCDC').grid(column=0, row=4, sticky='w')
     Label(scrollable_frame, text=incident_text).grid(column=0, row=5)
     back_button(0, 4, back_command=menu_causal_relationship)
@@ -441,11 +442,12 @@ def menu_settings_dataset(buttons=True):
     active_scroll()
     head.pack_forget()
     window.pack_forget()
+    scrollable_frame.grid_columnconfigure(0, weight=1, minsize=300)
+    scrollable_frame.grid_columnconfigure(1, weight=2)
     if is_debug:
         print(debug.i(), 'The dataset settings are open')
     Label(scrollable_frame, text=print_on_language(1, 59), background='#DCDCDC').grid(column=0, row=0, sticky='w')
     file_btn_text = StringVar()
-    Label(scrollable_frame, text=' ' * 110).grid(column=0, row=1, sticky='w')
     Button(scrollable_frame, textvariable=file_btn_text, command=lambda: show_path(file_loc)) \
         .grid(column=0, row=1, sticky='w')
     file_btn_text.set(print_on_language(1, 34) + ': ' + short_filename(file_loc))
